@@ -90,13 +90,14 @@ class ReminderService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForegroundNotification()
+        
         when (intent?.action) {
             ACTION_START -> {
                 val intervalMinutes = intent.getIntExtra(EXTRA_INTERVAL_MINUTES, 30)
                 val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 prefs.edit().putInt(KEY_INTERVAL, intervalMinutes).apply()
                 
-                startForegroundNotification()
                 scheduleNextAlarm(this)
             }
             ACTION_STOP -> {
