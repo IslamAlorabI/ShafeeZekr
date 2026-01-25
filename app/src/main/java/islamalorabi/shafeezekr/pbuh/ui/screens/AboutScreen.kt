@@ -81,7 +81,7 @@ fun AboutScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "GitHub: @islamalorabI",
+                text = "GitHub: @islamalorabi",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
