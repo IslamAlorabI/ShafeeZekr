@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
@@ -207,10 +209,10 @@ fun HomeScreen(
                             )
                         },
                         leadingContent = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_volume_up),
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_pbuh),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                modifier = Modifier.size(24.dp)
                             )
                         },
                         trailingContent = {
