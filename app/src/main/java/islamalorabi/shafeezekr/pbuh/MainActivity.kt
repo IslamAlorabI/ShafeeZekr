@@ -47,6 +47,7 @@ import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
+import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -131,15 +132,7 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     onCheckForUpdates = {
-                        scope.launch {
-                            android.widget.Toast.makeText(context, context.getString(R.string.checking_updates), android.widget.Toast.LENGTH_SHORT).show()
-                            val release = islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
-                            if (release != null) {
-                                updateRelease = release
-                            } else {
-                                android.widget.Toast.makeText(context, context.getString(R.string.no_updates), android.widget.Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
                     }
                 )
             }
@@ -157,7 +150,7 @@ fun MainApp(
     onThemeModeChange: (ThemeMode) -> Unit,
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
-    onCheckForUpdates: () -> Unit
+    onCheckForUpdates: suspend () -> GithubRelease?
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 

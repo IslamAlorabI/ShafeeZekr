@@ -55,7 +55,7 @@
     <string name="notification_channel_name">Zikr-Erinnerungen</string>
     <string name="notification_channel_desc">Periodische Erinnerungsbenachrichtigungen</string>
     <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">Sende Segen auf den Propheten</string>
+    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
     
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>

@@ -6,6 +6,10 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -154,8 +158,12 @@ fun HomeScreen(
             }
         }
         
-        if (settings.isReminderEnabled && remainingTime > 0) {
-            item {
+        item {
+            AnimatedVisibility(
+                visible = settings.isReminderEnabled && remainingTime > 0,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
                 val minutes = (remainingTime / 60000).toInt()
                 val seconds = ((remainingTime % 60000) / 1000).toInt()
                 OutlinedCard(

@@ -56,7 +56,7 @@
     <string name="notification_channel_name">Zikr Reminders</string>
     <string name="notification_channel_desc">Periodic reminder notifications</string>
     <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">Send blessings upon the Prophet</string>
+    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
     
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>

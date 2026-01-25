@@ -55,7 +55,7 @@
     <string name="notification_channel_name">Напоминания о зикре</string>
     <string name="notification_channel_desc">Периодические напоминания</string>
     <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">Салават Пророку</string>
+    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
     
     <string name="save">Сохранить</string>
     <string name="cancel">Отмена</string>
