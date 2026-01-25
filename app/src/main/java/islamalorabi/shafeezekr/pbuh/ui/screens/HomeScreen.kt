@@ -235,10 +235,11 @@ fun HomeScreen(
                             )
                         },
                         leadingContent = {
-                            Image(
+                            Icon(
                                 painter = painterResource(id = R.drawable.ic_pbuh),
                                 contentDescription = null,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         },
                         trailingContent = {
