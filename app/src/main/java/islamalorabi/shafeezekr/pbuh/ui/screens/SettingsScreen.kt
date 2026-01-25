@@ -1,5 +1,9 @@
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
+import android.content.Intent
+import android.net.Uri
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -205,6 +210,71 @@ fun SettingsScreen(
                             modifier = Modifier.clickable { showColorDialog = true }
                         )
                     }
+                }
+            }
+        }
+
+        item {
+            val context = LocalContext.current
+            val powerManager = context.getSystemService(android.content.Context.POWER_SERVICE) as PowerManager
+            val isIgnoringBatteryOptimizations = powerManager.isIgnoringBatteryOptimizations(context.packageName)
+            
+            SettingsGroup(
+                header = stringResource(R.string.battery_section),
+                headerColor = MaterialTheme.colorScheme.error
+            ) {
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.battery_optimization),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = if (isIgnoringBatteryOptimizations) {
+                                    stringResource(R.string.battery_optimization_disabled)
+                                } else {
+                                    stringResource(R.string.battery_optimization_desc)
+                                },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (isIgnoringBatteryOptimizations) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                }
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_do_not_disturb),
+                                contentDescription = null,
+                                tint = if (isIgnoringBatteryOptimizations) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                }
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        modifier = Modifier.clickable {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
                 }
             }
         }

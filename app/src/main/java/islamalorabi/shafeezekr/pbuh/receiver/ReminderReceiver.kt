@@ -10,7 +10,7 @@ import android.media.MediaPlayer
 import androidx.core.app.NotificationCompat
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
-import islamalorabi.shafeezekr.pbuh.service.ReminderService
+import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 
 class ReminderReceiver : BroadcastReceiver() {
 
@@ -23,7 +23,7 @@ class ReminderReceiver : BroadcastReceiver() {
         createNotificationChannel(context)
         showNotification(context)
         playSound(context)
-        ReminderService.scheduleNextAlarm(context)
+        ReminderScheduler.scheduleNextAlarm(context)
     }
 
     private fun createNotificationChannel(context: Context) {
@@ -75,3 +75,4 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 }
+
