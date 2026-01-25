@@ -35,6 +35,7 @@
     
     <string name="language_section">Language</string>
     <string name="language">Language</string>
+    <string name="lang_system">System</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -72,4 +73,8 @@
     <string name="checking_updates">Checking for updates...</string>
     <string name="no_updates">App is up to date</string>
     <string name="update_error">Error checking for updates</string>
+    <string name="update_available">Update Available</string>
+    <string name="update_message">A new version (%1$s) is available.</string>
+    <string name="update_button">Update</string>
+    <string name="later_button">Later</string>
 </resources>

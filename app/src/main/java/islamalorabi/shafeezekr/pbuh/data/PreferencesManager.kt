@@ -29,7 +29,7 @@ data class AppSettings(
     val customIntervalMinutes: Int = 15,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val colorScheme: ColorScheme = ColorScheme.MONET,
-    val languageCode: String = "en"
+    val languageCode: String = ""
 )
 
 class PreferencesManager(private val context: Context) {
@@ -62,7 +62,7 @@ class PreferencesManager(private val context: Context) {
             } catch (e: Exception) {
                 ColorScheme.MONET
             },
-            languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: "en"
+            languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: ""
         )
     }
 

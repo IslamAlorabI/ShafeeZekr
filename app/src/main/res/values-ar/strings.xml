@@ -35,6 +35,7 @@
     
     <string name="language_section">اللغة</string>
     <string name="language">اللغة</string>
+    <string name="lang_system">النظام</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -65,4 +66,14 @@
     <string name="battery_optimization_desc">أوقف التحسين لضمان عمل التذكيرات بشكل موثوق</string>
     <string name="battery_optimization_disabled">غير مقيد</string>
     <string name="battery_optimization_enabled">مقيد</string>
+    
+    <string name="updates_section">التحديثات</string>
+    <string name="check_updates">التحقق من التحديثات</string>
+    <string name="checking_updates">جاري التحقق من التحديثات...</string>
+    <string name="no_updates">التطبيق محدث</string>
+    <string name="update_error">خطأ في التحقق من التحديثات</string>
+    <string name="update_available">تحديث متاح</string>
+    <string name="update_message">إصدار جديد (%1$s) متاح.</string>
+    <string name="update_button">تحديث</string>
+    <string name="later_button">لاحقاً</string>
 </resources>

@@ -35,6 +35,7 @@
     
     <string name="language_section">Sprache</string>
     <string name="language">Sprache</string>
+    <string name="lang_system">System</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -59,4 +60,20 @@
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
+    <string name="next_reminder">Nächste Erinnerung</string>
+    <string name="battery_section">Batterie</string>
+    <string name="battery_optimization">Batterieoptimierung</string>
+    <string name="battery_optimization_desc">Deaktivieren, um zuverlässige Erinnerungen zu gewährleisten</string>
+    <string name="battery_optimization_disabled">Unbeschränkt</string>
+    <string name="battery_optimization_enabled">Beschränkt</string>
+    
+    <string name="updates_section">Updates</string>
+    <string name="check_updates">Nach Updates suchen</string>
+    <string name="checking_updates">Suche nach Updates...</string>
+    <string name="no_updates">App ist aktuell</string>
+    <string name="update_error">Fehler bei der Updatesuche</string>
+    <string name="update_available">Update verfügbar</string>
+    <string name="update_message">Eine neue Version (%1$s) ist verfügbar.</string>
+    <string name="update_button">Aktualisieren</string>
+    <string name="later_button">Später</string>
 </resources>
