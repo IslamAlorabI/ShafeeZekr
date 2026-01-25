@@ -129,7 +129,7 @@ fun SettingsScreen(
         item {
             SettingsGroup(
                 header = stringResource(R.string.theme_section),
-                headerColor = MaterialTheme.colorScheme.tertiary
+                headerColor = MaterialTheme.colorScheme.primary
             ) {
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -221,7 +221,7 @@ fun SettingsScreen(
             
             SettingsGroup(
                 header = stringResource(R.string.battery_section),
-                headerColor = MaterialTheme.colorScheme.error
+                headerColor = MaterialTheme.colorScheme.primary
             ) {
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
