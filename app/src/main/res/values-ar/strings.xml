@@ -59,4 +59,5 @@
     <string name="save">حفظ</string>
     <string name="cancel">إلغاء</string>
     <string name="ok">موافق</string>
+    <string name="next_reminder">التذكير القادم</string>
 </resources>
