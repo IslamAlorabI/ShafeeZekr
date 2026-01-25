@@ -61,6 +61,19 @@ class MainActivity : ComponentActivity() {
                 val appLocale = LocaleListCompat.forLanguageTags(settings.languageCode)
                 AppCompatDelegate.setApplicationLocales(appLocale)
             }
+            
+            var updateRelease by remember { androidx.compose.runtime.mutableStateOf<islamalorabi.shafeezekr.pbuh.update.GithubRelease?>(null) }
+            
+            LaunchedEffect(Unit) {
+               updateRelease = islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
+            }
+            
+            if (updateRelease != null) {
+                islamalorabi.shafeezekr.pbuh.update.UpdateDialog(
+                    release = updateRelease!!,
+                    onDismiss = { updateRelease = null }
+                )
+            }
 
             ShafeeZekrTheme(
                 themeMode = settings.themeMode,
