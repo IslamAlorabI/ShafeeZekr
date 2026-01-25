@@ -7,6 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import islamalorabi.shafeezekr.pbuh.R
 
 @Composable
 fun UpdateDialog(
@@ -17,9 +19,9 @@ fun UpdateDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Update Available") },
+        title = { Text(text = stringResource(R.string.update_available)) },
         text = { 
-            Text(text = "A new version (${release.tagName}) is available.\n\n${release.body}") 
+            Text(text = stringResource(R.string.update_message, release.tagName) + "\n\n${release.body}") 
         },
         confirmButton = {
             TextButton(
@@ -29,12 +31,12 @@ fun UpdateDialog(
                     onDismiss()
                 }
             ) {
-                Text("Update")
+                Text(stringResource(R.string.update_button))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Later")
+                Text(stringResource(R.string.later_button))
             }
         }
     )

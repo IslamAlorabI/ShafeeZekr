@@ -35,6 +35,7 @@
     
     <string name="language_section">زبان</string>
     <string name="language">زبان</string>
+    <string name="lang_system">سیستم</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -59,4 +60,20 @@
     <string name="save">ذخیره</string>
     <string name="cancel">لغو</string>
     <string name="ok">تأیید</string>
+    <string name="next_reminder">یادآوری بعدی</string>
+    <string name="battery_section">باتری</string>
+    <string name="battery_optimization">بهینه‌سازی باتری</string>
+    <string name="battery_optimization_desc">برای عملکرد مطمئن یادآوری غیرفعال کنید</string>
+    <string name="battery_optimization_disabled">نامحدود</string>
+    <string name="battery_optimization_enabled">محدود</string>
+    
+    <string name="updates_section">به‌روزرسانی‌ها</string>
+    <string name="check_updates">بررسی به‌روزرسانی</string>
+    <string name="checking_updates">در حال بررسی به‌روزرسانی...</string>
+    <string name="no_updates">برنامه به‌روز است</string>
+    <string name="update_error">خطا در بررسی به‌روزرسانی</string>
+    <string name="update_available">به‌روزرسانی موجود است</string>
+    <string name="update_message">نسخه جدید (%1$s) موجود است.</string>
+    <string name="update_button">به‌روزرسانی</string>
+    <string name="later_button">بعداً</string>
 </resources>

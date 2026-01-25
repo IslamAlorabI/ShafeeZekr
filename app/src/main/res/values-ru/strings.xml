@@ -35,6 +35,7 @@
     
     <string name="language_section">Язык</string>
     <string name="language">Язык</string>
+    <string name="lang_system">Системный</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -59,4 +60,20 @@
     <string name="save">Сохранить</string>
     <string name="cancel">Отмена</string>
     <string name="ok">ОК</string>
+    <string name="next_reminder">Следующее напоминание</string>
+    <string name="battery_section">Батарея</string>
+    <string name="battery_optimization">Оптимизация батареи</string>
+    <string name="battery_optimization_desc">Отключите для надёжной работы напоминаний</string>
+    <string name="battery_optimization_disabled">Без ограничений</string>
+    <string name="battery_optimization_enabled">Ограничено</string>
+    
+    <string name="updates_section">Обновления</string>
+    <string name="check_updates">Проверить обновления</string>
+    <string name="checking_updates">Проверка обновлений...</string>
+    <string name="no_updates">Приложение обновлено</string>
+    <string name="update_error">Ошибка проверки обновлений</string>
+    <string name="update_available">Доступно обновление</string>
+    <string name="update_message">Доступна новая версия (%1$s).</string>
+    <string name="update_button">Обновить</string>
+    <string name="later_button">Позже</string>
 </resources>

@@ -123,7 +123,11 @@ class MainActivity : ComponentActivity() {
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
                             val localeManager = context.getSystemService(LocaleManager::class.java)
-                            localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                            if (code.isEmpty()) {
+                                localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                            } else {
+                                localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                            }
                         }
                     },
                     onCheckForUpdates = {

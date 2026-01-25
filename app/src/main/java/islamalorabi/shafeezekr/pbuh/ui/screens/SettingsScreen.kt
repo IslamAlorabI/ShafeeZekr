@@ -56,6 +56,7 @@ data class LanguageOption(
 )
 
 val languages = listOf(
+    LanguageOption("", R.string.lang_system),
     LanguageOption("en", R.string.lang_en),
     LanguageOption("ar", R.string.lang_ar),
     LanguageOption("in", R.string.lang_id),

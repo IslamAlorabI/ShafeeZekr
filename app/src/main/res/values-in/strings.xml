@@ -35,6 +35,7 @@
     
     <string name="language_section">Bahasa</string>
     <string name="language">Bahasa</string>
+    <string name="lang_system">Sistem</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -59,4 +60,20 @@
     <string name="save">Simpan</string>
     <string name="cancel">Batal</string>
     <string name="ok">OK</string>
+    <string name="next_reminder">Pengingat Berikutnya</string>
+    <string name="battery_section">Baterai</string>
+    <string name="battery_optimization">Optimisasi Baterai</string>
+    <string name="battery_optimization_desc">Nonaktifkan untuk memastikan pengingat berfungsi</string>
+    <string name="battery_optimization_disabled">Tidak Dibatasi</string>
+    <string name="battery_optimization_enabled">Dibatasi</string>
+    
+    <string name="updates_section">Pembaruan</string>
+    <string name="check_updates">Periksa pembaruan</string>
+    <string name="checking_updates">Memeriksa pembaruan...</string>
+    <string name="no_updates">Aplikasi sudah terbaru</string>
+    <string name="update_error">Gagal memeriksa pembaruan</string>
+    <string name="update_available">Pembaruan tersedia</string>
+    <string name="update_message">Versi baru (%1$s) tersedia.</string>
+    <string name="update_button">Perbarui</string>
+    <string name="later_button">Nanti</string>
 </resources>

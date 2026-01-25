@@ -35,6 +35,7 @@
     
     <string name="language_section">Dil</string>
     <string name="language">Dil</string>
+    <string name="lang_system">Sistem</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_id">Bahasa Indonesia</string>
@@ -59,4 +60,20 @@
     <string name="save">Kaydet</string>
     <string name="cancel">İptal</string>
     <string name="ok">Tamam</string>
+    <string name="next_reminder">Sonraki Hatırlatma</string>
+    <string name="battery_section">Batarya</string>
+    <string name="battery_optimization">Batarya Optimizasyonu</string>
+    <string name="battery_optimization_desc">Güvenilir hatırlatmalar için devre dışı bırakın</string>
+    <string name="battery_optimization_disabled">Sınırsız</string>
+    <string name="battery_optimization_enabled">Kısıtlı</string>
+    
+    <string name="updates_section">Güncellemeler</string>
+    <string name="check_updates">Güncelleme kontrolü</string>
+    <string name="checking_updates">Güncellemeler kontrol ediliyor...</string>
+    <string name="no_updates">Uygulama güncel</string>
+    <string name="update_error">Güncelleme kontrol hatası</string>
+    <string name="update_available">Güncelleme mevcut</string>
+    <string name="update_message">Yeni bir sürüm (%1$s) mevcut.</string>
+    <string name="update_button">Güncelle</string>
+    <string name="later_button">Sonra</string>
 </resources>
