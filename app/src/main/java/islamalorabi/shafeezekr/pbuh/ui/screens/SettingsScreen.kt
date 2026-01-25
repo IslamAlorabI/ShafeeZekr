@@ -20,6 +20,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -156,9 +157,9 @@ fun SettingsScreen(
                             },
                             leadingContent = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_theme),
+                                    imageVector = Icons.Default.DarkMode,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             trailingContent = {
@@ -196,7 +197,7 @@ fun SettingsScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_palette),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             trailingContent = {
