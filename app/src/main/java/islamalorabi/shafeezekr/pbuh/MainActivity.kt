@@ -39,7 +39,7 @@ import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
-import islamalorabi.shafeezekr.pbuh.service.ReminderService
+import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
@@ -77,9 +77,9 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     settings.reminderInterval.minutes
                                 }
-                                ReminderService.startService(context, intervalMinutes)
+                                ReminderScheduler.startReminder(context, intervalMinutes)
                             } else {
-                                ReminderService.stopService(context)
+                                ReminderScheduler.stopReminder(context)
                             }
                         }
                     },
@@ -89,8 +89,7 @@ class MainActivity : ComponentActivity() {
                             if (settings.isReminderEnabled && interval != ReminderInterval.CUSTOM) {
                                 val intervalMinutes = interval.minutes
                                 if (intervalMinutes > 0) {
-                                    ReminderService.stopService(context)
-                                    ReminderService.startService(context, intervalMinutes)
+                                    ReminderScheduler.startReminder(context, intervalMinutes)
                                 }
                             }
                         }
@@ -99,8 +98,7 @@ class MainActivity : ComponentActivity() {
                         scope.launch {
                             preferencesManager.setCustomIntervalMinutes(minutes)
                             if (settings.isReminderEnabled && settings.reminderInterval == ReminderInterval.CUSTOM) {
-                                ReminderService.stopService(context)
-                                ReminderService.startService(context, minutes)
+                                ReminderScheduler.startReminder(context, minutes)
                             }
                         }
                     },

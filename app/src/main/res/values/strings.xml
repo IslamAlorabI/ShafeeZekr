@@ -61,4 +61,9 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="next_reminder">Next Reminder</string>
+    <string name="battery_section">Battery</string>
+    <string name="battery_optimization">Battery Optimization</string>
+    <string name="battery_optimization_desc">Disable to ensure reminders work reliably</string>
+    <string name="battery_optimization_disabled">Unrestricted</string>
+    <string name="battery_optimization_enabled">Restricted</string>
 </resources>

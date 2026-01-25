@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
-import islamalorabi.shafeezekr.pbuh.service.ReminderService
+import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -25,7 +25,7 @@ class BootReceiver : BroadcastReceiver() {
                     } else {
                         settings.reminderInterval.minutes
                     }
-                    ReminderService.startService(context, intervalMinutes)
+                    ReminderScheduler.startReminder(context, intervalMinutes)
                 }
             }
         }

@@ -60,4 +60,9 @@
     <string name="cancel">إلغاء</string>
     <string name="ok">موافق</string>
     <string name="next_reminder">التذكير القادم</string>
+    <string name="battery_section">البطارية</string>
+    <string name="battery_optimization">تحسين البطارية</string>
+    <string name="battery_optimization_desc">أوقف التحسين لضمان عمل التذكيرات بشكل موثوق</string>
+    <string name="battery_optimization_disabled">غير مقيد</string>
+    <string name="battery_optimization_enabled">مقيد</string>
 </resources>
