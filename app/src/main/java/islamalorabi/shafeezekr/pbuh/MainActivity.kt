@@ -127,6 +127,17 @@ class MainActivity : ComponentActivity() {
                             val appLocale = LocaleListCompat.forLanguageTags(code)
                             AppCompatDelegate.setApplicationLocales(appLocale)
                         }
+                    },
+                    onCheckForUpdates = {
+                        scope.launch {
+                            android.widget.Toast.makeText(context, context.getString(R.string.checking_updates), android.widget.Toast.LENGTH_SHORT).show()
+                            val release = islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
+                            if (release != null) {
+                                updateRelease = release
+                            } else {
+                                android.widget.Toast.makeText(context, context.getString(R.string.no_updates), android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 )
             }
@@ -143,7 +154,8 @@ fun MainApp(
     onCustomIntervalChange: (Int) -> Unit,
     onThemeModeChange: (ThemeMode) -> Unit,
     onColorSchemeChange: (ColorScheme) -> Unit,
-    onLanguageChange: (String) -> Unit
+    onLanguageChange: (String) -> Unit,
+    onCheckForUpdates: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -216,6 +228,7 @@ fun MainApp(
                 onThemeModeChange = onThemeModeChange,
                 onColorSchemeChange = onColorSchemeChange,
                 onLanguageChange = onLanguageChange,
+                onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)
             )
             2 -> AboutScreen(
