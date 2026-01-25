@@ -55,8 +55,8 @@
     
     <string name="notification_channel_name">Pengingat Zikir</string>
     <string name="notification_channel_desc">Notifikasi pengingat berkala</string>
-    <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
+    <string name="notification_title">Bersholawatlah kepada Nabi Muhammad ﷺ</string>
+    <string name="notification_text">Ya Allah, limpahkanlah sholawat dan salam kepada sebaik-baik makhluk</string>
     
     <string name="save">Simpan</string>
     <string name="cancel">Batal</string>
