@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">شفيع ذكر</string>
+    
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="nav_about">حول</string>
+    
+    <string name="home_title">صلّ على محمد</string>
+    <string name="home_subtitle">تذكير بالصلاة على النبي ﷺ</string>
+    <string name="enable_reminder">تفعيل التذكير</string>
+    <string name="enable_reminder_desc">تشغيل التذكير الصوتي تلقائياً كل فترة محددة</string>
+    
+    <string name="interval_title">الفترة الزمنية</string>
+    <string name="interval_5_min">كل 5 دقائق</string>
+    <string name="interval_10_min">كل 10 دقائق</string>
+    <string name="interval_30_min">كل 30 دقيقة</string>
+    <string name="interval_1_hour">كل ساعة</string>
+    <string name="interval_custom">مخصص</string>
+    <string name="custom_interval_title">فترة مخصصة</string>
+    <string name="minutes">دقيقة</string>
+    
+    <string name="settings_title">الإعدادات</string>
+    <string name="theme_section">المظهر</string>
+    <string name="theme_mode">وضع السمة</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="theme_system">حسب النظام</string>
+    <string name="color_scheme">نظام الألوان</string>
+    <string name="color_monet">ديناميكي (Monet)</string>
+    <string name="color_green">أخضر</string>
+    <string name="color_blue">أزرق</string>
+    <string name="color_purple">بنفسجي</string>
+    <string name="color_teal">أزرق مخضر</string>
+    
+    <string name="language_section">اللغة</string>
+    <string name="language">اللغة</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">حول التطبيق</string>
+    <string name="about_app_name">شفيع ذكر</string>
+    <string name="about_description">تطبيق بسيط للتذكير بالصلاة على النبي محمد ﷺ</string>
+    <string name="about_version">الإصدار %1$s</string>
+    <string name="about_copyright">© %1$s إسلام العرابي</string>
+    <string name="about_rights">جميع الحقوق محفوظة</string>
+    
+    <string name="notification_channel_name">تذكيرات الذكر</string>
+    <string name="notification_channel_desc">إشعارات التذكير الدورية</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">اللهم صلِّ وسلم على نبينا محمد</string>
+    
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+</resources>

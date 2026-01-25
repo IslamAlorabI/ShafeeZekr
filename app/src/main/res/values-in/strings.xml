@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShafeeZekr</string>
+    
+    <string name="nav_home">Beranda</string>
+    <string name="nav_settings">Pengaturan</string>
+    <string name="nav_about">Tentang</string>
+    
+    <string name="home_title">Bershalawat</string>
+    <string name="home_subtitle">Pengingat untuk bershalawat kepada Nabi ﷺ</string>
+    <string name="enable_reminder">Aktifkan Pengingat</string>
+    <string name="enable_reminder_desc">Putar pengingat suara secara berkala</string>
+    
+    <string name="interval_title">Interval Pengingat</string>
+    <string name="interval_5_min">Setiap 5 menit</string>
+    <string name="interval_10_min">Setiap 10 menit</string>
+    <string name="interval_30_min">Setiap 30 menit</string>
+    <string name="interval_1_hour">Setiap 1 jam</string>
+    <string name="interval_custom">Kustom</string>
+    <string name="custom_interval_title">Interval Kustom</string>
+    <string name="minutes">menit</string>
+    
+    <string name="settings_title">Pengaturan</string>
+    <string name="theme_section">Tampilan</string>
+    <string name="theme_mode">Mode Tema</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+    <string name="theme_system">Sistem</string>
+    <string name="color_scheme">Skema Warna</string>
+    <string name="color_monet">Dinamis (Monet)</string>
+    <string name="color_green">Hijau</string>
+    <string name="color_blue">Biru</string>
+    <string name="color_purple">Ungu</string>
+    <string name="color_teal">Teal</string>
+    
+    <string name="language_section">Bahasa</string>
+    <string name="language">Bahasa</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">Tentang</string>
+    <string name="about_app_name">ShafeeZekr</string>
+    <string name="about_description">Aplikasi pengingat sederhana untuk bershalawat kepada Nabi Muhammad ﷺ</string>
+    <string name="about_version">Versi %1$s</string>
+    <string name="about_copyright">© %1$s Islam Alorabi</string>
+    <string name="about_rights">Hak cipta dilindungi</string>
+    
+    <string name="notification_channel_name">Pengingat Zikir</string>
+    <string name="notification_channel_desc">Notifikasi pengingat berkala</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">Bershalawat kepada Nabi</string>
+    
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="ok">OK</string>
+</resources>

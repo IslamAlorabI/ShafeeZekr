@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">شفیع ذکر</string>
+    
+    <string name="nav_home">ہوم</string>
+    <string name="nav_settings">ترتیبات</string>
+    <string name="nav_about">تعارف</string>
+    
+    <string name="home_title">درود شریف</string>
+    <string name="home_subtitle">نبی کریم ﷺ پر درود بھیجنے کی یاد دہانی</string>
+    <string name="enable_reminder">یاد دہانی فعال کریں</string>
+    <string name="enable_reminder_desc">باقاعدہ وقفوں میں آڈیو یاد دہانی چلائیں</string>
+    
+    <string name="interval_title">یاد دہانی کا وقفہ</string>
+    <string name="interval_5_min">ہر 5 منٹ</string>
+    <string name="interval_10_min">ہر 10 منٹ</string>
+    <string name="interval_30_min">ہر 30 منٹ</string>
+    <string name="interval_1_hour">ہر گھنٹہ</string>
+    <string name="interval_custom">اپنی مرضی</string>
+    <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
+    <string name="minutes">منٹ</string>
+    
+    <string name="settings_title">ترتیبات</string>
+    <string name="theme_section">ظاہری شکل</string>
+    <string name="theme_mode">تھیم موڈ</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تاریک</string>
+    <string name="theme_system">سسٹم</string>
+    <string name="color_scheme">رنگ سکیم</string>
+    <string name="color_monet">متحرک (Monet)</string>
+    <string name="color_green">سبز</string>
+    <string name="color_blue">نیلا</string>
+    <string name="color_purple">جامنی</string>
+    <string name="color_teal">ٹیل</string>
+    
+    <string name="language_section">زبان</string>
+    <string name="language">زبان</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">تعارف</string>
+    <string name="about_app_name">شفیع ذکر</string>
+    <string name="about_description">نبی محمد ﷺ پر درود بھیجنے کی یاد دہانی کی ایک سادہ ایپ</string>
+    <string name="about_version">ورژن %1$s</string>
+    <string name="about_copyright">© %1$s اسلام العرابی</string>
+    <string name="about_rights">تمام حقوق محفوظ ہیں</string>
+    
+    <string name="notification_channel_name">ذکر کی یاد دہانیاں</string>
+    <string name="notification_channel_desc">وقتاً فوقتاً یاد دہانی کی اطلاعات</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">نبی پر درود بھیجیں</string>
+    
+    <string name="save">محفوظ کریں</string>
+    <string name="cancel">منسوخ</string>
+    <string name="ok">ٹھیک ہے</string>
+</resources>

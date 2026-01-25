@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShafeeZekr</string>
+    
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_settings">Ayarlar</string>
+    <string name="nav_about">Hakkında</string>
+    
+    <string name="home_title">Salavat</string>
+    <string name="home_subtitle">Peygamber ﷺ için salavat hatırlatması</string>
+    <string name="enable_reminder">Hatırlatmayı Etkinleştir</string>
+    <string name="enable_reminder_desc">Düzenli aralıklarla sesli hatırlatma çal</string>
+    
+    <string name="interval_title">Hatırlatma Aralığı</string>
+    <string name="interval_5_min">Her 5 dakika</string>
+    <string name="interval_10_min">Her 10 dakika</string>
+    <string name="interval_30_min">Her 30 dakika</string>
+    <string name="interval_1_hour">Her saat</string>
+    <string name="interval_custom">Özel</string>
+    <string name="custom_interval_title">Özel Aralık</string>
+    <string name="minutes">dakika</string>
+    
+    <string name="settings_title">Ayarlar</string>
+    <string name="theme_section">Görünüm</string>
+    <string name="theme_mode">Tema Modu</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="theme_system">Sistem</string>
+    <string name="color_scheme">Renk Şeması</string>
+    <string name="color_monet">Dinamik (Monet)</string>
+    <string name="color_green">Yeşil</string>
+    <string name="color_blue">Mavi</string>
+    <string name="color_purple">Mor</string>
+    <string name="color_teal">Camgöbeği</string>
+    
+    <string name="language_section">Dil</string>
+    <string name="language">Dil</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">Hakkında</string>
+    <string name="about_app_name">ShafeeZekr</string>
+    <string name="about_description">Peygamber Muhammed ﷺ için salavat hatırlatma uygulaması</string>
+    <string name="about_version">Sürüm %1$s</string>
+    <string name="about_copyright">© %1$s Islam Alorabi</string>
+    <string name="about_rights">Tüm hakları saklıdır</string>
+    
+    <string name="notification_channel_name">Zikir Hatırlatmaları</string>
+    <string name="notification_channel_desc">Periyodik hatırlatma bildirimleri</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">Peygambere salavat getir</string>
+    
+    <string name="save">Kaydet</string>
+    <string name="cancel">İptal</string>
+    <string name="ok">Tamam</string>
+</resources>

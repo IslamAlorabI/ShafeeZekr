@@ -1,60 +1,120 @@
 package islamalorabi.shafeezekr.pbuh
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
+import islamalorabi.shafeezekr.pbuh.data.AppSettings
+import islamalorabi.shafeezekr.pbuh.data.ColorScheme
+import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
+import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
+import islamalorabi.shafeezekr.pbuh.data.ThemeMode
+import islamalorabi.shafeezekr.pbuh.service.ReminderService
+import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
+import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
+import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ShafeeZekrTheme(darkTheme = true) {
-                SettingsScreen()
+            val context = LocalContext.current
+            val preferencesManager = remember { PreferencesManager(context) }
+            val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
+            val scope = rememberCoroutineScope()
+
+            LaunchedEffect(settings.languageCode) {
+                val appLocale = LocaleListCompat.forLanguageTags(settings.languageCode)
+                AppCompatDelegate.setApplicationLocales(appLocale)
+            }
+
+            ShafeeZekrTheme(
+                themeMode = settings.themeMode,
+                colorScheme = settings.colorScheme
+            ) {
+                MainApp(
+                    settings = settings,
+                    onReminderEnabledChange = { enabled ->
+                        scope.launch {
+                            preferencesManager.setReminderEnabled(enabled)
+                            if (enabled) {
+                                val intervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+                                    settings.customIntervalMinutes
+                                } else {
+                                    settings.reminderInterval.minutes
+                                }
+                                ReminderService.startService(context, intervalMinutes)
+                            } else {
+                                ReminderService.stopService(context)
+                            }
+                        }
+                    },
+                    onIntervalChange = { interval ->
+                        scope.launch {
+                            preferencesManager.setReminderInterval(interval)
+                            if (settings.isReminderEnabled) {
+                                val intervalMinutes = if (interval == ReminderInterval.CUSTOM) {
+                                    settings.customIntervalMinutes
+                                } else {
+                                    interval.minutes
+                                }
+                                ReminderService.stopService(context)
+                                ReminderService.startService(context, intervalMinutes)
+                            }
+                        }
+                    },
+                    onCustomIntervalChange = { minutes ->
+                        scope.launch {
+                            preferencesManager.setCustomIntervalMinutes(minutes)
+                            if (settings.isReminderEnabled && settings.reminderInterval == ReminderInterval.CUSTOM) {
+                                ReminderService.stopService(context)
+                                ReminderService.startService(context, minutes)
+                            }
+                        }
+                    },
+                    onThemeModeChange = { mode ->
+                        scope.launch { preferencesManager.setThemeMode(mode) }
+                    },
+                    onColorSchemeChange = { scheme ->
+                        scope.launch { preferencesManager.setColorScheme(scheme) }
+                    },
+                    onLanguageChange = { code ->
+                        scope.launch { preferencesManager.setLanguageCode(code) }
+                    }
+                )
             }
         }
     }
@@ -62,8 +122,22 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
-    var selectedNavItem by remember { mutableIntStateOf(0) }
+fun MainApp(
+    settings: AppSettings,
+    onReminderEnabledChange: (Boolean) -> Unit,
+    onIntervalChange: (ReminderInterval) -> Unit,
+    onCustomIntervalChange: (Int) -> Unit,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onColorSchemeChange: (ColorScheme) -> Unit,
+    onLanguageChange: (String) -> Unit
+) {
+    var selectedTab by remember { mutableIntStateOf(0) }
+
+    val titles = listOf(
+        stringResource(R.string.nav_home),
+        stringResource(R.string.nav_settings),
+        stringResource(R.string.nav_about)
+    )
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -71,8 +145,7 @@ fun SettingsScreen() {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "الإعدادات",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = titles[selectedTab],
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -81,233 +154,59 @@ fun SettingsScreen() {
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = selectedNavItem == 0,
-                    onClick = { selectedNavItem = 0 },
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
                     icon = {
                         Icon(
-                            imageVector = if (selectedNavItem == 0) Icons.Filled.Home else Icons.Outlined.Home,
-                            contentDescription = "الرئيسية"
+                            imageVector = if (selectedTab == 0) Icons.Filled.Home else Icons.Outlined.Home,
+                            contentDescription = titles[0]
                         )
                     },
-                    label = { Text("الرئيسية") }
+                    label = { Text(titles[0]) }
                 )
                 NavigationBarItem(
-                    selected = selectedNavItem == 1,
-                    onClick = { selectedNavItem = 1 },
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
                     icon = {
                         Icon(
-                            imageVector = if (selectedNavItem == 1) Icons.Filled.Info else Icons.Outlined.Info,
-                            contentDescription = "حول التطبيق"
+                            imageVector = if (selectedTab == 1) Icons.Filled.Settings else Icons.Outlined.Settings,
+                            contentDescription = titles[1]
                         )
                     },
-                    label = { Text("حول التطبيق") }
+                    label = { Text(titles[1]) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    icon = {
+                        Icon(
+                            imageVector = if (selectedTab == 2) Icons.Filled.Info else Icons.Outlined.Info,
+                            contentDescription = titles[2]
+                        )
+                    },
+                    label = { Text(titles[2]) }
                 )
             }
         }
     ) { innerPadding ->
-        SettingsContent(modifier = Modifier.padding(innerPadding))
-    }
-}
-
-@Composable
-fun SettingsContent(modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            SettingsGroup(
-                header = "التحكم الرئيسي",
-                headerColor = MaterialTheme.colorScheme.primary
-            ) {
-                MainControlCard()
-            }
-        }
-
-        item {
-            SettingsGroup(
-                header = "التوقيت والتخصيص",
-                headerColor = MaterialTheme.colorScheme.tertiary
-            ) {
-                TimingCustomizationCard()
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsGroup(
-    header: String,
-    headerColor: Color,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = header,
-            style = MaterialTheme.typography.labelLarge,
-            color = headerColor,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 4.dp)
-        )
-        content()
-    }
-}
-
-@Composable
-fun MainControlCard() {
-    val context = LocalContext.current
-    var isReminderEnabled by remember { mutableStateOf(false) }
-    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            mediaPlayer?.release()
-        }
-    }
-
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = "تفعيل التذكير الصوتي",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = "تشغيل المقطع الصوتي تلقائياً كل فترة محددة.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            leadingContent = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_volume_up),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-            trailingContent = {
-                Switch(
-                    checked = isReminderEnabled,
-                    onCheckedChange = { enabled ->
-                        isReminderEnabled = enabled
-                        if (enabled) {
-                            try {
-                                mediaPlayer?.release()
-                                mediaPlayer = MediaPlayer.create(context, R.raw.zikr_sound)
-                                mediaPlayer?.start()
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        } else {
-                            mediaPlayer?.stop()
-                            mediaPlayer?.release()
-                            mediaPlayer = null
-                        }
-                    }
-                )
-            },
-            colors = ListItemDefaults.colors(
-                containerColor = Color.Transparent
+        when (selectedTab) {
+            0 -> HomeScreen(
+                settings = settings,
+                onReminderEnabledChange = onReminderEnabledChange,
+                onIntervalChange = onIntervalChange,
+                onCustomIntervalChange = onCustomIntervalChange,
+                modifier = Modifier.padding(innerPadding)
             )
-        )
-    }
-}
-
-@Composable
-fun TimingCustomizationCard() {
-    var isSleepModeEnabled by remember { mutableStateOf(false) }
-
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column {
-            Surface(
-                onClick = { },
-                color = Color.Transparent
-            ) {
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = "الفترة الزمنية",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = "مثال: كل 30 دقيقة",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_schedule),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary
-                        )
-                    },
-                    trailingContent = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    colors = ListItemDefaults.colors(
-                        containerColor = Color.Transparent
-                    )
-                )
-            }
-
-            ListItem(
-                headlineContent = {
-                    Text(
-                        text = "إيقاف أثناء النوم",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                },
-                supportingContent = {
-                    Text(
-                        text = "عدم التشغيل في ساعات الليل المتأخرة.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                leadingContent = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_do_not_disturb),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                },
-                trailingContent = {
-                    Switch(
-                        checked = isSleepModeEnabled,
-                        onCheckedChange = { isSleepModeEnabled = it }
-                    )
-                },
-                colors = ListItemDefaults.colors(
-                    containerColor = Color.Transparent
-                )
+            1 -> SettingsScreen(
+                settings = settings,
+                onThemeModeChange = onThemeModeChange,
+                onColorSchemeChange = onColorSchemeChange,
+                onLanguageChange = onLanguageChange,
+                modifier = Modifier.padding(innerPadding)
+            )
+            2 -> AboutScreen(
+                modifier = Modifier.padding(innerPadding)
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsScreenPreview() {
-    ShafeeZekrTheme(darkTheme = true) {
-        SettingsScreen()
     }
 }

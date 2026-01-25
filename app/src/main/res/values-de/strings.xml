@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShafeeZekr</string>
+    
+    <string name="nav_home">Startseite</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_about">Über</string>
+    
+    <string name="home_title">Segensgruß</string>
+    <string name="home_subtitle">Erinnerung, Segen auf den Propheten ﷺ zu senden</string>
+    <string name="enable_reminder">Erinnerung aktivieren</string>
+    <string name="enable_reminder_desc">Audio-Erinnerung in regelmäßigen Abständen abspielen</string>
+    
+    <string name="interval_title">Erinnerungsintervall</string>
+    <string name="interval_5_min">Alle 5 Minuten</string>
+    <string name="interval_10_min">Alle 10 Minuten</string>
+    <string name="interval_30_min">Alle 30 Minuten</string>
+    <string name="interval_1_hour">Jede Stunde</string>
+    <string name="interval_custom">Benutzerdefiniert</string>
+    <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
+    <string name="minutes">Minuten</string>
+    
+    <string name="settings_title">Einstellungen</string>
+    <string name="theme_section">Erscheinungsbild</string>
+    <string name="theme_mode">Themenmodus</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_system">System</string>
+    <string name="color_scheme">Farbschema</string>
+    <string name="color_monet">Dynamisch (Monet)</string>
+    <string name="color_green">Grün</string>
+    <string name="color_blue">Blau</string>
+    <string name="color_purple">Lila</string>
+    <string name="color_teal">Blaugrün</string>
+    
+    <string name="language_section">Sprache</string>
+    <string name="language">Sprache</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">Über</string>
+    <string name="about_app_name">ShafeeZekr</string>
+    <string name="about_description">Eine einfache Erinnerungs-App, um Segen auf den Propheten Muhammad ﷺ zu senden</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_copyright">© %1$s Islam Alorabi</string>
+    <string name="about_rights">Alle Rechte vorbehalten</string>
+    
+    <string name="notification_channel_name">Zikr-Erinnerungen</string>
+    <string name="notification_channel_desc">Periodische Erinnerungsbenachrichtigungen</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">Sende Segen auf den Propheten</string>
+    
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="ok">OK</string>
+</resources>
