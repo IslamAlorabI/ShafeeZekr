@@ -55,8 +55,8 @@
     
     <string name="notification_channel_name">یادآوری‌های ذکر</string>
     <string name="notification_channel_desc">اعلان‌های یادآوری دوره‌ای</string>
-    <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
+    <string name="notification_title">بر محمد ﷺ صلوات بفرستید</string>
+    <string name="notification_text">پروردگارا، بر سید همه مخلوقات درود و سلام فرست</string>
     
     <string name="save">ذخیره</string>
     <string name="cancel">لغو</string>

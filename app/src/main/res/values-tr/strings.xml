@@ -55,8 +55,8 @@
     
     <string name="notification_channel_name">Zikir Hatırlatmaları</string>
     <string name="notification_channel_desc">Periyodik hatırlatma bildirimleri</string>
-    <string name="notification_title">صلّ على محمد ﷺ</string>
-    <string name="notification_text">اللهم صل وسلم وبارك على سيد الخلق</string>
+    <string name="notification_title">Muhammed\'e (sav) salavat getir</string>
+    <string name="notification_text">Allah\'ım, yaratılmışların efendisine salat ve selam eyle</string>
     
     <string name="save">Kaydet</string>
     <string name="cancel">İptal</string>
