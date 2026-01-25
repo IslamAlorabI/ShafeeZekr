@@ -15,8 +15,8 @@ import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 class ReminderReceiver : BroadcastReceiver() {
 
     companion object {
-        const val CHANNEL_ID = "zikr_alert_channel"
-        private var notificationId = 100
+        const val CHANNEL_ID = "zikr_alert_channel_v2"
+        private const val NOTIFICATION_ID = 1
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -33,6 +33,7 @@ class ReminderReceiver : BroadcastReceiver() {
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = context.getString(R.string.notification_channel_desc)
+            setSound(null, null)
         }
         val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
@@ -48,7 +49,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title))
-            .setContentText("اللهم صلِّ وسلم وبارك على سيد الخلق محمد صل الله عليه وسلم")
+            .setContentText(context.getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_volume_up)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -56,7 +57,7 @@ class ReminderReceiver : BroadcastReceiver() {
             .build()
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
-        notificationManager.notify(notificationId++, notification)
+        notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
     private fun playSound(context: Context) {
