@@ -4,6 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +17,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
@@ -20,8 +27,12 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -49,6 +60,17 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
+import islamalorabi.shafeezekr.pbuh.update.GithubRelease
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+
+sealed class UpdateState {
+    object Idle : UpdateState()
+    object Checking : UpdateState()
+    object UpToDate : UpdateState()
+    data class UpdateAvailable(val release: GithubRelease) : UpdateState()
+    object Error : UpdateState()
+}
 
 data class LanguageOption(
     val code: String,
@@ -73,12 +95,15 @@ fun SettingsScreen(
     onThemeModeChange: (ThemeMode) -> Unit,
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
-    onCheckForUpdates: () -> Unit,
+    onCheckForUpdates: suspend () -> GithubRelease?,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -292,30 +317,117 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.check_updates),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier.clickable { onCheckForUpdates() }
-                    )
+                    Column {
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.check_updates),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            leadingContent = {
+                                if (updateState is UpdateState.Checking) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            modifier = Modifier.clickable(
+                                enabled = updateState !is UpdateState.Checking
+                            ) {
+                                scope.launch {
+                                    updateState = UpdateState.Checking
+                                    try {
+                                        val release = onCheckForUpdates()
+                                        updateState = if (release != null) {
+                                            UpdateState.UpdateAvailable(release)
+                                        } else {
+                                            UpdateState.UpToDate
+                                        }
+                                    } catch (e: Exception) {
+                                        updateState = UpdateState.Error
+                                    }
+                                }
+                            }
+                        )
+                        
+                        AnimatedVisibility(
+                            visible = updateState !is UpdateState.Idle && updateState !is UpdateState.Checking,
+                            enter = fadeIn() + expandVertically(),
+                            exit = fadeOut() + shrinkVertically()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                when (updateState) {
+                                    is UpdateState.UpToDate -> {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                            Text(
+                                                text = stringResource(R.string.no_updates),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    }
+                                    is UpdateState.UpdateAvailable -> {
+                                        val release = (updateState as UpdateState.UpdateAvailable).release
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.update_message, release.tagName),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Button(
+                                                onClick = {
+                                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl))
+                                                    context.startActivity(intent)
+                                                },
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Download,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(stringResource(R.string.update_button))
+                                            }
+                                        }
+                                    }
+                                    is UpdateState.Error -> {
+                                        Text(
+                                            text = stringResource(R.string.update_error),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                    else -> {}
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    }
                 }
             }
         }
