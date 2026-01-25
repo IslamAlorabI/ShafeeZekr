@@ -1,6 +1,9 @@
 package islamalorabi.shafeezekr.pbuh
 
+import android.app.LocaleManager
+import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -56,11 +59,6 @@ class MainActivity : ComponentActivity() {
             val preferencesManager = remember { PreferencesManager(context) }
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
-
-            LaunchedEffect(settings.languageCode) {
-                val appLocale = LocaleListCompat.forLanguageTags(settings.languageCode)
-                AppCompatDelegate.setApplicationLocales(appLocale)
-            }
             
             var updateRelease by remember { androidx.compose.runtime.mutableStateOf<islamalorabi.shafeezekr.pbuh.update.GithubRelease?>(null) }
             
@@ -124,8 +122,8 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            val appLocale = LocaleListCompat.forLanguageTags(code)
-                            AppCompatDelegate.setApplicationLocales(appLocale)
+                            val localeManager = context.getSystemService(LocaleManager::class.java)
+                            localeManager.applicationLocales = LocaleList.forLanguageTags(code)
                         }
                     },
                     onCheckForUpdates = {
