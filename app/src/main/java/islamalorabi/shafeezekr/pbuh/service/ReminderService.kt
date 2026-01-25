@@ -7,9 +7,8 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
+import android.os.Build
 import android.os.IBinder
-import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
@@ -23,6 +22,9 @@ class ReminderService : Service() {
         const val ACTION_START = "islamalorabi.shafeezekr.pbuh.ACTION_START"
         const val ACTION_STOP = "islamalorabi.shafeezekr.pbuh.ACTION_STOP"
         const val EXTRA_INTERVAL_MINUTES = "interval_minutes"
+        private const val PREFS_NAME = "reminder_prefs"
+        private const val KEY_NEXT_TRIGGER = "next_trigger_time"
+        private const val KEY_INTERVAL = "interval_minutes"
 
         fun startService(context: Context, intervalMinutes: Int) {
             val intent = Intent(context, ReminderService::class.java).apply {
@@ -38,9 +40,47 @@ class ReminderService : Service() {
             }
             context.startService(intent)
         }
+        
+        fun scheduleNextAlarm(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val intervalMinutes = prefs.getInt(KEY_INTERVAL, 30)
+            val intervalMillis = intervalMinutes * 60 * 1000L
+            val nextTrigger = System.currentTimeMillis() + intervalMillis
+            
+            prefs.edit().putLong(KEY_NEXT_TRIGGER, nextTrigger).apply()
+            
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, ReminderReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        nextTrigger,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        nextTrigger,
+                        pendingIntent
+                    )
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextTrigger,
+                    pendingIntent
+                )
+            }
+        }
     }
-
-    private var mediaPlayer: MediaPlayer? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -53,11 +93,16 @@ class ReminderService : Service() {
         when (intent?.action) {
             ACTION_START -> {
                 val intervalMinutes = intent.getIntExtra(EXTRA_INTERVAL_MINUTES, 30)
+                val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                prefs.edit().putInt(KEY_INTERVAL, intervalMinutes).apply()
+                
                 startForegroundNotification()
-                scheduleAlarm(intervalMinutes)
+                scheduleNextAlarm(this)
             }
             ACTION_STOP -> {
                 cancelAlarm()
+                val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                prefs.edit().remove(KEY_NEXT_TRIGGER).apply()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
             }
@@ -67,8 +112,6 @@ class ReminderService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
-        mediaPlayer = null
         cancelAlarm()
     }
 
@@ -101,27 +144,6 @@ class ReminderService : Service() {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
-    }
-
-    private fun scheduleAlarm(intervalMinutes: Int) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, ReminderReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val intervalMillis = intervalMinutes * 60 * 1000L
-        val triggerAt = SystemClock.elapsedRealtime() + intervalMillis
-
-        alarmManager.setRepeating(
-            AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            triggerAt,
-            intervalMillis,
-            pendingIntent
-        )
     }
 
     private fun cancelAlarm() {

@@ -10,6 +10,7 @@ import android.media.MediaPlayer
 import androidx.core.app.NotificationCompat
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.service.ReminderService
 
 class ReminderReceiver : BroadcastReceiver() {
 
@@ -22,6 +23,7 @@ class ReminderReceiver : BroadcastReceiver() {
         createNotificationChannel(context)
         showNotification(context)
         playSound(context)
+        ReminderService.scheduleNextAlarm(context)
     }
 
     private fun createNotificationChannel(context: Context) {
@@ -46,7 +48,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title))
-            .setContentText(context.getString(R.string.notification_text))
+            .setContentText("اللهم صلِّ وسلم وبارك على سيد الخلق محمد صل الله عليه وسلم")
             .setSmallIcon(R.drawable.ic_volume_up)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -62,6 +64,10 @@ class ReminderReceiver : BroadcastReceiver() {
             val mediaPlayer = MediaPlayer.create(context, R.raw.zikr_sound)
             mediaPlayer?.setOnCompletionListener { mp ->
                 mp.release()
+            }
+            mediaPlayer?.setOnErrorListener { mp, _, _ ->
+                mp.release()
+                true
             }
             mediaPlayer?.start()
         } catch (e: Exception) {

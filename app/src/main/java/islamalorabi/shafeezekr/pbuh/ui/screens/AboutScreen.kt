@@ -21,6 +21,10 @@ import androidx.compose.ui.unit.dp
 import islamalorabi.shafeezekr.pbuh.BuildConfig
 import islamalorabi.shafeezekr.pbuh.R
 import java.util.Calendar
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun AboutScreen(
@@ -60,6 +64,30 @@ fun AboutScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        val uriHandler = LocalUriHandler.current
+        val githubUrl = stringResource(R.string.github_url)
+        
+        Row(
+            modifier = Modifier
+                .clickable { uriHandler.openUri(githubUrl) }
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_github),
+                contentDescription = "GitHub",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "GitHub: @islamalorabI",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(R.string.about_description),

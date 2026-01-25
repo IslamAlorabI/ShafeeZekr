@@ -37,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +56,8 @@ import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
+import android.media.MediaPlayer
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -86,6 +89,19 @@ fun HomeScreen(
     }
 
     var showCustomDialog by remember { mutableStateOf(false) }
+    
+    val sharedPrefs = remember { context.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE) }
+    var remainingTime by remember { mutableLongStateOf(0L) }
+    
+    LaunchedEffect(settings.isReminderEnabled, settings.reminderInterval, settings.customIntervalMinutes) {
+        while (settings.isReminderEnabled) {
+            val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
+            val now = System.currentTimeMillis()
+            remainingTime = if (nextTrigger > now) nextTrigger - now else 0L
+            delay(1000L)
+        }
+        remainingTime = 0L
+    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -94,7 +110,20 @@ fun HomeScreen(
     ) {
         item {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = false,
+                        onClick = {
+                            try {
+                                val mp = MediaPlayer.create(context, R.raw.zikr_sound)
+                                mp?.setOnCompletionListener { it.release() }
+                                mp?.start()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    ),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
@@ -119,6 +148,37 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                         textAlign = TextAlign.Center
                     )
+                }
+            }
+        }
+        
+        if (settings.isReminderEnabled && remainingTime > 0) {
+            item {
+                val minutes = (remainingTime / 60000).toInt()
+                val seconds = ((remainingTime % 60000) / 1000).toInt()
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.next_reminder),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = String.format("%02d:%02d", minutes, seconds),
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }

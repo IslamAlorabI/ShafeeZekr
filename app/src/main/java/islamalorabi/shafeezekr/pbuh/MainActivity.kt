@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
+            val activity = context as? ComponentActivity
             val preferencesManager = remember { PreferencesManager(context) }
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
@@ -85,14 +86,12 @@ class MainActivity : ComponentActivity() {
                     onIntervalChange = { interval ->
                         scope.launch {
                             preferencesManager.setReminderInterval(interval)
-                            if (settings.isReminderEnabled) {
-                                val intervalMinutes = if (interval == ReminderInterval.CUSTOM) {
-                                    settings.customIntervalMinutes
-                                } else {
-                                    interval.minutes
+                            if (settings.isReminderEnabled && interval != ReminderInterval.CUSTOM) {
+                                val intervalMinutes = interval.minutes
+                                if (intervalMinutes > 0) {
+                                    ReminderService.stopService(context)
+                                    ReminderService.startService(context, intervalMinutes)
                                 }
-                                ReminderService.stopService(context)
-                                ReminderService.startService(context, intervalMinutes)
                             }
                         }
                     },
@@ -112,7 +111,11 @@ class MainActivity : ComponentActivity() {
                         scope.launch { preferencesManager.setColorScheme(scheme) }
                     },
                     onLanguageChange = { code ->
-                        scope.launch { preferencesManager.setLanguageCode(code) }
+                        scope.launch {
+                            preferencesManager.setLanguageCode(code)
+                            val appLocale = LocaleListCompat.forLanguageTags(code)
+                            AppCompatDelegate.setApplicationLocales(appLocale)
+                        }
                     }
                 )
             }

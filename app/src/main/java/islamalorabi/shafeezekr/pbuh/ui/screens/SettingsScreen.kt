@@ -78,8 +78,53 @@ fun SettingsScreen(
     ) {
         item {
             SettingsGroup(
-                header = stringResource(R.string.theme_section),
+                header = stringResource(R.string.language_section),
                 headerColor = MaterialTheme.colorScheme.primary
+            ) {
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.language),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        supportingContent = {
+                            val currentLang = languages.find { it.code == settings.languageCode }
+                            Text(
+                                text = currentLang?.let { stringResource(it.nameRes) } ?: "English",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_language),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        modifier = Modifier.clickable { showLanguageDialog = true }
+                    )
+                }
+            }
+        }
+
+        item {
+            SettingsGroup(
+                header = stringResource(R.string.theme_section),
+                headerColor = MaterialTheme.colorScheme.tertiary
             ) {
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -108,7 +153,7 @@ fun SettingsScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_theme),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.tertiary
                                 )
                             },
                             trailingContent = {
@@ -146,7 +191,7 @@ fun SettingsScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_palette),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.tertiary
                                 )
                             },
                             trailingContent = {
@@ -160,51 +205,6 @@ fun SettingsScreen(
                             modifier = Modifier.clickable { showColorDialog = true }
                         )
                     }
-                }
-            }
-        }
-
-        item {
-            SettingsGroup(
-                header = stringResource(R.string.language_section),
-                headerColor = MaterialTheme.colorScheme.tertiary
-            ) {
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.language),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        supportingContent = {
-                            val currentLang = languages.find { it.code == settings.languageCode }
-                            Text(
-                                text = currentLang?.let { stringResource(it.nameRes) } ?: "English",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_language),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                        },
-                        trailingContent = {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier.clickable { showLanguageDialog = true }
-                    )
                 }
             }
         }
