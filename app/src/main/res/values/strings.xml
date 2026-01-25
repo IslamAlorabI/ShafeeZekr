@@ -50,7 +50,7 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_copyright">© %1$s Islam AlorabI</string>
     <string name="about_rights">All rights reserved</string>
-    <string name="github_url">https://github.com/islamalorabi</string>
+    <string name="github_url" translatable="false">https://github.com/islamalorabi</string>
     
     <string name="notification_channel_name">Zikr Reminders</string>
     <string name="notification_channel_desc">Periodic reminder notifications</string>
