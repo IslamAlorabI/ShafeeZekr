@@ -4,6 +4,7 @@
 
 **ShafeeZekr** is a beautiful, modern Android application designed to remind you to send blessings upon the Prophet Muhammad ﷺ (Peace Be Upon Him). With a clean Material Design 3 interface, customizable intervals, and multi-language support, it serves as a gentle spiritual companion for your daily life.
 
+
 ## ✨ Features
 
 *   **Periodic Reminders**: Set automatic audio reminders to play at intervals that suit you (every 5, 10, 30 minutes, 1 hour, or custom).
@@ -73,11 +74,3 @@ Contributions are welcome! If you have suggestions for improvements or bug fixes
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-**Islam AlorabI**
-
-*   [GitHub](https://github.com/islamalorabi)
-*   [Telegram](https://t.me/IslamAlorabI)
-*   [Facebook](https://www.facebook.com/IslamXAlorabI)
