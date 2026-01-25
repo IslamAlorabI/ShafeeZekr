@@ -46,11 +46,12 @@
     <string name="lang_tr">Türkçe</string>
     
     <string name="about_title">حول التطبيق</string>
-    <string name="about_app_name">شفيع ذكر</string>
+    <string name="about_app_name">ذكرُ الشفيع</string>
     <string name="about_description">تطبيق بسيط للتذكير بالصلاة على النبي محمد ﷺ</string>
     <string name="about_version">الإصدار %1$s</string>
     <string name="about_copyright">© %1$s إسلام العرابي</string>
     <string name="about_rights">جميع الحقوق محفوظة</string>
+    <string name="tap_to_listen">إضغط لتستمع إلى الثناء على النبي</string>
     
     <string name="notification_channel_name">تذكيرات الذكر</string>
     <string name="notification_channel_desc">إشعارات التذكير الدورية</string>

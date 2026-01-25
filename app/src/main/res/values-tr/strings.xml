@@ -51,6 +51,7 @@
     <string name="about_version">Sürüm %1$s</string>
     <string name="about_copyright">© %1$s Islam Alorabi</string>
     <string name="about_rights">Tüm hakları saklıdır</string>
+    <string name="tap_to_listen">Peygamberin övgüsünü dinlemek için dokunun</string>
     
     <string name="notification_channel_name">Zikir Hatırlatmaları</string>
     <string name="notification_channel_desc">Periyodik hatırlatma bildirimleri</string>

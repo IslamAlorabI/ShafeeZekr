@@ -46,11 +46,12 @@
     <string name="lang_tr">Türkçe</string>
     
     <string name="about_title">درباره</string>
-    <string name="about_app_name">شفیع ذکر</string>
+    <string name="about_app_name">ذکر شفیع</string>
     <string name="about_description">یک برنامه ساده یادآوری برای صلوات بر پیامبر محمد ﷺ</string>
     <string name="about_version">نسخه %1$s</string>
     <string name="about_copyright">© %1$s اسلام العرابی</string>
     <string name="about_rights">تمامی حقوق محفوظ است</string>
+    <string name="tap_to_listen">برای شنیدن ستایش پیامبر ضربه بزنید</string>
     
     <string name="notification_channel_name">یادآوری‌های ذکر</string>
     <string name="notification_channel_desc">اعلان‌های یادآوری دوره‌ای</string>
