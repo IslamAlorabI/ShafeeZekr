@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">شفیع ذکر</string>
+    
+    <string name="nav_home">خانه</string>
+    <string name="nav_settings">تنظیمات</string>
+    <string name="nav_about">درباره</string>
+    
+    <string name="home_title">صلوات</string>
+    <string name="home_subtitle">یادآوری صلوات بر پیامبر ﷺ</string>
+    <string name="enable_reminder">فعال کردن یادآوری</string>
+    <string name="enable_reminder_desc">پخش یادآوری صوتی در فواصل منظم</string>
+    
+    <string name="interval_title">فاصله یادآوری</string>
+    <string name="interval_5_min">هر 5 دقیقه</string>
+    <string name="interval_10_min">هر 10 دقیقه</string>
+    <string name="interval_30_min">هر 30 دقیقه</string>
+    <string name="interval_1_hour">هر ساعت</string>
+    <string name="interval_custom">سفارشی</string>
+    <string name="custom_interval_title">فاصله سفارشی</string>
+    <string name="minutes">دقیقه</string>
+    
+    <string name="settings_title">تنظیمات</string>
+    <string name="theme_section">ظاهر</string>
+    <string name="theme_mode">حالت تم</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تاریک</string>
+    <string name="theme_system">سیستم</string>
+    <string name="color_scheme">طرح رنگ</string>
+    <string name="color_monet">پویا (Monet)</string>
+    <string name="color_green">سبز</string>
+    <string name="color_blue">آبی</string>
+    <string name="color_purple">بنفش</string>
+    <string name="color_teal">سبزآبی</string>
+    
+    <string name="language_section">زبان</string>
+    <string name="language">زبان</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_tr">Türkçe</string>
+    
+    <string name="about_title">درباره</string>
+    <string name="about_app_name">شفیع ذکر</string>
+    <string name="about_description">یک برنامه ساده یادآوری برای صلوات بر پیامبر محمد ﷺ</string>
+    <string name="about_version">نسخه %1$s</string>
+    <string name="about_copyright">© %1$s اسلام العرابی</string>
+    <string name="about_rights">تمامی حقوق محفوظ است</string>
+    
+    <string name="notification_channel_name">یادآوری‌های ذکر</string>
+    <string name="notification_channel_desc">اعلان‌های یادآوری دوره‌ای</string>
+    <string name="notification_title">صلّ على محمد ﷺ</string>
+    <string name="notification_text">صلوات بر پیامبر</string>
+    
+    <string name="save">ذخیره</string>
+    <string name="cancel">لغو</string>
+    <string name="ok">تأیید</string>
+</resources>
