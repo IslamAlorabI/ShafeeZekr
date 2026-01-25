@@ -40,7 +40,7 @@ fun AboutScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_app_icon),
+            painter = painterResource(id = R.drawable.ic_pbuh_white),
             contentDescription = null,
             modifier = Modifier.size(96.dp),
             tint = MaterialTheme.colorScheme.primary
