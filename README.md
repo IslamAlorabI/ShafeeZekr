@@ -1,6 +1,6 @@
 # ShafeeZekr (ذكرُ الشفيع)
 
-![ShafeeZekr Logo](app/src/main/ic_launcher-web.png)
+![ShafeeZekr Logo](app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
 **ShafeeZekr** is a beautiful, modern Android application designed to remind you to send blessings upon the Prophet Muhammad ﷺ (Peace Be Upon Him). With a clean Material Design 3 interface, customizable intervals, and multi-language support, it serves as a gentle spiritual companion for your daily life.
 
@@ -24,9 +24,11 @@
 
 ## 📱 Screenshots
 
+> **Note**: Screenshots below are placeholders. Please capture screenshots from your device and place them in a `docs/screenshots` folder, then update the paths below.
+
 | Home Screen | Settings (Light) | Settings (Dark) |
 |:-----------:|:----------------:|:---------------:|
-| *(Add Screenshot)* | *(Add Screenshot)* | *(Add Screenshot)* |
+| *[Add Home Screenshot]* | *[Add Settings Light Screenshot]* | *[Add Settings Dark Screenshot]* |
 
 ## 🛠️ Tech Stack
 
