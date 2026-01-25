@@ -237,7 +237,7 @@ fun HomeScreen(
             AnimatedVisibility(visible = settings.isReminderEnabled) {
                 SettingsGroup(
                     header = stringResource(R.string.interval_title),
-                    headerColor = MaterialTheme.colorScheme.tertiary
+                    headerColor = MaterialTheme.colorScheme.primary
                 ) {
                     OutlinedCard(
                         modifier = Modifier.fillMaxWidth(),
