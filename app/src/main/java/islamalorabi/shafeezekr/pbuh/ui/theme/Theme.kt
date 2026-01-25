@@ -12,6 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
+import android.app.Activity
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 private val GreenDark = darkColorScheme(
     primary = Color(0xFF8BD98B),
@@ -186,10 +191,21 @@ fun ShafeeZekrTheme(
                 if (darkTheme) GreenDark else GreenLight
             }
         }
+
+
         ColorScheme.GREEN -> if (darkTheme) GreenDark else GreenLight
         ColorScheme.BLUE -> if (darkTheme) BlueDark else BlueLight
         ColorScheme.PURPLE -> if (darkTheme) PurpleDark else PurpleLight
         ColorScheme.TEAL -> if (darkTheme) TealDark else TealLight
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = Color.Transparent.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
     }
 
     MaterialTheme(
