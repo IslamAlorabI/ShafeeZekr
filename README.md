@@ -75,11 +75,3 @@ Contributions are welcome! If you have suggestions for improvements or bug fixes
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-**Islam AlorabI**
-
-*   [GitHub](https://github.com/islamalorabi)
-*   [Telegram](https://t.me/IslamAlorabI)
-*   [Facebook](https://www.facebook.com/IslamXAlorabI)
