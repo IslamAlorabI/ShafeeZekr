@@ -34,6 +34,9 @@
     <string name="color_blue">آبی</string>
     <string name="color_purple">بنفش</string>
     <string name="color_teal">سبزآبی</string>
+    <string name="color_orange">نارنجی</string>
+    <string name="color_pink">صورتی</string>
+    <string name="color_red">قرمز</string>
     
     <string name="language_section">زبان</string>
     <string name="language">زبان</string>
