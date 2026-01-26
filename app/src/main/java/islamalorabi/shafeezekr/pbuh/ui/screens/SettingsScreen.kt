@@ -220,6 +220,9 @@ fun SettingsScreen(
                                         ColorScheme.BLUE -> stringResource(R.string.color_blue)
                                         ColorScheme.PURPLE -> stringResource(R.string.color_purple)
                                         ColorScheme.TEAL -> stringResource(R.string.color_teal)
+                                        ColorScheme.ORANGE -> stringResource(R.string.color_orange)
+                                        ColorScheme.PINK -> stringResource(R.string.color_pink)
+                                        ColorScheme.RED -> stringResource(R.string.color_red)
                                     },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -520,6 +523,9 @@ private fun ThemeModeDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.theme_mode)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
@@ -563,6 +569,9 @@ private fun ColorSchemeDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.color_scheme)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
@@ -571,7 +580,10 @@ private fun ColorSchemeDialog(
                     ColorScheme.GREEN to stringResource(R.string.color_green),
                     ColorScheme.BLUE to stringResource(R.string.color_blue),
                     ColorScheme.PURPLE to stringResource(R.string.color_purple),
-                    ColorScheme.TEAL to stringResource(R.string.color_teal)
+                    ColorScheme.TEAL to stringResource(R.string.color_teal),
+                    ColorScheme.ORANGE to stringResource(R.string.color_orange),
+                    ColorScheme.PINK to stringResource(R.string.color_pink),
+                    ColorScheme.RED to stringResource(R.string.color_red)
                 )
                 options.forEach { (scheme, label) ->
                     Row(
@@ -608,6 +620,9 @@ private fun LanguageDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.language)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {

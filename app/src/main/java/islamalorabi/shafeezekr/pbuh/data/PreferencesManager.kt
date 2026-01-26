@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 enum class ThemeMode { LIGHT, DARK, SYSTEM }
-enum class ColorScheme { MONET, GREEN, BLUE, PURPLE, TEAL }
+enum class ColorScheme { MONET, GREEN, BLUE, PURPLE, TEAL, ORANGE, PINK, RED }
 enum class ReminderInterval(val minutes: Int) {
     FIVE(5),
     TEN(10),
