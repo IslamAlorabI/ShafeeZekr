@@ -20,7 +20,7 @@
     <string name="custom_interval_title">فاصله سفارشی</string>
     <string name="minutes">دقیقه</string>
     <string name="interval_reset_note">توجه: تغییر بازه زمانی باعث تنظیم مجدد تایمر فعلی می‌شود.</string>
-    <string name="battery_warning">توجه: اگر این گزینه فعال نشود، ممکن است اعلان‌ها ارسال نشوند.</string>
+    <string name="battery_warning">محدودیت‌های فعالیت پس‌زمینه در برخی دستگاه‌ها ممکن است مانع از ارسال به‌موقع یادآوری‌ها شود. لطفاً برای تضمین عملکرد قابل اعتماد، اطمینان حاصل کنید که بهینه‌سازی باتری برای این برنامه غیرفعال شده است.</string>
     
     <string name="settings_title">تنظیمات</string>
     <string name="theme_section">ظاهر</string>

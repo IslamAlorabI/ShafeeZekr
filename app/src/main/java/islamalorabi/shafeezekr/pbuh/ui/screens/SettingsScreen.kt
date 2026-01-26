@@ -270,6 +270,12 @@ fun SettingsScreen(
                 header = stringResource(R.string.battery_section),
                 headerColor = MaterialTheme.colorScheme.primary
             ) {
+                Text(
+                    text = stringResource(R.string.battery_warning),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+                )
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
@@ -323,13 +329,6 @@ fun SettingsScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.battery_warning),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
             }
         }
 

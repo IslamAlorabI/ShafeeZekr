@@ -20,7 +20,7 @@
     <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
     <string name="minutes">Minuten</string>
     <string name="interval_reset_note">Hinweis: Das Ändern des Intervalls setzt den aktuellen Timer zurück.</string>
-    <string name="battery_warning">Hinweis: Wenn diese Option nicht aktiviert ist, werden möglicherweise keine Benachrichtigungen gesendet.</string>
+    <string name="battery_warning">Einschränkungen der Hintergrundaktivität auf einigen Geräten können dazu führen, dass Erinnerungen nicht rechtzeitig zugestellt werden. Bitte stellen Sie sicher, dass die Akku-Optimierung für diese App deaktiviert ist, um eine zuverlässige Leistung zu gewährleisten.</string>
     
     <string name="settings_title">Einstellungen</string>
     <string name="theme_section">Erscheinungsbild</string>

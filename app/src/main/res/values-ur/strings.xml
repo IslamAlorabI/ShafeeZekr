@@ -20,7 +20,7 @@
     <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
     <string name="minutes">منٹ</string>
     <string name="interval_reset_note">نوٹ: وقفہ تبدیل کرنے سے موجودہ ٹائمر ری سیٹ ہو جائے گا۔</string>
-    <string name="battery_warning">نوٹ: اگر یہ آپشن فعال نہیں ہے تو نوٹیفیکیشنز نہیں بھیجے جا سکتے۔</string>
+    <string name="battery_warning">کچھ آلات پر پس منظر کی سرگرمی کی پابندیاں یاد دہانیوں کو وقت پر پہنچنے سے روک سکتی ہیں۔ قابل اعتماد کارکردگی کی ضمانت کے لیے براہ کرم یقینی بنائیں کہ اس ایپ کے لیے بیٹری کی اصلاح غیر فعال ہے۔</string>
     
     <string name="settings_title">ترتیبات</string>
     <string name="theme_section">ظاہری شکل</string>
