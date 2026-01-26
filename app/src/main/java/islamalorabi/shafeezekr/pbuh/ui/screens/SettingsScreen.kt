@@ -31,6 +31,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.BatteryAlert
+import androidx.compose.material.icons.filled.BatteryStd
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AlertDialog
@@ -307,7 +309,11 @@ fun SettingsScreen(
                         },
                         leadingContent = {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_do_not_disturb),
+                                imageVector = if (isIgnoringBatteryOptimizations) {
+                                    Icons.Default.BatteryStd
+                                } else {
+                                    Icons.Default.BatteryAlert
+                                },
                                 contentDescription = null,
                                 tint = if (isIgnoringBatteryOptimizations) {
                                     MaterialTheme.colorScheme.primary
