@@ -116,20 +116,16 @@ fun HomeScreen(
     ) {
         item {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = false,
-                        onClick = {
-                            try {
-                                val mp = MediaPlayer.create(context, R.raw.zikr_sound)
-                                mp?.setOnCompletionListener { it.release() }
-                                mp?.start()
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    ),
+                onClick = {
+                    try {
+                        val mp = MediaPlayer.create(context, R.raw.zikr_sound)
+                        mp?.setOnCompletionListener { it.release() }
+                        mp?.start()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
