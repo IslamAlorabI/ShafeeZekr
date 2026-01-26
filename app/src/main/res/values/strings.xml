@@ -20,7 +20,7 @@
     <string name="custom_interval_title">Custom Interval</string>
     <string name="minutes">minutes</string>
     <string name="interval_reset_note">Note: Changing the interval will reset the current timer.</string>
-    <string name="battery_warning">Note: If this option is not enabled, notifications may not be sent.</string>
+    <string name="battery_warning">Background activity restrictions on some devices may prevent reminders from being delivered on time. Please ensure battery optimization is disabled for this app to guarantee reliable performance.</string>
     
     <string name="settings_title">Settings</string>
     <string name="theme_section">Appearance</string>
