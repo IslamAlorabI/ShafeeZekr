@@ -10,7 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +27,9 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +37,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -50,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +66,11 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import android.media.MediaPlayer
+import islamalorabi.shafeezekr.pbuh.ui.components.ModernInfoCard
+import islamalorabi.shafeezekr.pbuh.ui.components.ModernStatusCard
+import islamalorabi.shafeezekr.pbuh.ui.theme.CardBackground
+import islamalorabi.shafeezekr.pbuh.ui.theme.CardTextPrimary
+import islamalorabi.shafeezekr.pbuh.ui.theme.CardTextSecondary
 import kotlinx.coroutines.delay
 
 @Composable
@@ -110,12 +118,17 @@ fun HomeScreen(
     }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(CardBackground),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            Card(
+            ModernStatusCard(
+                title = stringResource(R.string.home_title),
+                subtitle = stringResource(R.string.tap_to_listen),
+                icon = Icons.Filled.PlayArrow,
                 onClick = {
                     try {
                         val mp = MediaPlayer.create(context, R.raw.zikr_sound)
@@ -124,52 +137,8 @@ fun HomeScreen(
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.home_title),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.home_subtitle),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_volume_up),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(R.string.tap_to_listen),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                        )
-                    }
                 }
-            }
+            )
         }
         
         item {
@@ -180,29 +149,19 @@ fun HomeScreen(
             ) {
                 val minutes = (remainingTime / 60000).toInt()
                 val seconds = ((remainingTime % 60000) / 1000).toInt()
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.next_reminder),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = String.format("%02d:%02d", minutes, seconds),
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                ModernInfoCard {
+                    Text(
+                        text = stringResource(R.string.next_reminder),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = CardTextSecondary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = String.format("%02d:%02d", minutes, seconds),
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = CardTextPrimary
+                    )
                 }
             }
         }
@@ -210,50 +169,46 @@ fun HomeScreen(
         item {
             SettingsGroup(
                 header = stringResource(R.string.enable_reminder),
-                headerColor = MaterialTheme.colorScheme.primary
+                headerColor = CardTextPrimary // Using white for header to match dark theme
             ) {
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.enable_reminder),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                text = stringResource(R.string.enable_reminder_desc),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_pbuh),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        trailingContent = {
-                            Switch(
-                                checked = settings.isReminderEnabled,
-                                onCheckedChange = { enabled ->
-                                    if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        onReminderEnabledChange(enabled)
-                                    }
-                                }
-                            )
-                        },
-                        colors = ListItemDefaults.colors(
-                            containerColor = Color.Transparent
-                        )
-                    )
+                ModernInfoCard(modifier = Modifier.padding(0.dp)) { // Padding handled by ModernInfoCard internal
+                     Row(
+                         modifier = Modifier.fillMaxWidth(),
+                         verticalAlignment = Alignment.CenterVertically,
+                         horizontalArrangement = Arrangement.SpaceBetween
+                     ) {
+                         Row(verticalAlignment = Alignment.CenterVertically) {
+                             Icon(
+                                 painter = painterResource(id = R.drawable.ic_pbuh),
+                                 contentDescription = null,
+                                 modifier = Modifier.size(24.dp),
+                                 tint = CardTextPrimary
+                             )
+                             Spacer(modifier = Modifier.width(16.dp))
+                             Column {
+                                 Text(
+                                     text = stringResource(R.string.enable_reminder),
+                                     style = MaterialTheme.typography.bodyLarge,
+                                     color = CardTextPrimary
+                                 )
+                                 Text(
+                                     text = stringResource(R.string.enable_reminder_desc),
+                                     style = MaterialTheme.typography.bodyMedium,
+                                     color = CardTextSecondary
+                                 )
+                             }
+                         }
+                         Switch(
+                             checked = settings.isReminderEnabled,
+                             onCheckedChange = { enabled ->
+                                 if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                 } else {
+                                     onReminderEnabledChange(enabled)
+                                 }
+                             }
+                         )
+                     }
                 }
             }
         }
@@ -262,12 +217,9 @@ fun HomeScreen(
             AnimatedVisibility(visible = settings.isReminderEnabled) {
                 SettingsGroup(
                     header = stringResource(R.string.interval_title),
-                    headerColor = MaterialTheme.colorScheme.primary
+                    headerColor = CardTextPrimary
                 ) {
-                    OutlinedCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
+                    ModernInfoCard(modifier = Modifier.padding(0.dp)) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -276,8 +228,8 @@ fun HomeScreen(
                             Text(
                                 text = stringResource(R.string.interval_reset_note),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                                color = CardTextSecondary,
+                                modifier = Modifier.padding(bottom = 8.dp)
                             )
 
                             val intervals = listOf(
@@ -302,7 +254,7 @@ fun HomeScreen(
                                             },
                                             role = Role.RadioButton
                                         )
-                                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        .padding(vertical = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -316,7 +268,8 @@ fun HomeScreen(
                                         } else {
                                             label
                                         },
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CardTextPrimary
                                     )
                                 }
                             }
