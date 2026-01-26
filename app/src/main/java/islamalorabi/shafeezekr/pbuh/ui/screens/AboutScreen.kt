@@ -37,7 +37,7 @@ fun AboutScreen(
     val uriHandler = LocalUriHandler.current
     val githubUrl = stringResource(R.string.github_url)
     val telegramUrl = stringResource(R.string.telegram_url)
-    val facebookUrl = stringResource(R.string.facebook_url)
+    val telegramChannelUrl = stringResource(R.string.telegram_channel_url)
 
     Column(
         modifier = modifier
@@ -126,19 +126,19 @@ fun AboutScreen(
 
         Row(
             modifier = Modifier
-                .clickable { uriHandler.openUri(facebookUrl) }
+                .clickable { uriHandler.openUri(telegramChannelUrl) }
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_facebook),
-                contentDescription = "Facebook",
+                painter = painterResource(id = R.drawable.ic_telegram),
+                contentDescription = "Telegram Channel",
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Facebook: IslamXAlorabI",
+                text = "Telegram: @Shadow6by8",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
