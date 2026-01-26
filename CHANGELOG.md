@@ -1,19 +1,20 @@
 # Changelog
 
-## v1.5.0 (2026-01-26)
+## v1.5 (2026-01-26)
 
-### 🚀 New Features & Enhancements
-- **Refined User Interface**: Redesigned the Home Screen with a modern card-style layout to improve visual hierarchy and accessibility.
-- **Battery Optimization Intelligence**: Implemented a dynamic warning system in Settings that detects active battery optimizations and guides users to exempt the app, ensuring reliable reminder delivery.
-- **Enhanced Localization Support**: Added comprehensive English and Arabic translations for all new system warnings and instructional notes.
-- **Transparent User Guidance**: Introduced persistent UI notes clarifying reminder interval behaviors during device restarts and updates.
-- **Community Integration**: Updated the About section to feature direct access to the official Telegram channel and source code repository.
+### New Features
+- Display interval reset note in home screen
+- Add battery optimization warning in settings screen with localized text
+- Replace Facebook link with Telegram channel Shadow6by8 in About screen
+- Replace GitHub profile link with app source code repository in About screen
+- Configure release signing and ABI splits
+- Scale down app icon foreground to prevent cropping
 
-### 🛠 Fixes & Improvements
-- **Navigation Stability**: Resolved a critical issue where changing the application language triggered an unintended navigation reset.
-- **UI Consistency**: Fixed layout clipping issues on smaller screens and standardized button styling.
-- **System Compliance**: Updated status bar color handling to align with modern Android API standards, suppressing legacy deprecation warnings.
-
+### Bug Fixes
+- Fix language change resetting to home page
+- Fix battery optimization status not updating immediately after granting permission
+- Fix home screen big box appearing as image instead of button
+- Resolve navigation and UI update issues
 
 ## v1.0.0 (2026-01-26)
 
