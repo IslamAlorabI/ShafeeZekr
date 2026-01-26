@@ -66,15 +66,29 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun playSound(context: Context) {
         try {
-            val mediaPlayer = MediaPlayer.create(context, R.raw.zikr_sound)
-            mediaPlayer?.setOnCompletionListener { mp ->
+            // Use application context to avoid memory leaks and ensure longevity
+            val appContext = context.applicationContext
+            val mediaPlayer = MediaPlayer.create(appContext, R.raw.zikr_sound)
+            
+            if (mediaPlayer == null) {
+                // Was unable to create media player
+                return
+            }
+
+            mediaPlayer.setOnCompletionListener { mp ->
                 mp.release()
             }
-            mediaPlayer?.setOnErrorListener { mp, _, _ ->
+            mediaPlayer.setOnErrorListener { mp, _, _ ->
                 mp.release()
                 true
             }
-            mediaPlayer?.start()
+            
+            try {
+                mediaPlayer.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mediaPlayer.release()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

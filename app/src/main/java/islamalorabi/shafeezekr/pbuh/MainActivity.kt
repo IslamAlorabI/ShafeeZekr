@@ -4,7 +4,7 @@ import android.app.LocaleManager
 import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
@@ -50,13 +50,13 @@ import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
-            val activity = context as? ComponentActivity
+            val activity = context as? AppCompatActivity
             val preferencesManager = remember { PreferencesManager(context) }
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
@@ -123,12 +123,12 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            val localeManager = context.getSystemService(LocaleManager::class.java)
-                            if (code.isEmpty()) {
-                                localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                            val localeListCompat = if (code.isEmpty()) {
+                                LocaleListCompat.getEmptyLocaleList()
                             } else {
-                                localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                                LocaleListCompat.forLanguageTags(code)
                             }
+                            AppCompatDelegate.setApplicationLocales(localeListCompat)
                         }
                     },
                     onCheckForUpdates = {
