@@ -19,6 +19,8 @@
     <string name="interval_custom">Kustom</string>
     <string name="custom_interval_title">Interval Kustom</string>
     <string name="minutes">menit</string>
+    <string name="interval_reset_note">Catatan: Mengubah interval akan mengatur ulang pengatur waktu saat ini.</string>
+    <string name="battery_warning">Catatan: Jika opsi ini tidak diaktifkan, notifikasi mungkin tidak terkirim.</string>
     
     <string name="settings_title">Pengaturan</string>
     <string name="theme_section">Tampilan</string>

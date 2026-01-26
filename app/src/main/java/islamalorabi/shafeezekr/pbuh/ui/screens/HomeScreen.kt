@@ -273,6 +273,13 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .selectableGroup()
                         ) {
+                            Text(
+                                text = stringResource(R.string.interval_reset_note),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                            )
+
                             val intervals = listOf(
                                 ReminderInterval.FIVE to stringResource(R.string.interval_5_min),
                                 ReminderInterval.TEN to stringResource(R.string.interval_10_min),

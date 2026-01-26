@@ -19,6 +19,8 @@
     <string name="interval_custom">Özel</string>
     <string name="custom_interval_title">Özel Aralık</string>
     <string name="minutes">dakika</string>
+    <string name="interval_reset_note">Not: Aralığı değiştirmek mevcut zamanlayıcıyı sıfırlar.</string>
+    <string name="battery_warning">Not: Bu seçenek etkinleştirilmezse, bildirimler gönderilmeyebilir.</string>
     
     <string name="settings_title">Ayarlar</string>
     <string name="theme_section">Görünüm</string>

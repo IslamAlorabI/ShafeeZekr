@@ -19,6 +19,8 @@
     <string name="interval_custom">مخصص</string>
     <string name="custom_interval_title">فترة مخصصة</string>
     <string name="minutes">دقيقة</string>
+    <string name="interval_reset_note">ملاحظة: تغيير الفترة الزمنية سيؤدي إلى إعادة تعيين المؤقت الحالي.</string>
+    <string name="battery_warning">ملاحظة: إذا لم يتم تفعيل هذا الخيار، قد لا يتم إرسال الإشعارات.</string>
     
     <string name="settings_title">الإعدادات</string>
     <string name="theme_section">المظهر</string>

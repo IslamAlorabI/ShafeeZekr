@@ -19,6 +19,8 @@
     <string name="interval_custom">Настроить</string>
     <string name="custom_interval_title">Свой интервал</string>
     <string name="minutes">минут</string>
+    <string name="interval_reset_note">Примечание: Изменение интервала сбросит текущий таймер.</string>
+    <string name="battery_warning">Примечание: Если эта опция не включена, уведомления могут не приходить.</string>
     
     <string name="settings_title">Настройки</string>
     <string name="theme_section">Внешний вид</string>
