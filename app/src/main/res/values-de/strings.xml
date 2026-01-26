@@ -19,6 +19,8 @@
     <string name="interval_custom">Benutzerdefiniert</string>
     <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
     <string name="minutes">Minuten</string>
+    <string name="interval_reset_note">Hinweis: Das Ändern des Intervalls setzt den aktuellen Timer zurück.</string>
+    <string name="battery_warning">Hinweis: Wenn diese Option nicht aktiviert ist, werden möglicherweise keine Benachrichtigungen gesendet.</string>
     
     <string name="settings_title">Einstellungen</string>
     <string name="theme_section">Erscheinungsbild</string>

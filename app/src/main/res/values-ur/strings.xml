@@ -19,6 +19,8 @@
     <string name="interval_custom">اپنی مرضی</string>
     <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
     <string name="minutes">منٹ</string>
+    <string name="interval_reset_note">نوٹ: وقفہ تبدیل کرنے سے موجودہ ٹائمر ری سیٹ ہو جائے گا۔</string>
+    <string name="battery_warning">نوٹ: اگر یہ آپشن فعال نہیں ہے تو نوٹیفیکیشنز نہیں بھیجے جا سکتے۔</string>
     
     <string name="settings_title">ترتیبات</string>
     <string name="theme_section">ظاہری شکل</string>

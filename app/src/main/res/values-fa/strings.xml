@@ -19,6 +19,8 @@
     <string name="interval_custom">سفارشی</string>
     <string name="custom_interval_title">فاصله سفارشی</string>
     <string name="minutes">دقیقه</string>
+    <string name="interval_reset_note">توجه: تغییر بازه زمانی باعث تنظیم مجدد تایمر فعلی می‌شود.</string>
+    <string name="battery_warning">توجه: اگر این گزینه فعال نشود، ممکن است اعلان‌ها ارسال نشوند.</string>
     
     <string name="settings_title">تنظیمات</string>
     <string name="theme_section">ظاهر</string>

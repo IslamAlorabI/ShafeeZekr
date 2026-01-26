@@ -19,6 +19,8 @@
     <string name="interval_custom">Custom</string>
     <string name="custom_interval_title">Custom Interval</string>
     <string name="minutes">minutes</string>
+    <string name="interval_reset_note">Note: Changing the interval will reset the current timer.</string>
+    <string name="battery_warning">Note: If this option is not enabled, notifications may not be sent.</string>
     
     <string name="settings_title">Settings</string>
     <string name="theme_section">Appearance</string>
