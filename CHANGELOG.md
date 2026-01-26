@@ -16,7 +16,7 @@
 - Fix home screen big box appearing as image instead of button
 - Resolve navigation and UI update issues
 
-## v1.0.0 (2026-01-26)
+## v1.0 (2026-01-25)
 
 ### Features
 - Configure release signing and ABI splits
