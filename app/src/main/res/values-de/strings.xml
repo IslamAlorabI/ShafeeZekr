@@ -34,6 +34,9 @@
     <string name="color_blue">Blau</string>
     <string name="color_purple">Lila</string>
     <string name="color_teal">Blaugrün</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_pink">Rosa</string>
+    <string name="color_red">Rot</string>
     
     <string name="language_section">Sprache</string>
     <string name="language">Sprache</string>

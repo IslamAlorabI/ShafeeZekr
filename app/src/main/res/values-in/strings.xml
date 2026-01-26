@@ -34,6 +34,9 @@
     <string name="color_blue">Biru</string>
     <string name="color_purple">Ungu</string>
     <string name="color_teal">Teal</string>
+    <string name="color_orange">Oranye</string>
+    <string name="color_pink">Merah Muda</string>
+    <string name="color_red">Merah</string>
     
     <string name="language_section">Bahasa</string>
     <string name="language">Bahasa</string>

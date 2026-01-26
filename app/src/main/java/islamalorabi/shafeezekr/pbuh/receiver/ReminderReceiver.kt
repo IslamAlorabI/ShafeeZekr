@@ -7,7 +7,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.net.Uri
 import androidx.core.app.NotificationCompat
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
@@ -66,15 +68,26 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun playSound(context: Context) {
         try {
-            val mediaPlayer = MediaPlayer.create(context, R.raw.zikr_sound)
-            mediaPlayer?.setOnCompletionListener { mp ->
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+
+            val mediaPlayer = MediaPlayer()
+            mediaPlayer.setAudioAttributes(audioAttributes)
+            val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.zikr_sound}")
+            mediaPlayer.setDataSource(context, soundUri)
+            mediaPlayer.setOnPreparedListener { mp ->
+                mp.start()
+            }
+            mediaPlayer.setOnCompletionListener { mp ->
                 mp.release()
             }
-            mediaPlayer?.setOnErrorListener { mp, _, _ ->
+            mediaPlayer.setOnErrorListener { mp, _, _ ->
                 mp.release()
                 true
             }
-            mediaPlayer?.start()
+            mediaPlayer.prepareAsync()
         } catch (e: Exception) {
             e.printStackTrace()
         }

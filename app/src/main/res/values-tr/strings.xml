@@ -34,6 +34,9 @@
     <string name="color_blue">Mavi</string>
     <string name="color_purple">Mor</string>
     <string name="color_teal">Camgöbeği</string>
+    <string name="color_orange">Turuncu</string>
+    <string name="color_pink">Pembe</string>
+    <string name="color_red">Kırmızı</string>
     
     <string name="language_section">Dil</string>
     <string name="language">Dil</string>

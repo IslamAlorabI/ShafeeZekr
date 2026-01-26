@@ -34,6 +34,9 @@
     <string name="color_blue">أزرق</string>
     <string name="color_purple">بنفسجي</string>
     <string name="color_teal">أزرق مخضر</string>
+    <string name="color_orange">برتقالي</string>
+    <string name="color_pink">وردي</string>
+    <string name="color_red">أحمر</string>
     
     <string name="language_section">اللغة</string>
     <string name="language">اللغة</string>

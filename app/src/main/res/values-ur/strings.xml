@@ -34,6 +34,9 @@
     <string name="color_blue">نیلا</string>
     <string name="color_purple">جامنی</string>
     <string name="color_teal">ٹیل</string>
+    <string name="color_orange">نارنجی</string>
+    <string name="color_pink">گلابی</string>
+    <string name="color_red">سرخ</string>
     
     <string name="language_section">زبان</string>
     <string name="language">زبان</string>

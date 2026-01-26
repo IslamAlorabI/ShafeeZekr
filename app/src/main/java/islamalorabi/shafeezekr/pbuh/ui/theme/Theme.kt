@@ -170,6 +170,120 @@ private val TealLight = lightColorScheme(
     onSurface = Color(0xFF191C1D)
 )
 
+private val OrangeDark = darkColorScheme(
+    primary = Color(0xFFFFB77C),
+    onPrimary = Color(0xFF4D2700),
+    primaryContainer = Color(0xFF6D3900),
+    onPrimaryContainer = Color(0xFFFFDCC2),
+    secondary = Color(0xFFE3BFAB),
+    onSecondary = Color(0xFF422B1D),
+    secondaryContainer = Color(0xFF5A4132),
+    onSecondaryContainer = Color(0xFFFFDCC2),
+    tertiary = Color(0xFFCACA93),
+    onTertiary = Color(0xFF32330B),
+    tertiaryContainer = Color(0xFF494A1F),
+    onTertiaryContainer = Color(0xFFE6E7AD),
+    background = Color(0xFF1F1B16),
+    surface = Color(0xFF1F1B16),
+    onBackground = Color(0xFFEAE1D9),
+    onSurface = Color(0xFFEAE1D9)
+)
+
+private val OrangeLight = lightColorScheme(
+    primary = Color(0xFF8F4E00),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFFFDCC2),
+    onPrimaryContainer = Color(0xFF2E1500),
+    secondary = Color(0xFF745944),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFFFDCC2),
+    onSecondaryContainer = Color(0xFF2A1707),
+    tertiary = Color(0xFF606134),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFE6E7AD),
+    onTertiaryContainer = Color(0xFF1D1D00),
+    background = Color(0xFFFFFBFF),
+    surface = Color(0xFFFFFBFF),
+    onBackground = Color(0xFF1F1B16),
+    onSurface = Color(0xFF1F1B16)
+)
+
+private val PinkDark = darkColorScheme(
+    primary = Color(0xFFFFB1C8),
+    onPrimary = Color(0xFF5E1133),
+    primaryContainer = Color(0xFF7B294A),
+    onPrimaryContainer = Color(0xFFFFD9E2),
+    secondary = Color(0xFFE3BDC6),
+    onSecondary = Color(0xFF422931),
+    secondaryContainer = Color(0xFF5A3F47),
+    onSecondaryContainer = Color(0xFFFFD9E2),
+    tertiary = Color(0xFFEFBD94),
+    onTertiary = Color(0xFF48290C),
+    tertiaryContainer = Color(0xFF623F20),
+    onTertiaryContainer = Color(0xFFFFDCC1),
+    background = Color(0xFF201A1B),
+    surface = Color(0xFF201A1B),
+    onBackground = Color(0xFFECE0E1),
+    onSurface = Color(0xFFECE0E1)
+)
+
+private val PinkLight = lightColorScheme(
+    primary = Color(0xFF984061),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFFFD9E2),
+    onPrimaryContainer = Color(0xFF3E001D),
+    secondary = Color(0xFF74565E),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFFFD9E2),
+    onSecondaryContainer = Color(0xFF2B151B),
+    tertiary = Color(0xFF7C5635),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFFFDCC1),
+    onTertiaryContainer = Color(0xFF2E1500),
+    background = Color(0xFFFFFBFF),
+    surface = Color(0xFFFFFBFF),
+    onBackground = Color(0xFF201A1B),
+    onSurface = Color(0xFF201A1B)
+)
+
+private val RedDark = darkColorScheme(
+    primary = Color(0xFFFFB4AB),
+    onPrimary = Color(0xFF690005),
+    primaryContainer = Color(0xFF93000A),
+    onPrimaryContainer = Color(0xFFFFDAD6),
+    secondary = Color(0xFFE7BDB8),
+    onSecondary = Color(0xFF442926),
+    secondaryContainer = Color(0xFF5D3F3C),
+    onSecondaryContainer = Color(0xFFFFDAD6),
+    tertiary = Color(0xFFE5C18D),
+    onTertiary = Color(0xFF422C05),
+    tertiaryContainer = Color(0xFF5B4319),
+    onTertiaryContainer = Color(0xFFFFDEAD),
+    background = Color(0xFF201A19),
+    surface = Color(0xFF201A19),
+    onBackground = Color(0xFFEDE0DE),
+    onSurface = Color(0xFFEDE0DE)
+)
+
+private val RedLight = lightColorScheme(
+    primary = Color(0xFFBB1A1A),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFFFDAD6),
+    onPrimaryContainer = Color(0xFF410002),
+    secondary = Color(0xFF775652),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFFFDAD6),
+    onSecondaryContainer = Color(0xFF2C1513),
+    tertiary = Color(0xFF755A2F),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFFFDEAD),
+    onTertiaryContainer = Color(0xFF281900),
+    background = Color(0xFFFFFBFF),
+    surface = Color(0xFFFFFBFF),
+    onBackground = Color(0xFF201A19),
+    onSurface = Color(0xFF201A19)
+)
+
 @Composable
 fun ShafeeZekrTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
@@ -197,6 +311,9 @@ fun ShafeeZekrTheme(
         ColorScheme.BLUE -> if (darkTheme) BlueDark else BlueLight
         ColorScheme.PURPLE -> if (darkTheme) PurpleDark else PurpleLight
         ColorScheme.TEAL -> if (darkTheme) TealDark else TealLight
+        ColorScheme.ORANGE -> if (darkTheme) OrangeDark else OrangeLight
+        ColorScheme.PINK -> if (darkTheme) PinkDark else PinkLight
+        ColorScheme.RED -> if (darkTheme) RedDark else RedLight
     }
 
     val view = LocalView.current
