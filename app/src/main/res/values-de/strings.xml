@@ -12,10 +12,12 @@
     <string name="enable_reminder_desc">Audio-Erinnerung in regelmäßigen Abständen abspielen</string>
     
     <string name="interval_title">Erinnerungsintervall</string>
+    <string name="interval_1_min">Jede 1 Minute</string>
     <string name="interval_5_min">Alle 5 Minuten</string>
     <string name="interval_10_min">Alle 10 Minuten</string>
     <string name="interval_30_min">Alle 30 Minuten</string>
     <string name="interval_1_hour">Jede Stunde</string>
+    <string name="interval_2_hours">Alle 2 Stunden</string>
     <string name="interval_custom">Benutzerdefiniert</string>
     <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
     <string name="minutes">Minuten</string>
