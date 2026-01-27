@@ -106,4 +106,18 @@
     <string name="hours_label">Hours</string>
     <string name="minutes_label">Minutes</string>
     <string name="total_minutes">Total: %1$d minutes</string>
+    <string name="rule_type_daily">Daily Time Range</string>
+    <string name="rule_type_weekly">Weekly Days</string>
+    <string name="rule_type_date">Specific Date</string>
+    <string name="rule_action">Action</string>
+    <string name="schedule_type">Schedule Type</string>
+    <string name="select_days">Select Days</string>
+    <string name="select_date">Select Date</string>
+    <string name="day_sun">Sun</string>
+    <string name="day_mon">Mon</string>
+    <string name="day_tue">Tue</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thu">Thu</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
 </resources>

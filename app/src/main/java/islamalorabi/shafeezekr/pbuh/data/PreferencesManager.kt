@@ -29,25 +29,36 @@ enum class ReminderInterval(val minutes: Int) {
 }
 
 enum class PeriodRuleType { ALLOW, BLOCK }
+enum class RuleScheduleType { DAILY_TIME, WEEKLY_DAYS, SPECIFIC_DATE }
 
 data class PeriodRule(
     val id: String = UUID.randomUUID().toString(),
     val type: PeriodRuleType,
-    val startHour: Int,
-    val startMinute: Int,
-    val endHour: Int,
-    val endMinute: Int,
-    val isEnabled: Boolean = true
+    val scheduleType: RuleScheduleType,
+    val isEnabled: Boolean = true,
+    val startHour: Int = 0,
+    val startMinute: Int = 0,
+    val endHour: Int = 23,
+    val endMinute: Int = 59,
+    val daysOfWeek: Set<Int> = emptySet(),
+    val year: Int = 0,
+    val month: Int = 0,
+    val dayOfMonth: Int = 0
 ) {
     fun toJson(): JSONObject {
         return JSONObject().apply {
             put("id", id)
             put("type", type.name)
+            put("scheduleType", scheduleType.name)
+            put("isEnabled", isEnabled)
             put("startHour", startHour)
             put("startMinute", startMinute)
             put("endHour", endHour)
             put("endMinute", endMinute)
-            put("isEnabled", isEnabled)
+            put("daysOfWeek", JSONArray(daysOfWeek.toList()))
+            put("year", year)
+            put("month", month)
+            put("dayOfMonth", dayOfMonth)
         }
     }
 
@@ -55,6 +66,27 @@ data class PeriodRule(
         val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val currentMinute = calendar.get(Calendar.MINUTE)
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        return when (scheduleType) {
+            RuleScheduleType.DAILY_TIME -> {
+                isTimeInRange(currentHour, currentMinute)
+            }
+            RuleScheduleType.WEEKLY_DAYS -> {
+                if (currentDayOfWeek !in daysOfWeek) return false
+                isTimeInRange(currentHour, currentMinute)
+            }
+            RuleScheduleType.SPECIFIC_DATE -> {
+                if (currentYear != year || currentMonth != month || currentDay != dayOfMonth) return false
+                isTimeInRange(currentHour, currentMinute)
+            }
+        }
+    }
+
+    private fun isTimeInRange(currentHour: Int, currentMinute: Int): Boolean {
         val currentTotalMinutes = currentHour * 60 + currentMinute
         val startTotalMinutes = startHour * 60 + startMinute
         val endTotalMinutes = endHour * 60 + endMinute
@@ -67,6 +99,26 @@ data class PeriodRule(
     }
 
     fun conflictsWith(other: PeriodRule): Boolean {
+        if (scheduleType != other.scheduleType) return false
+        if (type == other.type) return false
+        
+        when (scheduleType) {
+            RuleScheduleType.DAILY_TIME -> {
+                return timeRangesOverlap(other)
+            }
+            RuleScheduleType.WEEKLY_DAYS -> {
+                val commonDays = daysOfWeek.intersect(other.daysOfWeek)
+                if (commonDays.isEmpty()) return false
+                return timeRangesOverlap(other)
+            }
+            RuleScheduleType.SPECIFIC_DATE -> {
+                if (year != other.year || month != other.month || dayOfMonth != other.dayOfMonth) return false
+                return timeRangesOverlap(other)
+            }
+        }
+    }
+
+    private fun timeRangesOverlap(other: PeriodRule): Boolean {
         val startA = startHour * 60 + startMinute
         val endA = endHour * 60 + endMinute
         val startB = other.startHour * 60 + other.startMinute
@@ -74,23 +126,51 @@ data class PeriodRule(
 
         return if (startA <= endA && startB <= endB) {
             !(endA < startB || endB < startA)
-        } else if (startA > endA && startB > endB) {
-            true
         } else {
             true
         }
     }
 
+    fun getDisplayText(): String {
+        val timeRange = String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
+        return when (scheduleType) {
+            RuleScheduleType.DAILY_TIME -> timeRange
+            RuleScheduleType.WEEKLY_DAYS -> {
+                val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+                val days = daysOfWeek.sorted().map { dayNames[it] }.joinToString(", ")
+                "$days | $timeRange"
+            }
+            RuleScheduleType.SPECIFIC_DATE -> {
+                String.format("%04d-%02d-%02d | %s", year, month + 1, dayOfMonth, timeRange)
+            }
+        }
+    }
+
     companion object {
         fun fromJson(json: JSONObject): PeriodRule {
+            val daysArray = json.optJSONArray("daysOfWeek")
+            val days = mutableSetOf<Int>()
+            if (daysArray != null) {
+                for (i in 0 until daysArray.length()) {
+                    days.add(daysArray.getInt(i))
+                }
+            }
+            
+            val scheduleTypeStr = json.optString("scheduleType", "DAILY_TIME")
+            
             return PeriodRule(
                 id = json.getString("id"),
                 type = PeriodRuleType.valueOf(json.getString("type")),
-                startHour = json.getInt("startHour"),
-                startMinute = json.getInt("startMinute"),
-                endHour = json.getInt("endHour"),
-                endMinute = json.getInt("endMinute"),
-                isEnabled = json.optBoolean("isEnabled", true)
+                scheduleType = RuleScheduleType.valueOf(scheduleTypeStr),
+                isEnabled = json.optBoolean("isEnabled", true),
+                startHour = json.optInt("startHour", 0),
+                startMinute = json.optInt("startMinute", 0),
+                endHour = json.optInt("endHour", 23),
+                endMinute = json.optInt("endMinute", 59),
+                daysOfWeek = days,
+                year = json.optInt("year", 0),
+                month = json.optInt("month", 0),
+                dayOfMonth = json.optInt("dayOfMonth", 0)
             )
         }
     }
