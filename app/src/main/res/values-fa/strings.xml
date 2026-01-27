@@ -86,4 +86,16 @@
     <string name="sound_section">صدا</string>
     <string name="app_volume">صدای برنامه</string>
     <string name="app_volume_desc">کنترل مستقل صدای برنامه</string>
+    
+    <string name="period_rules_section">قوانین زمانی</string>
+    <string name="period_rules_desc">کنترل زمان‌هایی که یادآوری مجاز یا مسدود است</string>
+    <string name="add_period_rule">افزودن قانون</string>
+    <string name="period_rule_allow">مجاز</string>
+    <string name="period_rule_block">مسدود</string>
+    <string name="period_rule_start">زمان شروع</string>
+    <string name="period_rule_end">زمان پایان</string>
+    <string name="period_rule_conflict_warning">فعال‌سازی امکان‌پذیر نیست: تعارض با قانون فعال دیگر</string>
+    <string name="period_rule_currently_blocked">در حال حاضر توسط قانون زمانی مسدود شده</string>
+    <string name="delete">حذف</string>
+    <string name="period_rule_empty">هیچ قانون زمانی تنظیم نشده</string>
 </resources>
