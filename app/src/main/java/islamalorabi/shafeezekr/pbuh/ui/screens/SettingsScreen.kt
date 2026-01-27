@@ -1298,20 +1298,13 @@ private fun SoundSelectionDialog(
                                 onClick = {
                                     tempSelected = index
                                     
-                                    // Play preview
                                     try {
                                         mediaPlayer?.release()
-                                        val resId = context.resources.getIdentifier(
-                                            "zikr_sound_$index", 
-                                            "raw", 
-                                            context.packageName
-                                        )
-                                        if (resId != 0) {
-                                            mediaPlayer = MediaPlayer.create(context, resId)
-                                            mediaPlayer?.setVolume(currentVolume, currentVolume)
-                                            mediaPlayer?.setOnCompletionListener { it.release() }
-                                            mediaPlayer?.start()
-                                        }
+                                        val resId = getSoundResourceId(index)
+                                        mediaPlayer = MediaPlayer.create(context, resId)
+                                        mediaPlayer?.setVolume(currentVolume, currentVolume)
+                                        mediaPlayer?.setOnCompletionListener { it.release() }
+                                        mediaPlayer?.start()
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
@@ -1344,4 +1337,18 @@ private fun SoundSelectionDialog(
             }
         }
     )
+}
+
+private fun getSoundResourceId(index: Int): Int {
+    return when (index) {
+        1 -> R.raw.zikr_sound_1
+        2 -> R.raw.zikr_sound_2
+        3 -> R.raw.zikr_sound_3
+        4 -> R.raw.zikr_sound_4
+        5 -> R.raw.zikr_sound_5
+        6 -> R.raw.zikr_sound_6
+        7 -> R.raw.zikr_sound_7
+        8 -> R.raw.zikr_sound_8
+        else -> R.raw.zikr_sound_1
+    }
 }

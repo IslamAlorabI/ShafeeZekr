@@ -121,8 +121,8 @@ fun HomeScreen(
             Card(
                 onClick = {
                     try {
-                        val resId = context.resources.getIdentifier("zikr_sound_${settings.selectedSoundIndex}", "raw", context.packageName)
-                        val mp = if (resId != 0) MediaPlayer.create(context, resId) else null
+                        val resId = getSoundResourceId(settings.selectedSoundIndex)
+                        val mp = MediaPlayer.create(context, resId)
                         mp?.setVolume(settings.appVolume, settings.appVolume)
                         mp?.setOnCompletionListener { it.release() }
                         mp?.start()
@@ -494,5 +494,19 @@ private fun NumberPickerColumn(
                 }
             }
         }
+    }
+}
+
+private fun getSoundResourceId(index: Int): Int {
+    return when (index) {
+        1 -> R.raw.zikr_sound_1
+        2 -> R.raw.zikr_sound_2
+        3 -> R.raw.zikr_sound_3
+        4 -> R.raw.zikr_sound_4
+        5 -> R.raw.zikr_sound_5
+        6 -> R.raw.zikr_sound_6
+        7 -> R.raw.zikr_sound_7
+        8 -> R.raw.zikr_sound_8
+        else -> R.raw.zikr_sound_1
     }
 }
