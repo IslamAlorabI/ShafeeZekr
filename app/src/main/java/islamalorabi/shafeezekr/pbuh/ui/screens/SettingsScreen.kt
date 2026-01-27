@@ -268,8 +268,8 @@ fun SettingsScreen(
                         
                         Slider(
                             value = settings.appVolume.coerceAtLeast(0.1f),
-                            onValueChange = { onVolumeChange(it) },
-                            valueRange = 0.1f..1f,
+                            onValueChange = { onVolumeChange(it.coerceAtLeast(0.1f)) },
+                            valueRange = 0f..1f,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
