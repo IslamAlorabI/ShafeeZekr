@@ -86,4 +86,16 @@
     <string name="sound_section">Звук</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
+    
+    <string name="period_rules_section">Правила периодов</string>
+    <string name="period_rules_desc">Управление временем разрешения или блокировки напоминаний</string>
+    <string name="add_period_rule">Добавить правило</string>
+    <string name="period_rule_allow">Разрешить</string>
+    <string name="period_rule_block">Блокировать</string>
+    <string name="period_rule_start">Время начала</string>
+    <string name="period_rule_end">Время окончания</string>
+    <string name="period_rule_conflict_warning">Невозможно включить: конфликт с другим активным правилом</string>
+    <string name="period_rule_currently_blocked">В данный момент заблокировано правилом периода</string>
+    <string name="delete">Удалить</string>
+    <string name="period_rule_empty">Правила периодов не настроены</string>
 </resources>

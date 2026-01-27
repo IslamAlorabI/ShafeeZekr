@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.os.LocaleListCompat
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
+import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
@@ -135,6 +136,9 @@ class MainActivity : ComponentActivity() {
                     onVolumeChange = { volume ->
                         scope.launch { preferencesManager.setAppVolume(volume) }
                     },
+                    onPeriodRulesChange = { rules ->
+                        scope.launch { preferencesManager.setPeriodRules(rules) }
+                    },
                     onCheckForUpdates = {
                         islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
                     }
@@ -155,6 +159,7 @@ fun MainApp(
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
+    onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -229,6 +234,7 @@ fun MainApp(
                 onColorSchemeChange = onColorSchemeChange,
                 onLanguageChange = onLanguageChange,
                 onVolumeChange = onVolumeChange,
+                onPeriodRulesChange = onPeriodRulesChange,
                 onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)
             )

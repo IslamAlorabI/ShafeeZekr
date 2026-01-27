@@ -66,10 +66,17 @@ import androidx.compose.ui.unit.dp
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
+import islamalorabi.shafeezekr.pbuh.data.PeriodRule
+import islamalorabi.shafeezekr.pbuh.data.PeriodRuleType
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Switch
+import androidx.compose.foundation.lazy.items
 
 sealed class UpdateState {
     object Idle : UpdateState()
@@ -103,12 +110,14 @@ fun SettingsScreen(
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
+    onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
     var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -210,6 +219,136 @@ fun SettingsScreen(
                             onValueChange = { onVolumeChange(it) },
                             valueRange = 0f..1f,
                             modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            SettingsGroup(
+                header = stringResource(R.string.period_rules_section),
+                headerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Text(
+                    text = stringResource(R.string.period_rules_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+                )
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        if (settings.periodRules.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.period_rule_empty),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        } else {
+                            settings.periodRules.forEachIndexed { index, rule ->
+                                val hasConflict = settings.periodRules.any { other ->
+                                    other.id != rule.id && other.isEnabled && rule.conflictsWith(other)
+                                }
+                                ListItem(
+                                    headlineContent = {
+                                        Text(
+                                            text = if (rule.type == PeriodRuleType.ALLOW) {
+                                                stringResource(R.string.period_rule_allow)
+                                            } else {
+                                                stringResource(R.string.period_rule_block)
+                                            },
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = if (rule.type == PeriodRuleType.ALLOW) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.error
+                                            }
+                                        )
+                                    },
+                                    supportingContent = {
+                                        Column {
+                                            Text(
+                                                text = String.format(
+                                                    "%02d:%02d - %02d:%02d",
+                                                    rule.startHour, rule.startMinute,
+                                                    rule.endHour, rule.endMinute
+                                                ),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            if (hasConflict && !rule.isEnabled) {
+                                                Text(
+                                                    text = stringResource(R.string.period_rule_conflict_warning),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.error
+                                                )
+                                            }
+                                        }
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            imageVector = Icons.Default.Schedule,
+                                            contentDescription = null,
+                                            tint = if (rule.type == PeriodRuleType.ALLOW) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.error
+                                            }
+                                        )
+                                    },
+                                    trailingContent = {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Switch(
+                                                checked = rule.isEnabled,
+                                                onCheckedChange = { enabled ->
+                                                    if (enabled && hasConflict) {
+                                                        return@Switch
+                                                    }
+                                                    val updatedRules = settings.periodRules.map {
+                                                        if (it.id == rule.id) it.copy(isEnabled = enabled) else it
+                                                    }
+                                                    onPeriodRulesChange(updatedRules)
+                                                }
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = stringResource(R.string.delete),
+                                                tint = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .clickable {
+                                                        val updatedRules = settings.periodRules.filter { it.id != rule.id }
+                                                        onPeriodRulesChange(updatedRules)
+                                                    }
+                                            )
+                                        }
+                                    },
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                )
+                            }
+                        }
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.add_period_rule),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            modifier = Modifier.clickable { showAddPeriodRuleDialog = true }
                         )
                     }
                 }
@@ -553,6 +692,17 @@ fun SettingsScreen(
             }
         )
     }
+
+    if (showAddPeriodRuleDialog) {
+        AddPeriodRuleDialog(
+            onDismiss = { showAddPeriodRuleDialog = false },
+            onConfirm = { rule ->
+                val updatedRules = settings.periodRules + rule
+                onPeriodRulesChange(updatedRules)
+                showAddPeriodRuleDialog = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -715,4 +865,178 @@ private fun LanguageDialog(
             }
         }
     )
+}
+
+@Composable
+private fun AddPeriodRuleDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (PeriodRule) -> Unit
+) {
+    var ruleType by remember { mutableStateOf(PeriodRuleType.ALLOW) }
+    var startHour by remember { mutableStateOf(9) }
+    var startMinute by remember { mutableStateOf(0) }
+    var endHour by remember { mutableStateOf(17) }
+    var endMinute by remember { mutableStateOf(0) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        title = { Text(stringResource(R.string.add_period_rule)) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Column(modifier = Modifier.selectableGroup()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = ruleType == PeriodRuleType.ALLOW,
+                                onClick = { ruleType = PeriodRuleType.ALLOW },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = ruleType == PeriodRuleType.ALLOW, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = stringResource(R.string.period_rule_allow),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = ruleType == PeriodRuleType.BLOCK,
+                                onClick = { ruleType = PeriodRuleType.BLOCK },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = ruleType == PeriodRuleType.BLOCK, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = stringResource(R.string.period_rule_block),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+                
+                Column {
+                    Text(
+                        text = stringResource(R.string.period_rule_start),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        TimePickerField(
+                            value = startHour,
+                            onValueChange = { startHour = it.coerceIn(0, 23) },
+                            maxValue = 23,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(":", style = MaterialTheme.typography.headlineSmall)
+                        TimePickerField(
+                            value = startMinute,
+                            onValueChange = { startMinute = it.coerceIn(0, 59) },
+                            maxValue = 59,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                
+                Column {
+                    Text(
+                        text = stringResource(R.string.period_rule_end),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        TimePickerField(
+                            value = endHour,
+                            onValueChange = { endHour = it.coerceIn(0, 23) },
+                            maxValue = 23,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(":", style = MaterialTheme.typography.headlineSmall)
+                        TimePickerField(
+                            value = endMinute,
+                            onValueChange = { endMinute = it.coerceIn(0, 59) },
+                            maxValue = 59,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm(
+                        PeriodRule(
+                            type = ruleType,
+                            startHour = startHour,
+                            startMinute = startMinute,
+                            endHour = endHour,
+                            endMinute = endMinute,
+                            isEnabled = true
+                        )
+                    )
+                }
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun TimePickerField(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    maxValue: Int,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TextButton(
+            onClick = { onValueChange(if (value > 0) value - 1 else maxValue) }
+        ) {
+            Text("-", style = MaterialTheme.typography.headlineSmall)
+        }
+        Text(
+            text = String.format("%02d", value),
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        TextButton(
+            onClick = { onValueChange(if (value < maxValue) value + 1 else 0) }
+        ) {
+            Text("+", style = MaterialTheme.typography.headlineSmall)
+        }
+    }
 }

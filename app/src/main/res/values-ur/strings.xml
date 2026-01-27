@@ -86,4 +86,16 @@
     <string name="sound_section">آواز</string>
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
+    
+    <string name="period_rules_section">وقت کے قواعد</string>
+    <string name="period_rules_desc">کنٹرول کریں کہ یاد دہانیاں کب اجازت یافتہ یا بلاک ہیں</string>
+    <string name="add_period_rule">قاعدہ شامل کریں</string>
+    <string name="period_rule_allow">اجازت</string>
+    <string name="period_rule_block">بلاک</string>
+    <string name="period_rule_start">شروع وقت</string>
+    <string name="period_rule_end">اختتام وقت</string>
+    <string name="period_rule_conflict_warning">فعال نہیں کیا جا سکتا: دوسرے فعال قاعدے سے تصادم</string>
+    <string name="period_rule_currently_blocked">فی الحال وقت کے قاعدے سے بلاک ہے</string>
+    <string name="delete">حذف کریں</string>
+    <string name="period_rule_empty">کوئی وقت کا قاعدہ ترتیب نہیں دیا گیا</string>
 </resources>
