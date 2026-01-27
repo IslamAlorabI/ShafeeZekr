@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">فی الحال وقت کے قاعدے سے بلاک ہے</string>
     <string name="delete">حذف کریں</string>
     <string name="period_rule_empty">کوئی وقت کا قاعدہ ترتیب نہیں دیا گیا</string>
+    <string name="hours_label">گھنٹے</string>
+    <string name="minutes_label">منٹ</string>
+    <string name="total_minutes">کل: %1$d منٹ</string>
 </resources>

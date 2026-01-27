@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">Derzeit durch Zeitregel blockiert</string>
     <string name="delete">Löschen</string>
     <string name="period_rule_empty">Keine Zeitregeln konfiguriert</string>
+    <string name="hours_label">Stunden</string>
+    <string name="minutes_label">Minuten</string>
+    <string name="total_minutes">Gesamt: %1$d Minuten</string>
 </resources>

@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">Şu anda zaman kuralı tarafından engellendi</string>
     <string name="delete">Sil</string>
     <string name="period_rule_empty">Yapılandırılmış zaman kuralı yok</string>
+    <string name="hours_label">Saat</string>
+    <string name="minutes_label">Dakika</string>
+    <string name="total_minutes">Toplam: %1$d dakika</string>
 </resources>

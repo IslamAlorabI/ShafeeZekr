@@ -367,7 +367,8 @@ private fun CustomIntervalDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int) -> Unit
 ) {
-    var textValue by remember { mutableStateOf(currentValue.toString()) }
+    var hours by remember { mutableStateOf(currentValue / 60) }
+    var minutes by remember { mutableStateOf(currentValue % 60) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -376,24 +377,52 @@ private fun CustomIntervalDialog(
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.custom_interval_title)) },
         text = {
-            OutlinedTextField(
-                value = textValue,
-                onValueChange = { newValue ->
-                    if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                        textValue = newValue
-                    }
-                },
-                label = { Text(stringResource(R.string.minutes)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    NumberPickerColumn(
+                        value = hours,
+                        range = 0..23,
+                        onValueChange = { hours = it },
+                        label = stringResource(R.string.hours_label)
+                    )
+                    
+                    Text(
+                        text = ":",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    
+                    NumberPickerColumn(
+                        value = minutes,
+                        range = 0..59,
+                        onValueChange = { minutes = it },
+                        label = stringResource(R.string.minutes_label)
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                val totalMinutes = hours * 60 + minutes
+                Text(
+                    text = stringResource(R.string.total_minutes, totalMinutes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    val minutes = textValue.toIntOrNull() ?: currentValue
-                    onConfirm(if (minutes > 0) minutes else 1)
+                    val totalMinutes = hours * 60 + minutes
+                    onConfirm(if (totalMinutes > 0) totalMinutes else 1)
                 }
             ) {
                 Text(stringResource(R.string.save))
@@ -405,4 +434,61 @@ private fun CustomIntervalDialog(
             }
         }
     )
+}
+
+@Composable
+private fun NumberPickerColumn(
+    value: Int,
+    range: IntRange,
+    onValueChange: (Int) -> Unit,
+    label: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedCard(
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                androidx.compose.material3.IconButton(
+                    onClick = { if (value < range.last) onValueChange(value + 1) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_up),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                
+                Text(
+                    text = String.format("%02d", value),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                
+                androidx.compose.material3.IconButton(
+                    onClick = { if (value > range.first) onValueChange(value - 1) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_down),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+    }
 }
