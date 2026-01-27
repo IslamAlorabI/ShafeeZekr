@@ -101,4 +101,18 @@
     <string name="hours_label">Saat</string>
     <string name="minutes_label">Dakika</string>
     <string name="total_minutes">Toplam: %1$d dakika</string>
+    <string name="rule_type_daily">Günlük Zaman Aralığı</string>
+    <string name="rule_type_weekly">Haftalık Günler</string>
+    <string name="rule_type_date">Belirli Tarih</string>
+    <string name="rule_action">Eylem</string>
+    <string name="schedule_type">Program Türü</string>
+    <string name="select_days">Günleri Seç</string>
+    <string name="select_date">Tarih Seç</string>
+    <string name="day_sun">Paz</string>
+    <string name="day_mon">Pzt</string>
+    <string name="day_tue">Sal</string>
+    <string name="day_wed">Çar</string>
+    <string name="day_thu">Per</string>
+    <string name="day_fri">Cum</string>
+    <string name="day_sat">Cmt</string>
 </resources>

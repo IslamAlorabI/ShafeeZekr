@@ -101,4 +101,18 @@
     <string name="hours_label">ساعات</string>
     <string name="minutes_label">دقائق</string>
     <string name="total_minutes">المجموع: %1$d دقيقة</string>
+    <string name="rule_type_daily">نطاق زمني يومي</string>
+    <string name="rule_type_weekly">أيام أسبوعية</string>
+    <string name="rule_type_date">تاريخ محدد</string>
+    <string name="rule_action">الإجراء</string>
+    <string name="schedule_type">نوع الجدول</string>
+    <string name="select_days">اختر الأيام</string>
+    <string name="select_date">اختر التاريخ</string>
+    <string name="day_sun">أحد</string>
+    <string name="day_mon">إثنين</string>
+    <string name="day_tue">ثلاثاء</string>
+    <string name="day_wed">أربعاء</string>
+    <string name="day_thu">خميس</string>
+    <string name="day_fri">جمعة</string>
+    <string name="day_sat">سبت</string>
 </resources>
