@@ -197,9 +197,7 @@ fun SettingsScreen(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         ListItem(
                             headlineContent = {
@@ -230,18 +228,18 @@ fun SettingsScreen(
                                 )
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            modifier = Modifier
-                                .clickable { showSoundDialog = true }
-                                .padding(bottom = 8.dp)
+                            modifier = Modifier.clickable { showSoundDialog = true }
                         )
                         
                         HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 8.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.outlineVariant
                         )
                         
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -267,12 +265,15 @@ fun SettingsScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        
                         Slider(
                             value = settings.appVolume,
                             onValueChange = { onVolumeChange(it) },
                             valueRange = 0f..1f,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp)
                         )
                     }
                 }
