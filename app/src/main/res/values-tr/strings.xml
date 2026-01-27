@@ -12,10 +12,12 @@
     <string name="enable_reminder_desc">Düzenli aralıklarla sesli hatırlatma çal</string>
     
     <string name="interval_title">Hatırlatma Aralığı</string>
+    <string name="interval_1_min">Her 1 dakikada</string>
     <string name="interval_5_min">Her 5 dakika</string>
     <string name="interval_10_min">Her 10 dakika</string>
     <string name="interval_30_min">Her 30 dakika</string>
-    <string name="interval_1_hour">Her saat</string>
+    <string name="interval_1_hour">Her 1 saatte</string>
+    <string name="interval_2_hours">Her 2 saatte</string>
     <string name="interval_custom">Özel</string>
     <string name="custom_interval_title">Özel Aralık</string>
     <string name="minutes">dakika</string>

@@ -12,11 +12,13 @@
     <string name="enable_reminder_desc">باقاعدہ وقفوں میں آڈیو یاد دہانی چلائیں</string>
     
     <string name="interval_title">یاد دہانی کا وقفہ</string>
+    <string name="interval_1_min">ہر 1 منٹ</string>
     <string name="interval_5_min">ہر 5 منٹ</string>
     <string name="interval_10_min">ہر 10 منٹ</string>
     <string name="interval_30_min">ہر 30 منٹ</string>
-    <string name="interval_1_hour">ہر گھنٹہ</string>
-    <string name="interval_custom">اپنی مرضی</string>
+    <string name="interval_1_hour">ہر 1 گھنٹہ</string>
+    <string name="interval_2_hours">ہر 2 گھنٹے</string>
+    <string name="interval_custom">اپنی مرضی کے مطابق</string>
     <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
     <string name="minutes">منٹ</string>
     <string name="interval_reset_note">نوٹ: وقفہ تبدیل کرنے سے موجودہ ٹائمر ری سیٹ ہو جائے گا۔</string>

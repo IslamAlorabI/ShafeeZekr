@@ -11,11 +11,13 @@
     <string name="enable_reminder">تفعيل التذكير</string>
     <string name="enable_reminder_desc">تشغيل التذكير الصوتي تلقائياً كل فترة محددة</string>
     
-    <string name="interval_title">الفترة الزمنية</string>
+    <string name="interval_title">فترة التذكير</string>
+    <string name="interval_1_min">كل دقيقة</string>
     <string name="interval_5_min">كل 5 دقائق</string>
     <string name="interval_10_min">كل 10 دقائق</string>
     <string name="interval_30_min">كل 30 دقيقة</string>
     <string name="interval_1_hour">كل ساعة</string>
+    <string name="interval_2_hours">كل ساعتين</string>
     <string name="interval_custom">مخصص</string>
     <string name="custom_interval_title">فترة مخصصة</string>
     <string name="minutes">دقيقة</string>

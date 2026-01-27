@@ -12,11 +12,13 @@
     <string name="enable_reminder_desc">Воспроизводить звуковое напоминание через регулярные интервалы</string>
     
     <string name="interval_title">Интервал напоминания</string>
+    <string name="interval_1_min">Каждую 1 минуту</string>
     <string name="interval_5_min">Каждые 5 минут</string>
     <string name="interval_10_min">Каждые 10 минут</string>
     <string name="interval_30_min">Каждые 30 минут</string>
     <string name="interval_1_hour">Каждый час</string>
-    <string name="interval_custom">Настроить</string>
+    <string name="interval_2_hours">Каждые 2 часа</string>
+    <string name="interval_custom">Пользовательский</string>
     <string name="custom_interval_title">Свой интервал</string>
     <string name="minutes">минут</string>
     <string name="interval_reset_note">Примечание: Изменение интервала сбросит текущий таймер.</string>
