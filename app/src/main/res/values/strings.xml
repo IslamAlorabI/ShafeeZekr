@@ -91,4 +91,16 @@
     <string name="sound_section">Sound</string>
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
+    
+    <string name="period_rules_section">Period Rules</string>
+    <string name="period_rules_desc">Control when reminders are allowed or blocked</string>
+    <string name="add_period_rule">Add Rule</string>
+    <string name="period_rule_allow">Allow</string>
+    <string name="period_rule_block">Block</string>
+    <string name="period_rule_start">Start Time</string>
+    <string name="period_rule_end">End Time</string>
+    <string name="period_rule_conflict_warning">Cannot enable: conflicts with another active rule</string>
+    <string name="period_rule_currently_blocked">Currently blocked by period rule</string>
+    <string name="delete">Delete</string>
+    <string name="period_rule_empty">No period rules configured</string>
 </resources>

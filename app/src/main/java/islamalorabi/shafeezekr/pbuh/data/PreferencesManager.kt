@@ -11,6 +11,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.Calendar
+import java.util.UUID
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -24,6 +28,74 @@ enum class ReminderInterval(val minutes: Int) {
     CUSTOM(-1)
 }
 
+enum class PeriodRuleType { ALLOW, BLOCK }
+
+data class PeriodRule(
+    val id: String = UUID.randomUUID().toString(),
+    val type: PeriodRuleType,
+    val startHour: Int,
+    val startMinute: Int,
+    val endHour: Int,
+    val endMinute: Int,
+    val isEnabled: Boolean = true
+) {
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put("id", id)
+            put("type", type.name)
+            put("startHour", startHour)
+            put("startMinute", startMinute)
+            put("endHour", endHour)
+            put("endMinute", endMinute)
+            put("isEnabled", isEnabled)
+        }
+    }
+
+    fun isCurrentTimeInRange(): Boolean {
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+        val currentTotalMinutes = currentHour * 60 + currentMinute
+        val startTotalMinutes = startHour * 60 + startMinute
+        val endTotalMinutes = endHour * 60 + endMinute
+
+        return if (startTotalMinutes <= endTotalMinutes) {
+            currentTotalMinutes in startTotalMinutes..endTotalMinutes
+        } else {
+            currentTotalMinutes >= startTotalMinutes || currentTotalMinutes <= endTotalMinutes
+        }
+    }
+
+    fun conflictsWith(other: PeriodRule): Boolean {
+        val startA = startHour * 60 + startMinute
+        val endA = endHour * 60 + endMinute
+        val startB = other.startHour * 60 + other.startMinute
+        val endB = other.endHour * 60 + other.endMinute
+
+        return if (startA <= endA && startB <= endB) {
+            !(endA < startB || endB < startA)
+        } else if (startA > endA && startB > endB) {
+            true
+        } else {
+            true
+        }
+    }
+
+    companion object {
+        fun fromJson(json: JSONObject): PeriodRule {
+            return PeriodRule(
+                id = json.getString("id"),
+                type = PeriodRuleType.valueOf(json.getString("type")),
+                startHour = json.getInt("startHour"),
+                startMinute = json.getInt("startMinute"),
+                endHour = json.getInt("endHour"),
+                endMinute = json.getInt("endMinute"),
+                isEnabled = json.optBoolean("isEnabled", true)
+            )
+        }
+    }
+}
+
 data class AppSettings(
     val isReminderEnabled: Boolean = false,
     val reminderInterval: ReminderInterval = ReminderInterval.THIRTY,
@@ -31,8 +103,34 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val colorScheme: ColorScheme = ColorScheme.MONET,
     val languageCode: String = "",
-    val appVolume: Float = 1.0f
-)
+    val appVolume: Float = 1.0f,
+    val periodRules: List<PeriodRule> = emptyList()
+) {
+    fun isReminderAllowedByPeriodRules(): Boolean {
+        val enabledRules = periodRules.filter { it.isEnabled }
+        if (enabledRules.isEmpty()) return true
+
+        val enabledAllowRules = enabledRules.filter { it.type == PeriodRuleType.ALLOW }
+        val enabledBlockRules = enabledRules.filter { it.type == PeriodRuleType.BLOCK }
+
+        for (blockRule in enabledBlockRules) {
+            if (blockRule.isCurrentTimeInRange()) {
+                return false
+            }
+        }
+
+        if (enabledAllowRules.isNotEmpty()) {
+            for (allowRule in enabledAllowRules) {
+                if (allowRule.isCurrentTimeInRange()) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        return true
+    }
+}
 
 class PreferencesManager(private val context: Context) {
 
@@ -44,6 +142,23 @@ class PreferencesManager(private val context: Context) {
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
         val APP_VOLUME = floatPreferencesKey("app_volume")
+        val PERIOD_RULES = stringPreferencesKey("period_rules")
+    }
+
+    private fun parsePeriodRules(json: String): List<PeriodRule> {
+        if (json.isEmpty()) return emptyList()
+        return try {
+            val array = JSONArray(json)
+            (0 until array.length()).map { PeriodRule.fromJson(array.getJSONObject(it)) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun periodRulesToJson(rules: List<PeriodRule>): String {
+        val array = JSONArray()
+        rules.forEach { array.put(it.toJson()) }
+        return array.toString()
     }
 
     val settingsFlow: Flow<AppSettings> = context.dataStore.data.map { preferences ->
@@ -66,7 +181,8 @@ class PreferencesManager(private val context: Context) {
                 ColorScheme.MONET
             },
             languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: "",
-            appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f
+            appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f,
+            periodRules = parsePeriodRules(preferences[PreferencesKeys.PERIOD_RULES] ?: "")
         )
     }
 
@@ -109,6 +225,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setAppVolume(volume: Float) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.APP_VOLUME] = volume.coerceIn(0f, 1f)
+        }
+    }
+
+    suspend fun setPeriodRules(rules: List<PeriodRule>) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.PERIOD_RULES] = periodRulesToJson(rules)
         }
     }
 }

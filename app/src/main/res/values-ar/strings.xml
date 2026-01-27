@@ -86,4 +86,16 @@
     <string name="sound_section">الصوت</string>
     <string name="app_volume">مستوى صوت التطبيق</string>
     <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
+    
+    <string name="period_rules_section">قواعد الفترات الزمنية</string>
+    <string name="period_rules_desc">التحكم في أوقات السماح أو الحظر للتذكيرات</string>
+    <string name="add_period_rule">إضافة قاعدة</string>
+    <string name="period_rule_allow">سماح</string>
+    <string name="period_rule_block">حظر</string>
+    <string name="period_rule_start">وقت البداية</string>
+    <string name="period_rule_end">وقت النهاية</string>
+    <string name="period_rule_conflict_warning">لا يمكن التفعيل: تعارض مع قاعدة نشطة أخرى</string>
+    <string name="period_rule_currently_blocked">محظور حالياً بسبب قاعدة فترة زمنية</string>
+    <string name="delete">حذف</string>
+    <string name="period_rule_empty">لا توجد قواعد فترات زمنية</string>
 </resources>
