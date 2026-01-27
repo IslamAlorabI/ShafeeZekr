@@ -86,7 +86,7 @@ class ReminderReceiver : BroadcastReceiver() {
             val mediaPlayer = MediaPlayer()
             mediaPlayer.setAudioAttributes(audioAttributes)
             
-            val resId = context.resources.getIdentifier("zikr_sound_$soundIndex", "raw", context.packageName)
+            val resId = getSoundResourceId(soundIndex)
             val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
             
             mediaPlayer.setDataSource(context, soundUri)
@@ -104,6 +104,20 @@ class ReminderReceiver : BroadcastReceiver() {
             mediaPlayer.prepareAsync()
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun getSoundResourceId(index: Int): Int {
+        return when (index) {
+            1 -> R.raw.zikr_sound_1
+            2 -> R.raw.zikr_sound_2
+            3 -> R.raw.zikr_sound_3
+            4 -> R.raw.zikr_sound_4
+            5 -> R.raw.zikr_sound_5
+            6 -> R.raw.zikr_sound_6
+            7 -> R.raw.zikr_sound_7
+            8 -> R.raw.zikr_sound_8
+            else -> R.raw.zikr_sound_1
         }
     }
 }
