@@ -101,4 +101,18 @@
     <string name="hours_label">Часы</string>
     <string name="minutes_label">Минуты</string>
     <string name="total_minutes">Всего: %1$d минут</string>
+    <string name="rule_type_daily">Ежедневный период</string>
+    <string name="rule_type_weekly">Дни недели</string>
+    <string name="rule_type_date">Конкретная дата</string>
+    <string name="rule_action">Действие</string>
+    <string name="schedule_type">Тип расписания</string>
+    <string name="select_days">Выбрать дни</string>
+    <string name="select_date">Выбрать дату</string>
+    <string name="day_sun">Вс</string>
+    <string name="day_mon">Пн</string>
+    <string name="day_tue">Вт</string>
+    <string name="day_wed">Ср</string>
+    <string name="day_thu">Чт</string>
+    <string name="day_fri">Пт</string>
+    <string name="day_sat">Сб</string>
 </resources>

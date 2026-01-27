@@ -101,4 +101,18 @@
     <string name="hours_label">Jam</string>
     <string name="minutes_label">Menit</string>
     <string name="total_minutes">Total: %1$d menit</string>
+    <string name="rule_type_daily">Rentang Waktu Harian</string>
+    <string name="rule_type_weekly">Hari Mingguan</string>
+    <string name="rule_type_date">Tanggal Tertentu</string>
+    <string name="rule_action">Tindakan</string>
+    <string name="schedule_type">Jenis Jadwal</string>
+    <string name="select_days">Pilih Hari</string>
+    <string name="select_date">Pilih Tanggal</string>
+    <string name="day_sun">Min</string>
+    <string name="day_mon">Sen</string>
+    <string name="day_tue">Sel</string>
+    <string name="day_wed">Rab</string>
+    <string name="day_thu">Kam</string>
+    <string name="day_fri">Jum</string>
+    <string name="day_sat">Sab</string>
 </resources>

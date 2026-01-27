@@ -101,4 +101,18 @@
     <string name="hours_label">ساعت</string>
     <string name="minutes_label">دقیقه</string>
     <string name="total_minutes">مجموع: %1$d دقیقه</string>
+    <string name="rule_type_daily">بازه زمانی روزانه</string>
+    <string name="rule_type_weekly">روزهای هفتگی</string>
+    <string name="rule_type_date">تاریخ خاص</string>
+    <string name="rule_action">اقدام</string>
+    <string name="schedule_type">نوع زمان‌بندی</string>
+    <string name="select_days">انتخاب روزها</string>
+    <string name="select_date">انتخاب تاریخ</string>
+    <string name="day_sun">یک</string>
+    <string name="day_mon">دو</string>
+    <string name="day_tue">سه</string>
+    <string name="day_wed">چهار</string>
+    <string name="day_thu">پنج</string>
+    <string name="day_fri">جمعه</string>
+    <string name="day_sat">شنبه</string>
 </resources>

@@ -68,15 +68,24 @@ import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.PeriodRuleType
+import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import java.util.Calendar
 
 sealed class UpdateState {
     object Idle : UpdateState()
@@ -255,28 +264,43 @@ fun SettingsScreen(
                                 }
                                 ListItem(
                                     headlineContent = {
-                                        Text(
-                                            text = if (rule.type == PeriodRuleType.ALLOW) {
-                                                stringResource(R.string.period_rule_allow)
-                                            } else {
-                                                stringResource(R.string.period_rule_block)
-                                            },
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = if (rule.type == PeriodRuleType.ALLOW) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.error
-                                            }
-                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Text(
+                                                text = if (rule.type == PeriodRuleType.ALLOW) {
+                                                    stringResource(R.string.period_rule_allow)
+                                                } else {
+                                                    stringResource(R.string.period_rule_block)
+                                                },
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = if (rule.type == PeriodRuleType.ALLOW) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.error
+                                                }
+                                            )
+                                            Text(
+                                                text = "•",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = when (rule.scheduleType) {
+                                                    RuleScheduleType.DAILY_TIME -> stringResource(R.string.rule_type_daily)
+                                                    RuleScheduleType.WEEKLY_DAYS -> stringResource(R.string.rule_type_weekly)
+                                                    RuleScheduleType.SPECIFIC_DATE -> stringResource(R.string.rule_type_date)
+                                                },
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                     },
                                     supportingContent = {
                                         Column {
                                             Text(
-                                                text = String.format(
-                                                    "%02d:%02d - %02d:%02d",
-                                                    rule.startHour, rule.startMinute,
-                                                    rule.endHour, rule.endMinute
-                                                ),
+                                                text = rule.getDisplayText(),
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
@@ -291,7 +315,11 @@ fun SettingsScreen(
                                     },
                                     leadingContent = {
                                         Icon(
-                                            imageVector = Icons.Default.Schedule,
+                                            imageVector = when (rule.scheduleType) {
+                                                RuleScheduleType.DAILY_TIME -> Icons.Default.Schedule
+                                                RuleScheduleType.WEEKLY_DAYS -> Icons.Default.DateRange
+                                                RuleScheduleType.SPECIFIC_DATE -> Icons.Default.Event
+                                            },
                                             contentDescription = null,
                                             tint = if (rule.type == PeriodRuleType.ALLOW) {
                                                 MaterialTheme.colorScheme.primary
@@ -873,10 +901,27 @@ private fun AddPeriodRuleDialog(
     onConfirm: (PeriodRule) -> Unit
 ) {
     var ruleType by remember { mutableStateOf(PeriodRuleType.ALLOW) }
+    var scheduleType by remember { mutableStateOf(RuleScheduleType.DAILY_TIME) }
     var startHour by remember { mutableStateOf(9) }
     var startMinute by remember { mutableStateOf(0) }
     var endHour by remember { mutableStateOf(17) }
     var endMinute by remember { mutableStateOf(0) }
+    var selectedDays by remember { mutableStateOf(setOf<Int>()) }
+    
+    val calendar = Calendar.getInstance()
+    var selectedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var selectedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
+    var selectedDay by remember { mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
+
+    val dayNames = listOf(
+        stringResource(R.string.day_sun),
+        stringResource(R.string.day_mon),
+        stringResource(R.string.day_tue),
+        stringResource(R.string.day_wed),
+        stringResource(R.string.day_thu),
+        stringResource(R.string.day_fri),
+        stringResource(R.string.day_sat)
+    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -886,50 +931,141 @@ private fun AddPeriodRuleDialog(
         title = { Text(stringResource(R.string.add_period_rule)) },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(modifier = Modifier.selectableGroup()) {
+                    Text(
+                        text = stringResource(R.string.rule_action),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = ruleType == PeriodRuleType.ALLOW,
-                                onClick = { ruleType = PeriodRuleType.ALLOW },
-                                role = Role.RadioButton
-                            )
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        RadioButton(selected = ruleType == PeriodRuleType.ALLOW, onClick = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.period_rule_allow),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary
+                        FilterChip(
+                            selected = ruleType == PeriodRuleType.ALLOW,
+                            onClick = { ruleType = PeriodRuleType.ALLOW },
+                            label = { Text(stringResource(R.string.period_rule_allow)) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = ruleType == PeriodRuleType.BLOCK,
-                                onClick = { ruleType = PeriodRuleType.BLOCK },
-                                role = Role.RadioButton
+                        FilterChip(
+                            selected = ruleType == PeriodRuleType.BLOCK,
+                            onClick = { ruleType = PeriodRuleType.BLOCK },
+                            label = { Text(stringResource(R.string.period_rule_block)) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.error,
+                                selectedLabelColor = MaterialTheme.colorScheme.onError
                             )
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = ruleType == PeriodRuleType.BLOCK, onClick = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.period_rule_block),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
-                
+
+                Column {
+                    Text(
+                        text = stringResource(R.string.schedule_type),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = scheduleType == RuleScheduleType.DAILY_TIME,
+                            onClick = { scheduleType = RuleScheduleType.DAILY_TIME },
+                            label = { Text(stringResource(R.string.rule_type_daily)) }
+                        )
+                        FilterChip(
+                            selected = scheduleType == RuleScheduleType.WEEKLY_DAYS,
+                            onClick = { scheduleType = RuleScheduleType.WEEKLY_DAYS },
+                            label = { Text(stringResource(R.string.rule_type_weekly)) }
+                        )
+                        FilterChip(
+                            selected = scheduleType == RuleScheduleType.SPECIFIC_DATE,
+                            onClick = { scheduleType = RuleScheduleType.SPECIFIC_DATE },
+                            label = { Text(stringResource(R.string.rule_type_date)) }
+                        )
+                    }
+                }
+
+                if (scheduleType == RuleScheduleType.WEEKLY_DAYS) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.select_days),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            dayNames.forEachIndexed { index, name ->
+                                FilterChip(
+                                    selected = index in selectedDays,
+                                    onClick = {
+                                        selectedDays = if (index in selectedDays) {
+                                            selectedDays - index
+                                        } else {
+                                            selectedDays + index
+                                        }
+                                    },
+                                    label = { Text(name.take(2)) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (scheduleType == RuleScheduleType.SPECIFIC_DATE) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.select_date),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TimePickerField(
+                                value = selectedYear,
+                                onValueChange = { selectedYear = it.coerceIn(2024, 2030) },
+                                maxValue = 2030,
+                                minValue = 2024,
+                                modifier = Modifier.weight(1.5f)
+                            )
+                            Text("-")
+                            TimePickerField(
+                                value = selectedMonth + 1,
+                                onValueChange = { selectedMonth = (it - 1).coerceIn(0, 11) },
+                                maxValue = 12,
+                                minValue = 1,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text("-")
+                            TimePickerField(
+                                value = selectedDay,
+                                onValueChange = { selectedDay = it.coerceIn(1, 31) },
+                                maxValue = 31,
+                                minValue = 1,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
                 Column {
                     Text(
                         text = stringResource(R.string.period_rule_start),
@@ -938,8 +1074,9 @@ private fun AddPeriodRuleDialog(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         TimePickerField(
                             value = startHour,
@@ -947,12 +1084,18 @@ private fun AddPeriodRuleDialog(
                             maxValue = 23,
                             modifier = Modifier.weight(1f)
                         )
-                        Text(":", style = MaterialTheme.typography.headlineSmall)
+                        Text(":", style = MaterialTheme.typography.titleMedium)
                         TimePickerField(
                             value = startMinute,
                             onValueChange = { startMinute = it.coerceIn(0, 59) },
                             maxValue = 59,
                             modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (startHour < 12) "AM" else "PM",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
                 }
@@ -965,8 +1108,9 @@ private fun AddPeriodRuleDialog(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         TimePickerField(
                             value = endHour,
@@ -974,12 +1118,18 @@ private fun AddPeriodRuleDialog(
                             maxValue = 23,
                             modifier = Modifier.weight(1f)
                         )
-                        Text(":", style = MaterialTheme.typography.headlineSmall)
+                        Text(":", style = MaterialTheme.typography.titleMedium)
                         TimePickerField(
                             value = endMinute,
                             onValueChange = { endMinute = it.coerceIn(0, 59) },
                             maxValue = 59,
                             modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (endHour < 12) "AM" else "PM",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
                 }
@@ -991,13 +1141,22 @@ private fun AddPeriodRuleDialog(
                     onConfirm(
                         PeriodRule(
                             type = ruleType,
+                            scheduleType = scheduleType,
                             startHour = startHour,
                             startMinute = startMinute,
                             endHour = endHour,
                             endMinute = endMinute,
+                            daysOfWeek = selectedDays,
+                            year = selectedYear,
+                            month = selectedMonth,
+                            dayOfMonth = selectedDay,
                             isEnabled = true
                         )
                     )
+                },
+                enabled = when (scheduleType) {
+                    RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
+                    else -> true
                 }
             ) {
                 Text(stringResource(R.string.save))
@@ -1016,27 +1175,30 @@ private fun TimePickerField(
     value: Int,
     onValueChange: (Int) -> Unit,
     maxValue: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    minValue: Int = 0
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        TextButton(
-            onClick = { onValueChange(if (value > 0) value - 1 else maxValue) }
+        IconButton(
+            onClick = { onValueChange(if (value > minValue) value - 1 else maxValue) },
+            modifier = Modifier.size(32.dp)
         ) {
-            Text("-", style = MaterialTheme.typography.headlineSmall)
+            Text("-", style = MaterialTheme.typography.titleLarge)
         }
         Text(
             text = String.format("%02d", value),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 4.dp)
         )
-        TextButton(
-            onClick = { onValueChange(if (value < maxValue) value + 1 else 0) }
+        IconButton(
+            onClick = { onValueChange(if (value < maxValue) value + 1 else minValue) },
+            modifier = Modifier.size(32.dp)
         ) {
-            Text("+", style = MaterialTheme.typography.headlineSmall)
+            Text("+", style = MaterialTheme.typography.titleLarge)
         }
     }
 }
