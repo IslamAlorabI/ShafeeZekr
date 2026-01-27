@@ -82,4 +82,8 @@
     <string name="update_message">Доступна новая версия (%1$s).</string>
     <string name="update_button">Обновить</string>
     <string name="later_button">Позже</string>
+    
+    <string name="sound_section">Звук</string>
+    <string name="app_volume">Громкость приложения</string>
+    <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
 </resources>

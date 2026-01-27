@@ -82,4 +82,8 @@
     <string name="update_message">نسخه جدید (%1$s) موجود است.</string>
     <string name="update_button">به‌روزرسانی</string>
     <string name="later_button">بعداً</string>
+    
+    <string name="sound_section">صدا</string>
+    <string name="app_volume">صدای برنامه</string>
+    <string name="app_volume_desc">کنترل مستقل صدای برنامه</string>
 </resources>

@@ -82,4 +82,8 @@
     <string name="update_message">Eine neue Version (%1$s) ist verfügbar.</string>
     <string name="update_button">Aktualisieren</string>
     <string name="later_button">Später</string>
+    
+    <string name="sound_section">Ton</string>
+    <string name="app_volume">App-Lautstärke</string>
+    <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
 </resources>

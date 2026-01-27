@@ -87,4 +87,8 @@
     <string name="update_message">A new version (%1$s) is available.</string>
     <string name="update_button">Update</string>
     <string name="later_button">Later</string>
+    
+    <string name="sound_section">Sound</string>
+    <string name="app_volume">App Volume</string>
+    <string name="app_volume_desc">Control app sound volume independently</string>
 </resources>
