@@ -88,6 +88,7 @@
     <string name="sound_section">Звук</string>
     <string name="sound_selection">Выбор звука</string>
     <string name="sound_name">Звук %1$d</string>
+    <string name="sound_play_warning">Предупреждение: звук будет воспроизведен сразу после выбора.</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
     
