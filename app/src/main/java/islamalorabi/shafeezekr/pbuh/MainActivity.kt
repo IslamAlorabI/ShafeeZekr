@@ -124,11 +124,19 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            val localeManager = context.getSystemService(LocaleManager::class.java)
-                            if (code.isEmpty()) {
-                                localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val localeManager = context.getSystemService(LocaleManager::class.java)
+                                if (code.isEmpty()) {
+                                    localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                                } else {
+                                    localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                                }
                             } else {
-                                localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                                if (code.isEmpty()) {
+                                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+                                } else {
+                                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code))
+                                }
                             }
                         }
                     },
