@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">В данный момент заблокировано правилом периода</string>
     <string name="delete">Удалить</string>
     <string name="period_rule_empty">Правила периодов не настроены</string>
+    <string name="hours_label">Часы</string>
+    <string name="minutes_label">Минуты</string>
+    <string name="total_minutes">Всего: %1$d минут</string>
 </resources>

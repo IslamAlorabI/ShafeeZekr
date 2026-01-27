@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">در حال حاضر توسط قانون زمانی مسدود شده</string>
     <string name="delete">حذف</string>
     <string name="period_rule_empty">هیچ قانون زمانی تنظیم نشده</string>
+    <string name="hours_label">ساعت</string>
+    <string name="minutes_label">دقیقه</string>
+    <string name="total_minutes">مجموع: %1$d دقیقه</string>
 </resources>

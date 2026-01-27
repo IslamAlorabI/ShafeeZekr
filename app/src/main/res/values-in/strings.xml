@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">Saat ini diblokir oleh aturan waktu</string>
     <string name="delete">Hapus</string>
     <string name="period_rule_empty">Tidak ada aturan waktu yang dikonfigurasi</string>
+    <string name="hours_label">Jam</string>
+    <string name="minutes_label">Menit</string>
+    <string name="total_minutes">Total: %1$d menit</string>
 </resources>
