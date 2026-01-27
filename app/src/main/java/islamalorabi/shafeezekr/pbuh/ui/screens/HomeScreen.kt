@@ -119,6 +119,7 @@ fun HomeScreen(
                 onClick = {
                     try {
                         val mp = MediaPlayer.create(context, R.raw.zikr_sound)
+                        mp?.setVolume(settings.appVolume, settings.appVolume)
                         mp?.setOnCompletionListener { it.release() }
                         mp?.start()
                     } catch (e: Exception) {

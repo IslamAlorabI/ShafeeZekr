@@ -82,4 +82,8 @@
     <string name="update_message">إصدار جديد (%1$s) متاح.</string>
     <string name="update_button">تحديث</string>
     <string name="later_button">لاحقاً</string>
+    
+    <string name="sound_section">الصوت</string>
+    <string name="app_volume">مستوى صوت التطبيق</string>
+    <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
 </resources>

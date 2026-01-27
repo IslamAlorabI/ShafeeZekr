@@ -82,4 +82,8 @@
     <string name="update_message">Yeni bir sürüm (%1$s) mevcut.</string>
     <string name="update_button">Güncelle</string>
     <string name="later_button">Sonra</string>
+    
+    <string name="sound_section">Ses</string>
+    <string name="app_volume">Uygulama Ses Düzeyi</string>
+    <string name="app_volume_desc">Uygulama sesini bağımsız olarak kontrol edin</string>
 </resources>
