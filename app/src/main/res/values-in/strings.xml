@@ -12,10 +12,12 @@
     <string name="enable_reminder_desc">Putar pengingat suara secara berkala</string>
     
     <string name="interval_title">Interval Pengingat</string>
+    <string name="interval_1_min">Setiap 1 menit</string>
     <string name="interval_5_min">Setiap 5 menit</string>
     <string name="interval_10_min">Setiap 10 menit</string>
     <string name="interval_30_min">Setiap 30 menit</string>
     <string name="interval_1_hour">Setiap 1 jam</string>
+    <string name="interval_2_hours">Setiap 2 jam</string>
     <string name="interval_custom">Kustom</string>
     <string name="custom_interval_title">Interval Kustom</string>
     <string name="minutes">menit</string>
