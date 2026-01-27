@@ -21,10 +21,12 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 enum class ThemeMode { LIGHT, DARK, SYSTEM }
 enum class ColorScheme { MONET, GREEN, BLUE, PURPLE, TEAL, ORANGE, PINK, RED }
 enum class ReminderInterval(val minutes: Int) {
+    ONE(1),
     FIVE(5),
     TEN(10),
     THIRTY(30),
     SIXTY(60),
+    TWO_HOURS(120),
     CUSTOM(-1)
 }
 
