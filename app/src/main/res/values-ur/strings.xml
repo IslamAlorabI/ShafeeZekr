@@ -91,33 +91,4 @@
     <string name="sound_play_warning">انتباہ: منتخب کرنے پر آواز فوراً بجائی جائے گی۔</string>
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
-    
-    <string name="period_rules_section">وقت کے قواعد</string>
-    <string name="period_rules_desc">کنٹرول کریں کہ یاد دہانیاں کب اجازت یافتہ یا بلاک ہیں</string>
-    <string name="add_period_rule">قاعدہ شامل کریں</string>
-    <string name="period_rule_allow">اجازت</string>
-    <string name="period_rule_block">بلاک</string>
-    <string name="period_rule_start">شروع وقت</string>
-    <string name="period_rule_end">اختتام وقت</string>
-    <string name="period_rule_conflict_warning">فعال نہیں کیا جا سکتا: دوسرے فعال قاعدے سے تصادم</string>
-    <string name="period_rule_currently_blocked">فی الحال وقت کے قاعدے سے بلاک ہے</string>
-    <string name="delete">حذف کریں</string>
-    <string name="period_rule_empty">کوئی وقت کا قاعدہ ترتیب نہیں دیا گیا</string>
-    <string name="hours_label">گھنٹے</string>
-    <string name="minutes_label">منٹ</string>
-    <string name="total_minutes">کل: %1$d منٹ</string>
-    <string name="rule_type_daily">روزانہ وقت</string>
-    <string name="rule_type_weekly">ہفتہ وار دن</string>
-    <string name="rule_type_date">مخصوص تاریخ</string>
-    <string name="rule_action">عمل</string>
-    <string name="schedule_type">شیڈول کی قسم</string>
-    <string name="select_days">دن منتخب کریں</string>
-    <string name="select_date">تاریخ منتخب کریں</string>
-    <string name="day_sun">اتوار</string>
-    <string name="day_mon">پیر</string>
-    <string name="day_tue">منگل</string>
-    <string name="day_wed">بدھ</string>
-    <string name="day_thu">تی</string>
-    <string name="day_fri">جمعہ</string>
-    <string name="day_sat">ہفتہ</string>
-</resources>
+    </resources>

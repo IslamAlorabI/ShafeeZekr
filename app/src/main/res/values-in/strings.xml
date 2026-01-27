@@ -91,33 +91,4 @@
     <string name="sound_play_warning">Peringatan: Suara akan diputar segera setelah dipilih.</string>
     <string name="app_volume">Volume Aplikasi</string>
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
-    
-    <string name="period_rules_section">Aturan Waktu</string>
-    <string name="period_rules_desc">Kontrol kapan pengingat diizinkan atau diblokir</string>
-    <string name="add_period_rule">Tambah Aturan</string>
-    <string name="period_rule_allow">Izinkan</string>
-    <string name="period_rule_block">Blokir</string>
-    <string name="period_rule_start">Waktu Mulai</string>
-    <string name="period_rule_end">Waktu Selesai</string>
-    <string name="period_rule_conflict_warning">Tidak dapat diaktifkan: konflik dengan aturan aktif lainnya</string>
-    <string name="period_rule_currently_blocked">Saat ini diblokir oleh aturan waktu</string>
-    <string name="delete">Hapus</string>
-    <string name="period_rule_empty">Tidak ada aturan waktu yang dikonfigurasi</string>
-    <string name="hours_label">Jam</string>
-    <string name="minutes_label">Menit</string>
-    <string name="total_minutes">Total: %1$d menit</string>
-    <string name="rule_type_daily">Rentang Waktu Harian</string>
-    <string name="rule_type_weekly">Hari Mingguan</string>
-    <string name="rule_type_date">Tanggal Tertentu</string>
-    <string name="rule_action">Tindakan</string>
-    <string name="schedule_type">Jenis Jadwal</string>
-    <string name="select_days">Pilih Hari</string>
-    <string name="select_date">Pilih Tanggal</string>
-    <string name="day_sun">Min</string>
-    <string name="day_mon">Sen</string>
-    <string name="day_tue">Sel</string>
-    <string name="day_wed">Rab</string>
-    <string name="day_thu">Kam</string>
-    <string name="day_fri">Jum</string>
-    <string name="day_sat">Sab</string>
-</resources>
+    </resources>
