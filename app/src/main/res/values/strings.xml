@@ -103,4 +103,7 @@
     <string name="period_rule_currently_blocked">Currently blocked by period rule</string>
     <string name="delete">Delete</string>
     <string name="period_rule_empty">No period rules configured</string>
+    <string name="hours_label">Hours</string>
+    <string name="minutes_label">Minutes</string>
+    <string name="total_minutes">Total: %1$d minutes</string>
 </resources>

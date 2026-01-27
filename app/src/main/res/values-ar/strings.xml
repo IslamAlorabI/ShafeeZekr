@@ -98,4 +98,7 @@
     <string name="period_rule_currently_blocked">محظور حالياً بسبب قاعدة فترة زمنية</string>
     <string name="delete">حذف</string>
     <string name="period_rule_empty">لا توجد قواعد فترات زمنية</string>
+    <string name="hours_label">ساعات</string>
+    <string name="minutes_label">دقائق</string>
+    <string name="total_minutes">المجموع: %1$d دقيقة</string>
 </resources>
