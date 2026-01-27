@@ -286,10 +286,12 @@ fun HomeScreen(
                             )
 
                             val intervals = listOf(
+                                ReminderInterval.ONE to stringResource(R.string.interval_1_min),
                                 ReminderInterval.FIVE to stringResource(R.string.interval_5_min),
                                 ReminderInterval.TEN to stringResource(R.string.interval_10_min),
                                 ReminderInterval.THIRTY to stringResource(R.string.interval_30_min),
                                 ReminderInterval.SIXTY to stringResource(R.string.interval_1_hour),
+                                ReminderInterval.TWO_HOURS to stringResource(R.string.interval_2_hours),
                                 ReminderInterval.CUSTOM to stringResource(R.string.interval_custom)
                             )
 
@@ -466,10 +468,10 @@ private fun NumberPickerColumn(
                 modifier = Modifier.padding(8.dp)
             ) {
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value > range.first) onValueChange(value - 1) }
+                    onClick = { if (value < range.last) onValueChange(value + 1) }
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Remove,
+                        imageVector = androidx.compose.material.icons.Icons.Default.Add,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -484,10 +486,10 @@ private fun NumberPickerColumn(
                 )
                 
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value < range.last) onValueChange(value + 1) }
+                    onClick = { if (value > range.first) onValueChange(value - 1) }
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                        imageVector = androidx.compose.material.icons.Icons.Default.Remove,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
