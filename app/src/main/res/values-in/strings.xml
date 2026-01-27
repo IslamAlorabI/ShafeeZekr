@@ -88,6 +88,7 @@
     <string name="sound_section">Suara</string>
     <string name="sound_selection">Pilihan Suara</string>
     <string name="sound_name">Suara %1$d</string>
+    <string name="sound_play_warning">Peringatan: Suara akan diputar segera setelah dipilih.</string>
     <string name="app_volume">Volume Aplikasi</string>
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
     

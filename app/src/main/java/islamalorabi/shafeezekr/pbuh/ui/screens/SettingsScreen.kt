@@ -1323,6 +1323,14 @@ private fun SoundSelectionDialog(
                         )
                     }
                 }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    text = stringResource(R.string.sound_play_warning),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
         },
         confirmButton = {
