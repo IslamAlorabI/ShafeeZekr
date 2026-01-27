@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -29,7 +30,8 @@ data class AppSettings(
     val customIntervalMinutes: Int = 15,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val colorScheme: ColorScheme = ColorScheme.MONET,
-    val languageCode: String = ""
+    val languageCode: String = "",
+    val appVolume: Float = 1.0f
 )
 
 class PreferencesManager(private val context: Context) {
@@ -41,6 +43,7 @@ class PreferencesManager(private val context: Context) {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
+        val APP_VOLUME = floatPreferencesKey("app_volume")
     }
 
     val settingsFlow: Flow<AppSettings> = context.dataStore.data.map { preferences ->
@@ -62,7 +65,8 @@ class PreferencesManager(private val context: Context) {
             } catch (e: Exception) {
                 ColorScheme.MONET
             },
-            languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: ""
+            languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: "",
+            appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f
         )
     }
 
@@ -99,6 +103,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setLanguageCode(code: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LANGUAGE_CODE] = code
+        }
+    }
+
+    suspend fun setAppVolume(volume: Float) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.APP_VOLUME] = volume.coerceIn(0f, 1f)
         }
     }
 }

@@ -132,6 +132,9 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     },
+                    onVolumeChange = { volume ->
+                        scope.launch { preferencesManager.setAppVolume(volume) }
+                    },
                     onCheckForUpdates = {
                         islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
                     }
@@ -151,6 +154,7 @@ fun MainApp(
     onThemeModeChange: (ThemeMode) -> Unit,
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
+    onVolumeChange: (Float) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -224,6 +228,7 @@ fun MainApp(
                 onThemeModeChange = onThemeModeChange,
                 onColorSchemeChange = onColorSchemeChange,
                 onLanguageChange = onLanguageChange,
+                onVolumeChange = onVolumeChange,
                 onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)
             )

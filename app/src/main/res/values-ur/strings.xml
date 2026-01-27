@@ -82,4 +82,8 @@
     <string name="update_message">نیا ورژن (%1$s) دستیاب ہے۔</string>
     <string name="update_button">اپڈیٹ کریں</string>
     <string name="later_button">بعد میں</string>
+    
+    <string name="sound_section">آواز</string>
+    <string name="app_volume">ایپ والیوم</string>
+    <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
 </resources>
