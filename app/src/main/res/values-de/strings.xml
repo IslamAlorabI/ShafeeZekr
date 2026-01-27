@@ -84,6 +84,8 @@
     <string name="later_button">Später</string>
     
     <string name="sound_section">Ton</string>
+    <string name="sound_selection">Tonauswahl</string>
+    <string name="sound_name">Ton %1$d</string>
     <string name="app_volume">App-Lautstärke</string>
     <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
     

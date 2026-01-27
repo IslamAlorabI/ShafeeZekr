@@ -84,6 +84,8 @@
     <string name="later_button">بعداً</string>
     
     <string name="sound_section">صدا</string>
+    <string name="sound_selection">انتخاب صدا</string>
+    <string name="sound_name">صدای %1$d</string>
     <string name="app_volume">صدای برنامه</string>
     <string name="app_volume_desc">کنترل مستقل صدای برنامه</string>
     

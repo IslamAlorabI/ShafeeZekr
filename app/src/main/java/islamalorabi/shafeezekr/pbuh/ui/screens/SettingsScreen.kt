@@ -46,6 +46,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -209,7 +210,7 @@ fun SettingsScreen(
                             },
                             supportingContent = {
                                 Text(
-                                    text = "Sound ${settings.selectedSoundIndex}",
+                                    text = stringResource(R.string.sound_name, settings.selectedSoundIndex),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -232,6 +233,11 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .clickable { showSoundDialog = true }
                                 .padding(bottom = 8.dp)
+                        )
+                        
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant
                         )
                         
                         Row(
@@ -1282,7 +1288,6 @@ private fun SoundSelectionDialog(
                 modifier = Modifier
                     .selectableGroup()
                     .verticalScroll(rememberScrollState())
-                    .height(300.dp)
             ) {
                 (1..8).forEach { index ->
                     Row(
@@ -1319,7 +1324,7 @@ private fun SoundSelectionDialog(
                         RadioButton(selected = tempSelected == index, onClick = null)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Sound $index", 
+                            text = stringResource(R.string.sound_name, index), 
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

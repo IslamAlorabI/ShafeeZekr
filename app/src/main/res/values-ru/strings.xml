@@ -84,6 +84,8 @@
     <string name="later_button">Позже</string>
     
     <string name="sound_section">Звук</string>
+    <string name="sound_selection">Выбор звука</string>
+    <string name="sound_name">Звук %1$d</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
     
