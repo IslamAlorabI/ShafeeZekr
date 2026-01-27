@@ -12,6 +12,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.dataStore
@@ -71,9 +72,11 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun playSound(context: Context) {
         try {
-            val volume = kotlinx.coroutines.runBlocking {
-                context.dataStore.data.first()[floatPreferencesKey("app_volume")] ?: 1.0f
+            val preferences = kotlinx.coroutines.runBlocking {
+                context.dataStore.data.first()
             }
+            val volume = preferences[floatPreferencesKey("app_volume")] ?: 1.0f
+            val soundIndex = preferences[intPreferencesKey("selected_sound_index")] ?: 1
 
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -82,7 +85,10 @@ class ReminderReceiver : BroadcastReceiver() {
 
             val mediaPlayer = MediaPlayer()
             mediaPlayer.setAudioAttributes(audioAttributes)
-            val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.zikr_sound}")
+            
+            val resId = context.resources.getIdentifier("zikr_sound_$soundIndex", "raw", context.packageName)
+            val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
+            
             mediaPlayer.setDataSource(context, soundUri)
             mediaPlayer.setOnPreparedListener { mp ->
                 mp.setVolume(volume, volume)

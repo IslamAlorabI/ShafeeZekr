@@ -139,6 +139,9 @@ class MainActivity : ComponentActivity() {
                     onPeriodRulesChange = { rules ->
                         scope.launch { preferencesManager.setPeriodRules(rules) }
                     },
+                    onSoundChange = { index ->
+                        scope.launch { preferencesManager.setSelectedSoundIndex(index) }
+                    },
                     onCheckForUpdates = {
                         islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
                     }
@@ -160,6 +163,7 @@ fun MainApp(
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
+    onSoundChange: (Int) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
@@ -235,6 +239,7 @@ fun MainApp(
                 onLanguageChange = onLanguageChange,
                 onVolumeChange = onVolumeChange,
                 onPeriodRulesChange = onPeriodRulesChange,
+                onSoundChange = onSoundChange,
                 onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)
             )

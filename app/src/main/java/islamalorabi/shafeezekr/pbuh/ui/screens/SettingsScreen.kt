@@ -22,27 +22,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.BatteryStd
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,10 +62,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,6 +73,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
@@ -72,20 +85,10 @@ import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Switch
-import androidx.compose.foundation.lazy.items
+import java.util.Calendar
+import android.media.MediaPlayer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import java.util.Calendar
 
 sealed class UpdateState {
     object Idle : UpdateState()
@@ -120,6 +123,7 @@ fun SettingsScreen(
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
+    onSoundChange: (Int) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?,
     modifier: Modifier = Modifier
 ) {
@@ -127,6 +131,7 @@ fun SettingsScreen(
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
+    var showSoundDialog by remember { mutableStateOf(false) }
     var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -195,6 +200,40 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.sound_selection),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = "Sound ${settings.selectedSoundIndex}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.MusicNote,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            modifier = Modifier
+                                .clickable { showSoundDialog = true }
+                                .padding(bottom = 8.dp)
+                        )
+                        
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -731,6 +770,18 @@ fun SettingsScreen(
             }
         )
     }
+
+    if (showSoundDialog) {
+        SoundSelectionDialog(
+            currentIndex = settings.selectedSoundIndex,
+            currentVolume = settings.appVolume,
+            onDismiss = { showSoundDialog = false },
+            onSelect = {
+                onSoundChange(it)
+                showSoundDialog = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -1201,4 +1252,91 @@ private fun TimePickerField(
             Text("+", style = MaterialTheme.typography.titleLarge)
         }
     }
+}
+
+@Composable
+private fun SoundSelectionDialog(
+    currentIndex: Int,
+    currentVolume: Float,
+    onDismiss: () -> Unit,
+    onSelect: (Int) -> Unit
+) {
+    val context = LocalContext.current
+    var tempSelected by remember { mutableStateOf(currentIndex) }
+    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer?.release()
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        title = { Text(stringResource(R.string.sound_selection)) },
+        text = {
+            Column(
+                modifier = Modifier
+                    .selectableGroup()
+                    .verticalScroll(rememberScrollState())
+                    .height(300.dp)
+            ) {
+                (1..8).forEach { index ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = tempSelected == index,
+                                onClick = {
+                                    tempSelected = index
+                                    
+                                    // Play preview
+                                    try {
+                                        mediaPlayer?.release()
+                                        val resId = context.resources.getIdentifier(
+                                            "zikr_sound_$index", 
+                                            "raw", 
+                                            context.packageName
+                                        )
+                                        if (resId != 0) {
+                                            mediaPlayer = MediaPlayer.create(context, resId)
+                                            mediaPlayer?.setVolume(currentVolume, currentVolume)
+                                            mediaPlayer?.setOnCompletionListener { it.release() }
+                                            mediaPlayer?.start()
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = tempSelected == index, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Sound $index", 
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onSelect(tempSelected)
+            }) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }
