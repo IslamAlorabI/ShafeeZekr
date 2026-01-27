@@ -89,6 +89,7 @@
     <string name="later_button">Later</string>
     
     <string name="sound_section">Sound</string>
+    <string name="sound_selection">Sound Selection</string>
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
     

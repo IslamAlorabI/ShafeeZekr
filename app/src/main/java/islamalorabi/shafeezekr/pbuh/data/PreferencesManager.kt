@@ -184,6 +184,7 @@ data class AppSettings(
     val colorScheme: ColorScheme = ColorScheme.MONET,
     val languageCode: String = "",
     val appVolume: Float = 1.0f,
+    val selectedSoundIndex: Int = 1,
     val periodRules: List<PeriodRule> = emptyList()
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
@@ -222,6 +223,7 @@ class PreferencesManager(private val context: Context) {
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
         val APP_VOLUME = floatPreferencesKey("app_volume")
+        val SELECTED_SOUND_INDEX = intPreferencesKey("selected_sound_index")
         val PERIOD_RULES = stringPreferencesKey("period_rules")
     }
 
@@ -262,6 +264,7 @@ class PreferencesManager(private val context: Context) {
             },
             languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: "",
             appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f,
+            selectedSoundIndex = preferences[PreferencesKeys.SELECTED_SOUND_INDEX] ?: 1,
             periodRules = parsePeriodRules(preferences[PreferencesKeys.PERIOD_RULES] ?: "")
         )
     }
@@ -311,6 +314,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setPeriodRules(rules: List<PeriodRule>) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.PERIOD_RULES] = periodRulesToJson(rules)
+        }
+    }
+
+    suspend fun setSelectedSoundIndex(index: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_SOUND_INDEX] = index
         }
     }
 }

@@ -121,7 +121,8 @@ fun HomeScreen(
             Card(
                 onClick = {
                     try {
-                        val mp = MediaPlayer.create(context, R.raw.zikr_sound)
+                        val resId = context.resources.getIdentifier("zikr_sound_${settings.selectedSoundIndex}", "raw", context.packageName)
+                        val mp = if (resId != 0) MediaPlayer.create(context, resId) else null
                         mp?.setVolume(settings.appVolume, settings.appVolume)
                         mp?.setOnCompletionListener { it.release() }
                         mp?.start()
