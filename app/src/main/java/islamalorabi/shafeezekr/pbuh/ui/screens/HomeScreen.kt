@@ -11,6 +11,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -462,10 +465,10 @@ private fun NumberPickerColumn(
                 modifier = Modifier.padding(8.dp)
             ) {
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value < range.last) onValueChange(value + 1) }
+                    onClick = { if (value > range.first) onValueChange(value - 1) }
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_up),
+                        imageVector = androidx.compose.material.icons.Icons.Default.Remove,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -480,10 +483,10 @@ private fun NumberPickerColumn(
                 )
                 
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value > range.first) onValueChange(value - 1) }
+                    onClick = { if (value < range.last) onValueChange(value + 1) }
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_down),
+                        imageVector = androidx.compose.material.icons.Icons.Default.Add,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
