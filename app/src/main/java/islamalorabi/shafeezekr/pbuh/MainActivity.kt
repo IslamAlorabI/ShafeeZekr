@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.os.LocaleListCompat
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
-import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
@@ -136,9 +135,7 @@ class MainActivity : ComponentActivity() {
                     onVolumeChange = { volume ->
                         scope.launch { preferencesManager.setAppVolume(volume) }
                     },
-                    onPeriodRulesChange = { rules ->
-                        scope.launch { preferencesManager.setPeriodRules(rules) }
-                    },
+
                     onSoundChange = { index ->
                         scope.launch { preferencesManager.setSelectedSoundIndex(index) }
                     },
@@ -162,7 +159,6 @@ fun MainApp(
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
-    onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onSoundChange: (Int) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?
 ) {
@@ -238,7 +234,6 @@ fun MainApp(
                 onColorSchemeChange = onColorSchemeChange,
                 onLanguageChange = onLanguageChange,
                 onVolumeChange = onVolumeChange,
-                onPeriodRulesChange = onPeriodRulesChange,
                 onSoundChange = onSoundChange,
                 onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)

@@ -34,13 +34,10 @@ import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.BatteryStd
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -80,9 +77,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
-import islamalorabi.shafeezekr.pbuh.data.PeriodRule
-import islamalorabi.shafeezekr.pbuh.data.PeriodRuleType
-import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
@@ -123,7 +117,6 @@ fun SettingsScreen(
     onColorSchemeChange: (ColorScheme) -> Unit,
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
-    onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onSoundChange: (Int) -> Unit,
     onCheckForUpdates: suspend () -> GithubRelease?,
     modifier: Modifier = Modifier
@@ -131,7 +124,6 @@ fun SettingsScreen(
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
-    var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
     var showSoundDialog by remember { mutableStateOf(false) }
     var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
     val scope = rememberCoroutineScope()
@@ -280,154 +272,7 @@ fun SettingsScreen(
             }
         }
 
-        item {
-            SettingsGroup(
-                header = stringResource(R.string.period_rules_section),
-                headerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Text(
-                    text = stringResource(R.string.period_rules_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
-                )
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        if (settings.periodRules.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.period_rule_empty),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        } else {
-                            settings.periodRules.forEachIndexed { index, rule ->
-                                val hasConflict = settings.periodRules.any { other ->
-                                    other.id != rule.id && other.isEnabled && rule.conflictsWith(other)
-                                }
-                                ListItem(
-                                    headlineContent = {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Text(
-                                                text = if (rule.type == PeriodRuleType.ALLOW) {
-                                                    stringResource(R.string.period_rule_allow)
-                                                } else {
-                                                    stringResource(R.string.period_rule_block)
-                                                },
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                color = if (rule.type == PeriodRuleType.ALLOW) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.error
-                                                }
-                                            )
-                                            Text(
-                                                text = "•",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                text = when (rule.scheduleType) {
-                                                    RuleScheduleType.DAILY_TIME -> stringResource(R.string.rule_type_daily)
-                                                    RuleScheduleType.WEEKLY_DAYS -> stringResource(R.string.rule_type_weekly)
-                                                    RuleScheduleType.SPECIFIC_DATE -> stringResource(R.string.rule_type_date)
-                                                },
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    },
-                                    supportingContent = {
-                                        Column {
-                                            Text(
-                                                text = rule.getDisplayText(),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            if (hasConflict && !rule.isEnabled) {
-                                                Text(
-                                                    text = stringResource(R.string.period_rule_conflict_warning),
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = MaterialTheme.colorScheme.error
-                                                )
-                                            }
-                                        }
-                                    },
-                                    leadingContent = {
-                                        Icon(
-                                            imageVector = when (rule.scheduleType) {
-                                                RuleScheduleType.DAILY_TIME -> Icons.Default.Schedule
-                                                RuleScheduleType.WEEKLY_DAYS -> Icons.Default.DateRange
-                                                RuleScheduleType.SPECIFIC_DATE -> Icons.Default.Event
-                                            },
-                                            contentDescription = null,
-                                            tint = if (rule.type == PeriodRuleType.ALLOW) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.error
-                                            }
-                                        )
-                                    },
-                                    trailingContent = {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Switch(
-                                                checked = rule.isEnabled,
-                                                onCheckedChange = { enabled ->
-                                                    if (enabled && hasConflict) {
-                                                        return@Switch
-                                                    }
-                                                    val updatedRules = settings.periodRules.map {
-                                                        if (it.id == rule.id) it.copy(isEnabled = enabled) else it
-                                                    }
-                                                    onPeriodRulesChange(updatedRules)
-                                                }
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = stringResource(R.string.delete),
-                                                tint = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier
-                                                    .size(24.dp)
-                                                    .clickable {
-                                                        val updatedRules = settings.periodRules.filter { it.id != rule.id }
-                                                        onPeriodRulesChange(updatedRules)
-                                                    }
-                                            )
-                                        }
-                                    },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                                )
-                            }
-                        }
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    text = stringResource(R.string.add_period_rule),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            },
-                            leadingContent = {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            },
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            modifier = Modifier.clickable { showAddPeriodRuleDialog = true }
-                        )
-                    }
-                }
-            }
-        }
+
 
         item {
             SettingsGroup(
@@ -767,16 +612,7 @@ fun SettingsScreen(
         )
     }
 
-    if (showAddPeriodRuleDialog) {
-        AddPeriodRuleDialog(
-            onDismiss = { showAddPeriodRuleDialog = false },
-            onConfirm = { rule ->
-                val updatedRules = settings.periodRules + rule
-                onPeriodRulesChange(updatedRules)
-                showAddPeriodRuleDialog = false
-            }
-        )
-    }
+
 
     if (showSoundDialog) {
         SoundSelectionDialog(
@@ -953,313 +789,7 @@ private fun LanguageDialog(
     )
 }
 
-@Composable
-private fun AddPeriodRuleDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (PeriodRule) -> Unit
-) {
-    var ruleType by remember { mutableStateOf(PeriodRuleType.ALLOW) }
-    var scheduleType by remember { mutableStateOf(RuleScheduleType.DAILY_TIME) }
-    var startHour by remember { mutableStateOf(9) }
-    var startMinute by remember { mutableStateOf(0) }
-    var endHour by remember { mutableStateOf(17) }
-    var endMinute by remember { mutableStateOf(0) }
-    var selectedDays by remember { mutableStateOf(setOf<Int>()) }
-    
-    val calendar = Calendar.getInstance()
-    var selectedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
-    var selectedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
-    var selectedDay by remember { mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
 
-    val dayNames = listOf(
-        stringResource(R.string.day_sun),
-        stringResource(R.string.day_mon),
-        stringResource(R.string.day_tue),
-        stringResource(R.string.day_wed),
-        stringResource(R.string.day_thu),
-        stringResource(R.string.day_fri),
-        stringResource(R.string.day_sat)
-    )
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        title = { Text(stringResource(R.string.add_period_rule)) },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Column(modifier = Modifier.selectableGroup()) {
-                    Text(
-                        text = stringResource(R.string.rule_action),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilterChip(
-                            selected = ruleType == PeriodRuleType.ALLOW,
-                            onClick = { ruleType = PeriodRuleType.ALLOW },
-                            label = { Text(stringResource(R.string.period_rule_allow)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        )
-                        FilterChip(
-                            selected = ruleType == PeriodRuleType.BLOCK,
-                            onClick = { ruleType = PeriodRuleType.BLOCK },
-                            label = { Text(stringResource(R.string.period_rule_block)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.error,
-                                selectedLabelColor = MaterialTheme.colorScheme.onError
-                            )
-                        )
-                    }
-                }
-
-                Column {
-                    Text(
-                        text = stringResource(R.string.schedule_type),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilterChip(
-                            selected = scheduleType == RuleScheduleType.DAILY_TIME,
-                            onClick = { scheduleType = RuleScheduleType.DAILY_TIME },
-                            label = { Text(stringResource(R.string.rule_type_daily)) }
-                        )
-                        FilterChip(
-                            selected = scheduleType == RuleScheduleType.WEEKLY_DAYS,
-                            onClick = { scheduleType = RuleScheduleType.WEEKLY_DAYS },
-                            label = { Text(stringResource(R.string.rule_type_weekly)) }
-                        )
-                        FilterChip(
-                            selected = scheduleType == RuleScheduleType.SPECIFIC_DATE,
-                            onClick = { scheduleType = RuleScheduleType.SPECIFIC_DATE },
-                            label = { Text(stringResource(R.string.rule_type_date)) }
-                        )
-                    }
-                }
-
-                if (scheduleType == RuleScheduleType.WEEKLY_DAYS) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.select_days),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            dayNames.forEachIndexed { index, name ->
-                                FilterChip(
-                                    selected = index in selectedDays,
-                                    onClick = {
-                                        selectedDays = if (index in selectedDays) {
-                                            selectedDays - index
-                                        } else {
-                                            selectedDays + index
-                                        }
-                                    },
-                                    label = { Text(name.take(2)) },
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                if (scheduleType == RuleScheduleType.SPECIFIC_DATE) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.select_date),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TimePickerField(
-                                value = selectedYear,
-                                onValueChange = { selectedYear = it.coerceIn(2024, 2030) },
-                                maxValue = 2030,
-                                minValue = 2024,
-                                modifier = Modifier.weight(1.5f)
-                            )
-                            Text("-")
-                            TimePickerField(
-                                value = selectedMonth + 1,
-                                onValueChange = { selectedMonth = (it - 1).coerceIn(0, 11) },
-                                maxValue = 12,
-                                minValue = 1,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text("-")
-                            TimePickerField(
-                                value = selectedDay,
-                                onValueChange = { selectedDay = it.coerceIn(1, 31) },
-                                maxValue = 31,
-                                minValue = 1,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
-
-                Column {
-                    Text(
-                        text = stringResource(R.string.period_rule_start),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        TimePickerField(
-                            value = startHour,
-                            onValueChange = { startHour = it.coerceIn(0, 23) },
-                            maxValue = 23,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(":", style = MaterialTheme.typography.titleMedium)
-                        TimePickerField(
-                            value = startMinute,
-                            onValueChange = { startMinute = it.coerceIn(0, 59) },
-                            maxValue = 59,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (startHour < 12) "AM" else "PM",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-                    }
-                }
-                
-                Column {
-                    Text(
-                        text = stringResource(R.string.period_rule_end),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        TimePickerField(
-                            value = endHour,
-                            onValueChange = { endHour = it.coerceIn(0, 23) },
-                            maxValue = 23,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(":", style = MaterialTheme.typography.titleMedium)
-                        TimePickerField(
-                            value = endMinute,
-                            onValueChange = { endMinute = it.coerceIn(0, 59) },
-                            maxValue = 59,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (endHour < 12) "AM" else "PM",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm(
-                        PeriodRule(
-                            type = ruleType,
-                            scheduleType = scheduleType,
-                            startHour = startHour,
-                            startMinute = startMinute,
-                            endHour = endHour,
-                            endMinute = endMinute,
-                            daysOfWeek = selectedDays,
-                            year = selectedYear,
-                            month = selectedMonth,
-                            dayOfMonth = selectedDay,
-                            isEnabled = true
-                        )
-                    )
-                },
-                enabled = when (scheduleType) {
-                    RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
-                    else -> true
-                }
-            ) {
-                Text(stringResource(R.string.save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
-    )
-}
-
-@Composable
-private fun TimePickerField(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    maxValue: Int,
-    modifier: Modifier = Modifier,
-    minValue: Int = 0
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        IconButton(
-            onClick = { onValueChange(if (value > minValue) value - 1 else maxValue) },
-            modifier = Modifier.size(32.dp)
-        ) {
-            Text("-", style = MaterialTheme.typography.titleLarge)
-        }
-        Text(
-            text = String.format("%02d", value),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
-        IconButton(
-            onClick = { onValueChange(if (value < maxValue) value + 1 else minValue) },
-            modifier = Modifier.size(32.dp)
-        ) {
-            Text("+", style = MaterialTheme.typography.titleLarge)
-        }
-    }
-}
 
 @Composable
 private fun SoundSelectionDialog(

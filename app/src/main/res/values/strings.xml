@@ -22,6 +22,9 @@
     <string name="custom_interval_title">Custom Interval</string>
     <string name="minutes">minutes</string>
     <string name="interval_reset_note">Note: Changing the interval will reset the current timer.</string>
+    <string name="hours_label">Hours</string>
+    <string name="minutes_label">Minutes</string>
+    <string name="total_minutes">Total: %1$d minutes</string>
     <string name="battery_warning">Background activity restrictions on some devices may prevent reminders from being delivered on time. Please ensure battery optimization is disabled for this app to guarantee reliable performance.</string>
     
     <string name="settings_title">Settings</string>
@@ -97,32 +100,5 @@
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
     
-    <string name="period_rules_section">Period Rules</string>
-    <string name="period_rules_desc">Control when reminders are allowed or blocked</string>
-    <string name="add_period_rule">Add Rule</string>
-    <string name="period_rule_allow">Allow</string>
-    <string name="period_rule_block">Block</string>
-    <string name="period_rule_start">Start Time</string>
-    <string name="period_rule_end">End Time</string>
-    <string name="period_rule_conflict_warning">Cannot enable: conflicts with another active rule</string>
-    <string name="period_rule_currently_blocked">Currently blocked by period rule</string>
-    <string name="delete">Delete</string>
-    <string name="period_rule_empty">No period rules configured</string>
-    <string name="hours_label">Hours</string>
-    <string name="minutes_label">Minutes</string>
-    <string name="total_minutes">Total: %1$d minutes</string>
-    <string name="rule_type_daily">Daily Time Range</string>
-    <string name="rule_type_weekly">Weekly Days</string>
-    <string name="rule_type_date">Specific Date</string>
-    <string name="rule_action">Action</string>
-    <string name="schedule_type">Schedule Type</string>
-    <string name="select_days">Select Days</string>
-    <string name="select_date">Select Date</string>
-    <string name="day_sun">Sun</string>
-    <string name="day_mon">Mon</string>
-    <string name="day_tue">Tue</string>
-    <string name="day_wed">Wed</string>
-    <string name="day_thu">Thu</string>
-    <string name="day_fri">Fri</string>
-    <string name="day_sat">Sat</string>
+
 </resources>
