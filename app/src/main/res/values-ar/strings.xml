@@ -102,8 +102,7 @@
     <string name="edit_period_rule">تعديل ساعة هدوء</string>
     <string name="quiet_hours_active">ساعات الهدوء: التذكيرات متوقفة</string>
     <string name="all_day">اليوم كامل</string>
-    <string name="period_rule_allow">سماح</string>
-    <string name="period_rule_block">حظر</string>
+
     <string name="period_rule_start">وقت البداية</string>
     <string name="period_rule_end">وقت النهاية</string>
     <string name="period_rule_conflict_warning">لا يمكن التفعيل: تعارض مع قاعدة نشطة أخرى</string>

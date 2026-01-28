@@ -101,8 +101,7 @@
     <string name="all_week">Ganze Woche</string>
     <string name="quiet_hours_active">Ruhezeit Aktiv: Erinnerungen pausiert</string>
     <string name="all_day">Ganztägig</string>
-    <string name="period_rule_allow">Erlauben</string>
-    <string name="period_rule_block">Blockieren</string>
+
     <string name="period_rule_start">Startzeit</string>
     <string name="period_rule_end">Endzeit</string>
     <string name="period_rule_conflict_warning">Aktivierung nicht möglich: Konflikt mit einer anderen aktiven Regel</string>

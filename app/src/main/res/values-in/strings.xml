@@ -101,8 +101,7 @@
     <string name="all_week">Semua minggu</string>
     <string name="quiet_hours_active">Jam Tenang Aktif: Pengingat Dijeda</string>
     <string name="all_day">Sepanjang Hari</string>
-    <string name="period_rule_allow">Izinkan</string>
-    <string name="period_rule_block">Blokir</string>
+
     <string name="period_rule_start">Waktu Mulai</string>
     <string name="period_rule_end">Waktu Selesai</string>
     <string name="period_rule_conflict_warning">Tidak dapat diaktifkan: konflik dengan aturan aktif lainnya</string>
