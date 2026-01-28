@@ -94,7 +94,11 @@
     
     <string name="period_rules_section">Sessiz Saatler</string>
     <string name="period_rules_desc">Hatırlatıcıların sessize alındığı zamanları ayarlayın</string>
+    <string name="quiet_hours_edit_hint">Düzenlemek için bir kurala dokunun</string>
+    <string name="quiet_hours_delete_hint">Kurallar düzenleme sayfasından silinebilir</string>
     <string name="add_period_rule">Sessiz Saat Ekle</string>
+    <string name="select_all_days">Tümünü Seç</string>
+    <string name="all_week">Tüm hafta</string>
     <string name="quiet_hours_active">Sessiz Saatler Aktif: Hatırlatmalar Duraklatıldı</string>
     <string name="all_day">Tüm Gün</string>
     <string name="period_rule_allow">İzin Ver</string>

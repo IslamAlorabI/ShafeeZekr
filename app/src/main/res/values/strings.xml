@@ -99,8 +99,13 @@
     
     <string name="period_rules_section">Quiet Hours</string>
     <string name="period_rules_desc">Set times when reminders are muted</string>
+    <string name="quiet_hours_edit_hint">Tap on a rule to edit it</string>
+    <string name="quiet_hours_delete_hint">Rules can be deleted from the edit page</string>
     <string name="all_day">All Day</string>
+    <string name="select_all_days">Select All</string>
+    <string name="all_week">All week</string>
     <string name="add_period_rule">Add Quiet Hour</string>
+    <string name="edit_period_rule">Edit Quiet Hour</string>
     <string name="period_rule_start">Start Time</string>
     <string name="period_rule_end">End Time</string>
     <string name="period_rule_conflict_warning">Cannot enable: conflicts with another active rule</string>

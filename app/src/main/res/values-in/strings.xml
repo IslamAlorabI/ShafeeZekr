@@ -94,7 +94,11 @@
     
     <string name="period_rules_section">Jam Tenang</string>
     <string name="period_rules_desc">Atur waktu ketika pengingat diheningkan</string>
+    <string name="quiet_hours_edit_hint">Ketuk aturan untuk mengeditnya</string>
+    <string name="quiet_hours_delete_hint">Aturan dapat dihapus dari halaman edit</string>
     <string name="add_period_rule">Tambah Jam Tenang</string>
+    <string name="select_all_days">Pilih Semua</string>
+    <string name="all_week">Semua minggu</string>
     <string name="quiet_hours_active">Jam Tenang Aktif: Pengingat Dijeda</string>
     <string name="all_day">Sepanjang Hari</string>
     <string name="period_rule_allow">Izinkan</string>

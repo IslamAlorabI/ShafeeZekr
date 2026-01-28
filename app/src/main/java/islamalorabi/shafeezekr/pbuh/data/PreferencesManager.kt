@@ -137,8 +137,12 @@ data class PeriodRule(
         }
         return when (scheduleType) {
             RuleScheduleType.WEEKLY_DAYS -> {
-                val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
-                val days = daysOfWeek.sorted().map { dayNames[it] }.joinToString(", ")
+                val days = if (daysOfWeek.size == 7) {
+                    "All week"
+                } else {
+                    val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+                    daysOfWeek.sorted().map { dayNames[it] }.joinToString(", ")
+                }
                 "$days | $timeRange"
             }
             RuleScheduleType.SPECIFIC_DATE -> {
