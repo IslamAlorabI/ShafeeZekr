@@ -101,8 +101,7 @@
     <string name="all_week">Вся неделя</string>
     <string name="quiet_hours_active">Тихий режим: напоминания приостановлены</string>
     <string name="all_day">Весь день</string>
-    <string name="period_rule_allow">Разрешить</string>
-    <string name="period_rule_block">Блокировать</string>
+
     <string name="period_rule_start">Время начала</string>
     <string name="period_rule_end">Время окончания</string>
     <string name="period_rule_conflict_warning">Невозможно включить: конфликт с другим активным правилом</string>

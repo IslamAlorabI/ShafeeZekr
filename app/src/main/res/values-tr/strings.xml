@@ -101,8 +101,7 @@
     <string name="all_week">Tüm hafta</string>
     <string name="quiet_hours_active">Sessiz Saatler Aktif: Hatırlatmalar Duraklatıldı</string>
     <string name="all_day">Tüm Gün</string>
-    <string name="period_rule_allow">İzin Ver</string>
-    <string name="period_rule_block">Engelle</string>
+
     <string name="period_rule_start">Başlangıç Zamanı</string>
     <string name="period_rule_end">Bitiş Zamanı</string>
     <string name="period_rule_conflict_warning">Etkinleştirilemez: başka bir aktif kuralla çakışıyor</string>
