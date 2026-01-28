@@ -144,6 +144,27 @@ fun AboutScreen(
             )
         }
 
+        val privacyPolicyUrl = stringResource(R.string.privacy_policy_url)
+        Row(
+            modifier = Modifier
+                .clickable { uriHandler.openUri(privacyPolicyUrl) }
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_privacy),
+                contentDescription = stringResource(R.string.privacy_policy),
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.privacy_policy),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
