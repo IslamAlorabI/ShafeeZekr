@@ -59,6 +59,7 @@
     <string name="about_copyright">© %1$s Islam Alorabi</string>
     <string name="about_rights">Hak cipta dilindungi</string>
     <string name="tap_to_listen">Ketuk untuk mendengar pujian kepada Nabi</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
     
     <string name="notification_channel_name">Pengingat Zikir</string>
     <string name="notification_channel_desc">Notifikasi pengingat berkala</string>

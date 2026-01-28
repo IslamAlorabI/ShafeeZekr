@@ -22,7 +22,7 @@
 *   **Battery Optimization**: Intelligent handling of battery optimization settings to ensure reliable reminders.
 *   **Auto-Updates**: Integrated check for updates directly from GitHub Releases.
 *   **Boot Persistence**: Reminders automatically restart when you reboot your device.
-*   **Privacy Focused**: No data collection or tracking.
+*   **Privacy Focused**: No data collection or tracking. See our [Privacy Policy](PRIVACY_POLICY.md).
 
 ## 📱 Screenshots
 
