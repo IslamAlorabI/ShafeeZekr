@@ -92,9 +92,11 @@
     <string name="app_volume">Volume Aplikasi</string>
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
     
-    <string name="period_rules_section">Aturan Waktu</string>
-    <string name="period_rules_desc">Kontrol kapan pengingat diizinkan atau diblokir</string>
-    <string name="add_period_rule">Tambah Aturan</string>
+    <string name="period_rules_section">Jam Tenang</string>
+    <string name="period_rules_desc">Atur waktu ketika pengingat diheningkan</string>
+    <string name="add_period_rule">Tambah Jam Tenang</string>
+    <string name="quiet_hours_active">Jam Tenang Aktif: Pengingat Dijeda</string>
+    <string name="all_day">Sepanjang Hari</string>
     <string name="period_rule_allow">Izinkan</string>
     <string name="period_rule_block">Blokir</string>
     <string name="period_rule_start">Waktu Mulai</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">Tidak dapat diaktifkan: konflik dengan aturan aktif lainnya</string>
     <string name="period_rule_currently_blocked">Saat ini diblokir oleh aturan waktu</string>
     <string name="delete">Hapus</string>
-    <string name="period_rule_empty">Tidak ada aturan waktu yang dikonfigurasi</string>
+    <string name="period_rule_empty">Tidak ada jam tenang yang dikonfigurasi</string>
     <string name="hours_label">Jam</string>
     <string name="minutes_label">Menit</string>
     <string name="total_minutes">Total: %1$d menit</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">Kam</string>
     <string name="day_fri">Jum</string>
     <string name="day_sat">Sab</string>
+    <string name="day_sun_full">Minggu</string>
+    <string name="day_mon_full">Senin</string>
+    <string name="day_tue_full">Selasa</string>
+    <string name="day_wed_full">Rabu</string>
+    <string name="day_thu_full">Kamis</string>
+    <string name="day_fri_full">Jumat</string>
+    <string name="day_sat_full">Sabtu</string>
     <string name="select_time">Pilih Waktu</string>
     <string name="confirm">Konfirmasi</string>
 </resources>

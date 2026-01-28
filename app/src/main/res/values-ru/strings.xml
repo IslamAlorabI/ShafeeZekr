@@ -92,9 +92,11 @@
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
     
-    <string name="period_rules_section">Правила периодов</string>
-    <string name="period_rules_desc">Управление временем разрешения или блокировки напоминаний</string>
-    <string name="add_period_rule">Добавить правило</string>
+    <string name="period_rules_section">Тихие часы</string>
+    <string name="period_rules_desc">Настройте время, когда напоминания отключены</string>
+    <string name="add_period_rule">Добавить тихий час</string>
+    <string name="quiet_hours_active">Тихий режим: напоминания приостановлены</string>
+    <string name="all_day">Весь день</string>
     <string name="period_rule_allow">Разрешить</string>
     <string name="period_rule_block">Блокировать</string>
     <string name="period_rule_start">Время начала</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">Невозможно включить: конфликт с другим активным правилом</string>
     <string name="period_rule_currently_blocked">В данный момент заблокировано правилом периода</string>
     <string name="delete">Удалить</string>
-    <string name="period_rule_empty">Правила периодов не настроены</string>
+    <string name="period_rule_empty">Тихие часы не настроены</string>
     <string name="hours_label">Часы</string>
     <string name="minutes_label">Минуты</string>
     <string name="total_minutes">Всего: %1$d минут</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">Чт</string>
     <string name="day_fri">Пт</string>
     <string name="day_sat">Сб</string>
+    <string name="day_sun_full">Воскресенье</string>
+    <string name="day_mon_full">Понедельник</string>
+    <string name="day_tue_full">Вторник</string>
+    <string name="day_wed_full">Среда</string>
+    <string name="day_thu_full">Четверг</string>
+    <string name="day_fri_full">Пятница</string>
+    <string name="day_sat_full">Суббота</string>
     <string name="select_time">Выбрать время</string>
     <string name="confirm">Подтвердить</string>
 </resources>

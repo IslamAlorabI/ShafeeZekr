@@ -92,9 +92,11 @@
     <string name="app_volume">Uygulama Ses Düzeyi</string>
     <string name="app_volume_desc">Uygulama sesini bağımsız olarak kontrol edin</string>
     
-    <string name="period_rules_section">Zaman Kuralları</string>
-    <string name="period_rules_desc">Hatırlatıcıların ne zaman izin verildiğini veya engellendiğini kontrol edin</string>
-    <string name="add_period_rule">Kural Ekle</string>
+    <string name="period_rules_section">Sessiz Saatler</string>
+    <string name="period_rules_desc">Hatırlatıcıların sessize alındığı zamanları ayarlayın</string>
+    <string name="add_period_rule">Sessiz Saat Ekle</string>
+    <string name="quiet_hours_active">Sessiz Saatler Aktif: Hatırlatmalar Duraklatıldı</string>
+    <string name="all_day">Tüm Gün</string>
     <string name="period_rule_allow">İzin Ver</string>
     <string name="period_rule_block">Engelle</string>
     <string name="period_rule_start">Başlangıç Zamanı</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">Etkinleştirilemez: başka bir aktif kuralla çakışıyor</string>
     <string name="period_rule_currently_blocked">Şu anda zaman kuralı tarafından engellendi</string>
     <string name="delete">Sil</string>
-    <string name="period_rule_empty">Yapılandırılmış zaman kuralı yok</string>
+    <string name="period_rule_empty">Yapılandırılmış sessiz saat yok</string>
     <string name="hours_label">Saat</string>
     <string name="minutes_label">Dakika</string>
     <string name="total_minutes">Toplam: %1$d dakika</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">Per</string>
     <string name="day_fri">Cum</string>
     <string name="day_sat">Cmt</string>
+    <string name="day_sun_full">Pazar</string>
+    <string name="day_mon_full">Pazartesi</string>
+    <string name="day_tue_full">Salı</string>
+    <string name="day_wed_full">Çarşamba</string>
+    <string name="day_thu_full">Perşembe</string>
+    <string name="day_fri_full">Cuma</string>
+    <string name="day_sat_full">Cumartesi</string>
     <string name="select_time">Zaman Seç</string>
     <string name="confirm">Onayla</string>
 </resources>

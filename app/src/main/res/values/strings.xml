@@ -97,17 +97,17 @@
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
     
-    <string name="period_rules_section">Period Rules</string>
-    <string name="period_rules_desc">Control when reminders are allowed or blocked</string>
-    <string name="add_period_rule">Add Rule</string>
-    <string name="period_rule_allow">Allow</string>
-    <string name="period_rule_block">Block</string>
+    <string name="period_rules_section">Quiet Hours</string>
+    <string name="period_rules_desc">Set times when reminders are muted</string>
+    <string name="all_day">All Day</string>
+    <string name="add_period_rule">Add Quiet Hour</string>
     <string name="period_rule_start">Start Time</string>
     <string name="period_rule_end">End Time</string>
     <string name="period_rule_conflict_warning">Cannot enable: conflicts with another active rule</string>
+    <string name="quiet_hours_active">Quiet Hours Active: Reminders Paused</string>
     <string name="period_rule_currently_blocked">Currently blocked by period rule</string>
     <string name="delete">Delete</string>
-    <string name="period_rule_empty">No period rules configured</string>
+    <string name="period_rule_empty">No quiet hours configured</string>
     <string name="hours_label">Hours</string>
     <string name="minutes_label">Minutes</string>
     <string name="total_minutes">Total: %1$d minutes</string>
@@ -125,6 +125,13 @@
     <string name="day_thu">Thu</string>
     <string name="day_fri">Fri</string>
     <string name="day_sat">Sat</string>
+    <string name="day_sun_full">Sunday</string>
+    <string name="day_mon_full">Monday</string>
+    <string name="day_tue_full">Tuesday</string>
+    <string name="day_wed_full">Wednesday</string>
+    <string name="day_thu_full">Thursday</string>
+    <string name="day_fri_full">Friday</string>
+    <string name="day_sat_full">Saturday</string>
     <string name="select_time">Select Time</string>
     <string name="confirm">Confirm</string>
 </resources>

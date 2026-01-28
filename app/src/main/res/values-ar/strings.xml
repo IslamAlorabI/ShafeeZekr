@@ -92,9 +92,11 @@
     <string name="app_volume">مستوى صوت التطبيق</string>
     <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
     
-    <string name="period_rules_section">قواعد الفترات الزمنية</string>
-    <string name="period_rules_desc">التحكم في أوقات السماح أو الحظر للتذكيرات</string>
-    <string name="add_period_rule">إضافة قاعدة</string>
+    <string name="period_rules_section">ساعات الهدوء</string>
+    <string name="period_rules_desc">تعيين أوقات كتم التذكيرات</string>
+    <string name="add_period_rule">إضافة ساعة هدوء</string>
+    <string name="quiet_hours_active">ساعات الهدوء: التذكيرات متوقفة</string>
+    <string name="all_day">اليوم كامل</string>
     <string name="period_rule_allow">سماح</string>
     <string name="period_rule_block">حظر</string>
     <string name="period_rule_start">وقت البداية</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">لا يمكن التفعيل: تعارض مع قاعدة نشطة أخرى</string>
     <string name="period_rule_currently_blocked">محظور حالياً بسبب قاعدة فترة زمنية</string>
     <string name="delete">حذف</string>
-    <string name="period_rule_empty">لا توجد قواعد فترات زمنية</string>
+    <string name="period_rule_empty">لا توجد ساعات هدوء</string>
     <string name="hours_label">ساعات</string>
     <string name="minutes_label">دقائق</string>
     <string name="total_minutes">المجموع: %1$d دقيقة</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">خميس</string>
     <string name="day_fri">جمعة</string>
     <string name="day_sat">سبت</string>
+    <string name="day_sun_full">الأحد</string>
+    <string name="day_mon_full">الإثنين</string>
+    <string name="day_tue_full">الثلاثاء</string>
+    <string name="day_wed_full">الأربعاء</string>
+    <string name="day_thu_full">الخميس</string>
+    <string name="day_fri_full">الجمعة</string>
+    <string name="day_sat_full">السبت</string>
     <string name="select_time">اختر الوقت</string>
     <string name="confirm">تأكيد</string>
 </resources>
