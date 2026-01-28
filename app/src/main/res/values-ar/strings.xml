@@ -78,15 +78,7 @@
     <string name="battery_optimization_disabled">غير مقيد</string>
     <string name="battery_optimization_enabled">مقيد</string>
     
-    <string name="updates_section">التحديثات</string>
-    <string name="check_updates">التحقق من التحديثات</string>
-    <string name="checking_updates">جاري التحقق من التحديثات...</string>
-    <string name="no_updates">التطبيق محدث</string>
-    <string name="update_error">خطأ في التحقق من التحديثات</string>
-    <string name="update_available">تحديث متاح</string>
-    <string name="update_message">إصدار جديد (%1$s) متاح.</string>
-    <string name="update_button">تحديث</string>
-    <string name="later_button">لاحقاً</string>
+
     
     <string name="sound_section">الصوت</string>
     <string name="sound_selection">اختيار الصوت</string>

@@ -78,15 +78,7 @@
     <string name="battery_optimization_disabled">غیر محدود</string>
     <string name="battery_optimization_enabled">محدود</string>
     
-    <string name="updates_section">اپڈیٹس</string>
-    <string name="check_updates">اپڈیٹس چیک کریں</string>
-    <string name="checking_updates">اپڈیٹس چیک ہو رہے ہیں...</string>
-    <string name="no_updates">ایپ اپڈیٹ ہے</string>
-    <string name="update_error">اپڈیٹس چیک کرنے میں خرابی</string>
-    <string name="update_available">اپڈیٹ دستیاب ہے</string>
-    <string name="update_message">نیا ورژن (%1$s) دستیاب ہے۔</string>
-    <string name="update_button">اپڈیٹ کریں</string>
-    <string name="later_button">بعد میں</string>
+
     
     <string name="sound_section">آواز</string>
     <string name="sound_selection">آواز کا انتخاب</string>

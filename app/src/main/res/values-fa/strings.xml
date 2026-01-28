@@ -78,15 +78,7 @@
     <string name="battery_optimization_disabled">نامحدود</string>
     <string name="battery_optimization_enabled">محدود</string>
     
-    <string name="updates_section">به‌روزرسانی‌ها</string>
-    <string name="check_updates">بررسی به‌روزرسانی</string>
-    <string name="checking_updates">در حال بررسی به‌روزرسانی...</string>
-    <string name="no_updates">برنامه به‌روز است</string>
-    <string name="update_error">خطا در بررسی به‌روزرسانی</string>
-    <string name="update_available">به‌روزرسانی موجود است</string>
-    <string name="update_message">نسخه جدید (%1$s) موجود است.</string>
-    <string name="update_button">به‌روزرسانی</string>
-    <string name="later_button">بعداً</string>
+
     
     <string name="sound_section">صدا</string>
     <string name="sound_selection">انتخاب صدا</string>

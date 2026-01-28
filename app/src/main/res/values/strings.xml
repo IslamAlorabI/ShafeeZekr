@@ -83,15 +83,7 @@
     <string name="battery_optimization_disabled">Unrestricted</string>
     <string name="battery_optimization_enabled">Restricted</string>
     
-    <string name="updates_section">Updates</string>
-    <string name="check_updates">Check for updates</string>
-    <string name="checking_updates">Checking for updates...</string>
-    <string name="no_updates">App is up to date</string>
-    <string name="update_error">Error checking for updates</string>
-    <string name="update_available">Update Available</string>
-    <string name="update_message">A new version (%1$s) is available.</string>
-    <string name="update_button">Update</string>
-    <string name="later_button">Later</string>
+
     
     <string name="sound_section">Sound</string>
     <string name="sound_selection">Sound Selection</string>
