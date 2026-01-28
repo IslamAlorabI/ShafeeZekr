@@ -66,6 +66,8 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -180,6 +182,8 @@ fun HomeScreen(
             ) {
                 val minutes = (remainingTime / 60000).toInt()
                 val seconds = ((remainingTime % 60000) / 1000).toInt()
+                val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
+                val formattedTime = formatLocaleTime(minutes, seconds, locale)
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
@@ -197,7 +201,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = String.format("%02d:%02d", minutes, seconds),
+                            text = formattedTime,
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -502,5 +506,65 @@ private fun NumberPickerColumn(
                 }
             }
         }
+    }
+}
+
+private fun formatLocaleTime(minutes: Int, seconds: Int, localeTag: String): String {
+    val formatted = String.format("%02d:%02d", minutes, seconds)
+    val lang = localeTag.split("-").first().lowercase()
+    
+    return when (lang) {
+        "ar" -> formatted.map { convertToArabicNumerals(it) }.joinToString("")
+        "fa" -> formatted.map { convertToPersianNumerals(it) }.joinToString("")
+        "ur" -> formatted.map { convertToUrduNumerals(it) }.joinToString("")
+        else -> formatted
+    }
+}
+
+private fun convertToArabicNumerals(char: Char): Char {
+    return when (char) {
+        '0' -> '٠'
+        '1' -> '١'
+        '2' -> '٢'
+        '3' -> '٣'
+        '4' -> '٤'
+        '5' -> '٥'
+        '6' -> '٦'
+        '7' -> '٧'
+        '8' -> '٨'
+        '9' -> '٩'
+        else -> char
+    }
+}
+
+private fun convertToPersianNumerals(char: Char): Char {
+    return when (char) {
+        '0' -> '۰'
+        '1' -> '۱'
+        '2' -> '۲'
+        '3' -> '۳'
+        '4' -> '۴'
+        '5' -> '۵'
+        '6' -> '۶'
+        '7' -> '۷'
+        '8' -> '۸'
+        '9' -> '۹'
+        else -> char
+    }
+}
+
+private fun convertToUrduNumerals(char: Char): Char {
+    return when (char) {
+        '0' -> '۰'
+        '1' -> '۱'
+        '2' -> '۲'
+        '3' -> '۳'
+        '4' -> '۴'
+        '5' -> '۵'
+        '6' -> '۶'
+        '7' -> '۷'
+        '8' -> '۸'
+        '9' -> '۹'
+        else -> char
     }
 }

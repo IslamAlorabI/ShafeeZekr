@@ -125,6 +125,45 @@ val languages = listOf(
 )
 
 @Composable
+fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
+    val dayAbbreviations = listOf(
+        stringResource(R.string.day_sun),
+        stringResource(R.string.day_mon),
+        stringResource(R.string.day_tue),
+        stringResource(R.string.day_wed),
+        stringResource(R.string.day_thu),
+        stringResource(R.string.day_fri),
+        stringResource(R.string.day_sat)
+    )
+    val allWeek = stringResource(R.string.all_week)
+    val allDay = stringResource(R.string.all_day)
+
+    val isEffectivelyAllDay = rule.isAllDay || 
+        (rule.startHour == 0 && rule.startMinute == 0 && rule.endHour == 23 && rule.endMinute == 59)
+    
+    val timeRange = if (isEffectivelyAllDay) {
+        allDay
+    } else {
+        String.format("%02d:%02d - %02d:%02d", rule.startHour, rule.startMinute, rule.endHour, rule.endMinute)
+    }
+
+    return when (rule.scheduleType) {
+        RuleScheduleType.WEEKLY_DAYS -> {
+            val days = if (rule.daysOfWeek.size == 7) {
+                allWeek
+            } else {
+                rule.daysOfWeek.sorted().map { dayAbbreviations[it] }.joinToString(", ")
+            }
+            "$days | $timeRange"
+        }
+        RuleScheduleType.SPECIFIC_DATE -> {
+            String.format("%04d-%02d-%02d | %s", rule.year, rule.month + 1, rule.dayOfMonth, timeRange)
+        }
+    }
+}
+
+
+@Composable
 fun SettingsScreen(
     settings: AppSettings,
     onThemeModeChange: (ThemeMode) -> Unit,
@@ -376,7 +415,7 @@ fun SettingsScreen(
                                     supportingContent = {
                                         Column {
                                             Text(
-                                                text = rule.getDisplayText(),
+                                                text = getLocalizedRuleDisplayText(rule),
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
