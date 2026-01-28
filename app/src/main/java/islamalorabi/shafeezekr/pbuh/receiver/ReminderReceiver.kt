@@ -72,11 +72,20 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun playSound(context: Context) {
         try {
-            val preferences = kotlinx.coroutines.runBlocking {
-                context.dataStore.data.first()
+            // Instantiate PreferencesManager to check rules
+            val preferencesManager = islamalorabi.shafeezekr.pbuh.data.PreferencesManager(context)
+            val settings = kotlinx.coroutines.runBlocking {
+                preferencesManager.settingsFlow.first()
             }
-            val volume = preferences[floatPreferencesKey("app_volume")] ?: 1.0f
-            val soundIndex = preferences[intPreferencesKey("selected_sound_index")] ?: 1
+            
+            // Check if blocked by Quiet Hours
+            if (!settings.isReminderAllowedByPeriodRules()) {
+                // Reminder is blocked, do not play sound
+                return
+            }
+
+            val volume = settings.appVolume
+            val soundIndex = settings.selectedSoundIndex
 
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)

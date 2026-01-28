@@ -223,10 +223,20 @@ fun HomeScreen(
                 ) {
                     ListItem(
                         headlineContent = {
-                            Text(
-                                text = stringResource(R.string.enable_reminder),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.enable_reminder),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                if (!settings.isReminderAllowedByPeriodRules()) {
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = stringResource(R.string.quiet_hours_active),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
                         },
                         supportingContent = {
                             Text(
@@ -246,6 +256,7 @@ fun HomeScreen(
                         trailingContent = {
                             Switch(
                                 checked = settings.isReminderEnabled,
+                                enabled = settings.isReminderAllowedByPeriodRules(),
                                 onCheckedChange = { enabled ->
                                     if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)

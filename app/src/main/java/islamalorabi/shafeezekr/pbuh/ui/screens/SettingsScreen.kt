@@ -81,8 +81,8 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
-import islamalorabi.shafeezekr.pbuh.data.PeriodRuleType
 import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
+import java.util.UUID
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
@@ -140,10 +140,39 @@ fun SettingsScreen(
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
+    var ruleToEdit by remember { mutableStateOf<PeriodRule?>(null) }
     var showSoundDialog by remember { mutableStateOf(false) }
     var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    if (showAddPeriodRuleDialog) {
+        AddPeriodRuleDialog(
+            ruleToEdit = ruleToEdit,
+            onDismiss = {
+                showAddPeriodRuleDialog = false
+                ruleToEdit = null
+            },
+            onDelete = if (ruleToEdit != null) {
+                {
+                    val updatedRules = settings.periodRules.filter { it.id != ruleToEdit?.id }
+                    onPeriodRulesChange(updatedRules)
+                    showAddPeriodRuleDialog = false
+                    ruleToEdit = null
+                }
+            } else null,
+            onConfirm = { rule ->
+                val updatedRules = if (ruleToEdit != null) {
+                    settings.periodRules.map { if (it.id == rule.id) rule else it }
+                } else {
+                    settings.periodRules + rule
+                }
+                onPeriodRulesChange(updatedRules)
+                showAddPeriodRuleDialog = false
+                ruleToEdit = null
+            }
+        )
+    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -323,31 +352,12 @@ fun SettingsScreen(
                                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                                         ) {
                                             Text(
-                                                text = if (rule.type == PeriodRuleType.ALLOW) {
-                                                    stringResource(R.string.period_rule_allow)
-                                                } else {
-                                                    stringResource(R.string.period_rule_block)
-                                                },
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                color = if (rule.type == PeriodRuleType.ALLOW) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.error
-                                                }
-                                            )
-                                            Text(
-                                                text = "•",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
                                                 text = when (rule.scheduleType) {
-                                                    RuleScheduleType.DAILY_TIME -> stringResource(R.string.rule_type_daily)
                                                     RuleScheduleType.WEEKLY_DAYS -> stringResource(R.string.rule_type_weekly)
                                                     RuleScheduleType.SPECIFIC_DATE -> stringResource(R.string.rule_type_date)
                                                 },
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurface
                                             )
                                         }
                                     },
@@ -358,7 +368,7 @@ fun SettingsScreen(
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
-                                            if (hasConflict && !rule.isEnabled) {
+                                            if (hasConflict && rule.isEnabled) {
                                                 Text(
                                                     text = stringResource(R.string.period_rule_conflict_warning),
                                                     style = MaterialTheme.typography.bodySmall,
@@ -370,47 +380,29 @@ fun SettingsScreen(
                                     leadingContent = {
                                         Icon(
                                             imageVector = when (rule.scheduleType) {
-                                                RuleScheduleType.DAILY_TIME -> Icons.Default.Schedule
                                                 RuleScheduleType.WEEKLY_DAYS -> Icons.Default.DateRange
                                                 RuleScheduleType.SPECIFIC_DATE -> Icons.Default.Event
                                             },
                                             contentDescription = null,
-                                            tint = if (rule.type == PeriodRuleType.ALLOW) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.error
-                                            }
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     },
                                     trailingContent = {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Switch(
-                                                checked = rule.isEnabled,
-                                                onCheckedChange = { enabled ->
-                                                    if (enabled && hasConflict) {
-                                                        return@Switch
-                                                    }
-                                                    val updatedRules = settings.periodRules.map {
-                                                        if (it.id == rule.id) it.copy(isEnabled = enabled) else it
-                                                    }
-                                                    onPeriodRulesChange(updatedRules)
+                                        Switch(
+                                            checked = rule.isEnabled,
+                                            onCheckedChange = { enabled ->
+                                                val updatedRules = settings.periodRules.map {
+                                                    if (it.id == rule.id) it.copy(isEnabled = enabled) else it
                                                 }
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = stringResource(R.string.delete),
-                                                tint = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier
-                                                    .size(24.dp)
-                                                    .clickable {
-                                                        val updatedRules = settings.periodRules.filter { it.id != rule.id }
-                                                        onPeriodRulesChange(updatedRules)
-                                                    }
-                                            )
-                                        }
+                                                onPeriodRulesChange(updatedRules)
+                                            }
+                                        )
                                     },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    modifier = Modifier.clickable { 
+                                        ruleToEdit = rule
+                                        showAddPeriodRuleDialog = true 
+                                    }
                                 )
                             }
                         }
@@ -430,7 +422,10 @@ fun SettingsScreen(
                                 )
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            modifier = Modifier.clickable { showAddPeriodRuleDialog = true }
+                            modifier = Modifier.clickable { 
+                                ruleToEdit = null
+                                showAddPeriodRuleDialog = true 
+                            }
                         )
                     }
                 }
@@ -777,11 +772,20 @@ fun SettingsScreen(
 
     if (showAddPeriodRuleDialog) {
         AddPeriodRuleDialog(
-            onDismiss = { showAddPeriodRuleDialog = false },
+            ruleToEdit = ruleToEdit,
+            onDismiss = { 
+                showAddPeriodRuleDialog = false 
+                ruleToEdit = null
+            },
             onConfirm = { rule ->
-                val updatedRules = settings.periodRules + rule
+                val updatedRules = if (ruleToEdit != null) {
+                    settings.periodRules.map { if (it.id == rule.id) rule else it }
+                } else {
+                    settings.periodRules + rule
+                }
                 onPeriodRulesChange(updatedRules)
                 showAddPeriodRuleDialog = false
+                ruleToEdit = null
             }
         )
     }
@@ -964,34 +968,39 @@ private fun LanguageDialog(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun AddPeriodRuleDialog(
+    ruleToEdit: PeriodRule? = null,
     onDismiss: () -> Unit,
+    onDelete: (() -> Unit)? = null,
     onConfirm: (PeriodRule) -> Unit
 ) {
-    var ruleType by remember { mutableStateOf(PeriodRuleType.ALLOW) }
-    var scheduleType by remember { mutableStateOf(RuleScheduleType.DAILY_TIME) }
-    var startHour by remember { mutableIntStateOf(9) }
-    var startMinute by remember { mutableIntStateOf(0) }
-    var endHour by remember { mutableIntStateOf(17) }
-    var endMinute by remember { mutableIntStateOf(0) }
-    var selectedDays by remember { mutableStateOf(setOf<Int>()) }
+    var scheduleType by remember { mutableStateOf(ruleToEdit?.scheduleType ?: RuleScheduleType.WEEKLY_DAYS) }
+    var startHour by remember { mutableIntStateOf(ruleToEdit?.startHour ?: 9) }
+    var startMinute by remember { mutableIntStateOf(ruleToEdit?.startMinute ?: 0) }
+    var endHour by remember { mutableIntStateOf(ruleToEdit?.endHour ?: 17) }
+    var endMinute by remember { mutableIntStateOf(ruleToEdit?.endMinute ?: 0) }
+    var selectedDays by remember { mutableStateOf(ruleToEdit?.daysOfWeek ?: setOf<Int>()) }
+    var isAllDay by remember { mutableStateOf(ruleToEdit?.isAllDay ?: false) }
     
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     
     val calendar = Calendar.getInstance()
+    if (ruleToEdit != null && ruleToEdit.year != 0) {
+        calendar.set(ruleToEdit.year, ruleToEdit.month, ruleToEdit.dayOfMonth)
+    }
     var selectedDateMillis by remember { 
         mutableStateOf(calendar.timeInMillis) 
     }
 
     val dayNames = listOf(
-        stringResource(R.string.day_sun),
-        stringResource(R.string.day_mon),
-        stringResource(R.string.day_tue),
-        stringResource(R.string.day_wed),
-        stringResource(R.string.day_thu),
-        stringResource(R.string.day_fri),
-        stringResource(R.string.day_sat)
+        stringResource(R.string.day_sun_full),
+        stringResource(R.string.day_mon_full),
+        stringResource(R.string.day_tue_full),
+        stringResource(R.string.day_wed_full),
+        stringResource(R.string.day_thu_full),
+        stringResource(R.string.day_fri_full),
+        stringResource(R.string.day_sat_full)
     )
 
     fun formatTime(hour: Int, minute: Int): String {
@@ -1011,7 +1020,12 @@ private fun AddPeriodRuleDialog(
         containerColor = MaterialTheme.colorScheme.surface,
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        title = { Text(stringResource(R.string.add_period_rule)) },
+        title = { 
+            Text(
+                if (ruleToEdit != null) stringResource(R.string.add_period_rule).replace("Add", "Edit") // Fallback if string not changed yet
+                else stringResource(R.string.add_period_rule)
+            ) 
+        },
         text = {
             Column(
                 modifier = Modifier
@@ -1019,37 +1033,6 @@ private fun AddPeriodRuleDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(modifier = Modifier.selectableGroup()) {
-                    Text(
-                        text = stringResource(R.string.rule_action),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilterChip(
-                            selected = ruleType == PeriodRuleType.ALLOW,
-                            onClick = { ruleType = PeriodRuleType.ALLOW },
-                            label = { Text(stringResource(R.string.period_rule_allow)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        )
-                        FilterChip(
-                            selected = ruleType == PeriodRuleType.BLOCK,
-                            onClick = { ruleType = PeriodRuleType.BLOCK },
-                            label = { Text(stringResource(R.string.period_rule_block)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.error,
-                                selectedLabelColor = MaterialTheme.colorScheme.onError
-                            )
-                        )
-                    }
-                }
-
                 Column {
                     Text(
                         text = stringResource(R.string.schedule_type),
@@ -1062,11 +1045,6 @@ private fun AddPeriodRuleDialog(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        FilterChip(
-                            selected = scheduleType == RuleScheduleType.DAILY_TIME,
-                            onClick = { scheduleType = RuleScheduleType.DAILY_TIME },
-                            label = { Text(stringResource(R.string.rule_type_daily)) }
-                        )
                         FilterChip(
                             selected = scheduleType == RuleScheduleType.WEEKLY_DAYS,
                             onClick = { scheduleType = RuleScheduleType.WEEKLY_DAYS },
@@ -1103,9 +1081,25 @@ private fun AddPeriodRuleDialog(
                                             selectedDays + index
                                         }
                                     },
-                                    label = { Text(name.take(2)) }
+                                    label = { Text(name) }
                                 )
                             }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.all_day),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Switch(
+                                checked = isAllDay,
+                                onCheckedChange = { isAllDay = it }
+                            )
                         }
                     }
                 }
@@ -1143,104 +1137,121 @@ private fun AddPeriodRuleDialog(
                     }
                 }
 
-                Column {
-                    Text(
-                        text = stringResource(R.string.period_rule_start),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    OutlinedCard(
-                        onClick = { showStartTimePicker = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                if (!(scheduleType == RuleScheduleType.WEEKLY_DAYS && isAllDay)) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.period_rule_start),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedCard(
+                            onClick = { showStartTimePicker = true },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = formatTime(startHour, startMinute),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Schedule,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = formatTime(startHour, startMinute),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
-                }
-                
-                Column {
-                    Text(
-                        text = stringResource(R.string.period_rule_end),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    OutlinedCard(
-                        onClick = { showEndTimePicker = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    
+                    Column {
+                        Text(
+                            text = stringResource(R.string.period_rule_end),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedCard(
+                            onClick = { showEndTimePicker = true },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = formatTime(endHour, endMinute),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Schedule,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = formatTime(endHour, endMinute),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    val cal = Calendar.getInstance().apply { 
-                        timeInMillis = selectedDateMillis 
-                    }
-                    onConfirm(
-                        PeriodRule(
-                            type = ruleType,
-                            scheduleType = scheduleType,
-                            startHour = startHour,
-                            startMinute = startMinute,
-                            endHour = endHour,
-                            endMinute = endMinute,
-                            daysOfWeek = selectedDays,
-                            year = cal.get(Calendar.YEAR),
-                            month = cal.get(Calendar.MONTH),
-                            dayOfMonth = cal.get(Calendar.DAY_OF_MONTH),
-                            isEnabled = true
-                        )
-                    )
-                },
-                enabled = when (scheduleType) {
-                    RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
-                    else -> true
-                }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.save))
+                if (onDelete != null) {
+                    TextButton(
+                        onClick = onDelete
+                    ) {
+                        Text(
+                            text = stringResource(R.string.delete),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel))
+                }
+                TextButton(
+                    onClick = {
+                        val cal = Calendar.getInstance().apply { 
+                            timeInMillis = selectedDateMillis 
+                        }
+                        onConfirm(
+                            PeriodRule(
+                                id = ruleToEdit?.id ?: UUID.randomUUID().toString(),
+                                scheduleType = scheduleType,
+                                startHour = if (isAllDay) 0 else startHour,
+                                startMinute = if (isAllDay) 0 else startMinute,
+                                endHour = if (isAllDay) 23 else endHour,
+                                endMinute = if (isAllDay) 59 else endMinute,
+                                daysOfWeek = selectedDays,
+                                year = cal.get(Calendar.YEAR),
+                                month = cal.get(Calendar.MONTH),
+                                dayOfMonth = cal.get(Calendar.DAY_OF_MONTH),
+                                isEnabled = ruleToEdit?.isEnabled ?: true,
+                                isAllDay = isAllDay
+                            )
+                        )
+                    },
+                    enabled = when (scheduleType) {
+                        RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
+                        else -> true
+                    }
+                ) {
+                    Text(stringResource(R.string.save))
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+        dismissButton = {}
     )
     
     if (showStartTimePicker) {
