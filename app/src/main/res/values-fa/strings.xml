@@ -92,9 +92,11 @@
     <string name="app_volume">صدای برنامه</string>
     <string name="app_volume_desc">کنترل مستقل صدای برنامه</string>
     
-    <string name="period_rules_section">قوانین زمانی</string>
-    <string name="period_rules_desc">کنترل زمان‌هایی که یادآوری مجاز یا مسدود است</string>
-    <string name="add_period_rule">افزودن قانون</string>
+    <string name="period_rules_section">ساعات سکوت</string>
+    <string name="period_rules_desc">زمان‌هایی که یادآوری‌ها بی‌صدا می‌شوند را تنظیم کنید</string>
+    <string name="add_period_rule">افزودن ساعت سکوت</string>
+    <string name="quiet_hours_active">ساعات سکوت فعال: یادآوری‌ها متوقف شده</string>
+    <string name="all_day">تمام روز</string>
     <string name="period_rule_allow">مجاز</string>
     <string name="period_rule_block">مسدود</string>
     <string name="period_rule_start">زمان شروع</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">فعال‌سازی امکان‌پذیر نیست: تعارض با قانون فعال دیگر</string>
     <string name="period_rule_currently_blocked">در حال حاضر توسط قانون زمانی مسدود شده</string>
     <string name="delete">حذف</string>
-    <string name="period_rule_empty">هیچ قانون زمانی تنظیم نشده</string>
+    <string name="period_rule_empty">هیچ ساعت سکوتی تنظیم نشده</string>
     <string name="hours_label">ساعت</string>
     <string name="minutes_label">دقیقه</string>
     <string name="total_minutes">مجموع: %1$d دقیقه</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">پنج</string>
     <string name="day_fri">جمعه</string>
     <string name="day_sat">شنبه</string>
+    <string name="day_sun_full">یکشنبه</string>
+    <string name="day_mon_full">دوشنبه</string>
+    <string name="day_tue_full">سه‌شنبه</string>
+    <string name="day_wed_full">چهارشنبه</string>
+    <string name="day_thu_full">پنجشنبه</string>
+    <string name="day_fri_full">جمعه</string>
+    <string name="day_sat_full">شنبه</string>
     <string name="select_time">انتخاب زمان</string>
     <string name="confirm">تأیید</string>
 </resources>

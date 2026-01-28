@@ -92,9 +92,11 @@
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
     
-    <string name="period_rules_section">وقت کے قواعد</string>
-    <string name="period_rules_desc">کنٹرول کریں کہ یاد دہانیاں کب اجازت یافتہ یا بلاک ہیں</string>
-    <string name="add_period_rule">قاعدہ شامل کریں</string>
+    <string name="period_rules_section">خاموش اوقات</string>
+    <string name="period_rules_desc">وہ اوقات مقرر کریں جب یاد دہانیاں خاموش ہوں</string>
+    <string name="add_period_rule">خاموش وقت شامل کریں</string>
+    <string name="quiet_hours_active">خاموش اوقات فعال: یاد دہانیاں روکی گئیں</string>
+    <string name="all_day">پورا دن</string>
     <string name="period_rule_allow">اجازت</string>
     <string name="period_rule_block">بلاک</string>
     <string name="period_rule_start">شروع وقت</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">فعال نہیں کیا جا سکتا: دوسرے فعال قاعدے سے تصادم</string>
     <string name="period_rule_currently_blocked">فی الحال وقت کے قاعدے سے بلاک ہے</string>
     <string name="delete">حذف کریں</string>
-    <string name="period_rule_empty">کوئی وقت کا قاعدہ ترتیب نہیں دیا گیا</string>
+    <string name="period_rule_empty">کوئی خاموش وقت ترتیب نہیں دیا گیا</string>
     <string name="hours_label">گھنٹے</string>
     <string name="minutes_label">منٹ</string>
     <string name="total_minutes">کل: %1$d منٹ</string>
@@ -117,9 +119,16 @@
     <string name="day_mon">پیر</string>
     <string name="day_tue">منگل</string>
     <string name="day_wed">بدھ</string>
-    <string name="day_thu">تی</string>
+    <string name="day_thu">جمعرات</string>
     <string name="day_fri">جمعہ</string>
     <string name="day_sat">ہفتہ</string>
+    <string name="day_sun_full">اتوار</string>
+    <string name="day_mon_full">پیر</string>
+    <string name="day_tue_full">منگل</string>
+    <string name="day_wed_full">بدھ</string>
+    <string name="day_thu_full">جمعرات</string>
+    <string name="day_fri_full">جمعہ</string>
+    <string name="day_sat_full">ہفتہ</string>
     <string name="select_time">وقت منتخب کریں</string>
     <string name="confirm">تصدیق کریں</string>
 </resources>

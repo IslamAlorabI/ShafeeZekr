@@ -92,9 +92,11 @@
     <string name="app_volume">App-Lautstärke</string>
     <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
     
-    <string name="period_rules_section">Zeitregeln</string>
-    <string name="period_rules_desc">Steuern Sie, wann Erinnerungen erlaubt oder blockiert sind</string>
-    <string name="add_period_rule">Regel hinzufügen</string>
+    <string name="period_rules_section">Ruhezeiten</string>
+    <string name="period_rules_desc">Zeiten festlegen, in denen Erinnerungen stummgeschaltet sind</string>
+    <string name="add_period_rule">Ruhezeit hinzufügen</string>
+    <string name="quiet_hours_active">Ruhezeit Aktiv: Erinnerungen pausiert</string>
+    <string name="all_day">Ganztägig</string>
     <string name="period_rule_allow">Erlauben</string>
     <string name="period_rule_block">Blockieren</string>
     <string name="period_rule_start">Startzeit</string>
@@ -102,7 +104,7 @@
     <string name="period_rule_conflict_warning">Aktivierung nicht möglich: Konflikt mit einer anderen aktiven Regel</string>
     <string name="period_rule_currently_blocked">Derzeit durch Zeitregel blockiert</string>
     <string name="delete">Löschen</string>
-    <string name="period_rule_empty">Keine Zeitregeln konfiguriert</string>
+    <string name="period_rule_empty">Keine Ruhezeiten konfiguriert</string>
     <string name="hours_label">Stunden</string>
     <string name="minutes_label">Minuten</string>
     <string name="total_minutes">Gesamt: %1$d Minuten</string>
@@ -120,6 +122,13 @@
     <string name="day_thu">Do</string>
     <string name="day_fri">Fr</string>
     <string name="day_sat">Sa</string>
+    <string name="day_sun_full">Sonntag</string>
+    <string name="day_mon_full">Montag</string>
+    <string name="day_tue_full">Dienstag</string>
+    <string name="day_wed_full">Mittwoch</string>
+    <string name="day_thu_full">Donnerstag</string>
+    <string name="day_fri_full">Freitag</string>
+    <string name="day_sat_full">Samstag</string>
     <string name="select_time">Zeit auswählen</string>
     <string name="confirm">Bestätigen</string>
 </resources>

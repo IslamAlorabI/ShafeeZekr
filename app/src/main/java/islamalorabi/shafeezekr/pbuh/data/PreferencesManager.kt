@@ -30,12 +30,10 @@ enum class ReminderInterval(val minutes: Int) {
     CUSTOM(-1)
 }
 
-enum class PeriodRuleType { ALLOW, BLOCK }
-enum class RuleScheduleType { DAILY_TIME, WEEKLY_DAYS, SPECIFIC_DATE }
+enum class RuleScheduleType { WEEKLY_DAYS, SPECIFIC_DATE }
 
 data class PeriodRule(
     val id: String = UUID.randomUUID().toString(),
-    val type: PeriodRuleType,
     val scheduleType: RuleScheduleType,
     val isEnabled: Boolean = true,
     val startHour: Int = 0,
@@ -45,12 +43,12 @@ data class PeriodRule(
     val daysOfWeek: Set<Int> = emptySet(),
     val year: Int = 0,
     val month: Int = 0,
-    val dayOfMonth: Int = 0
+    val dayOfMonth: Int = 0,
+    val isAllDay: Boolean = false
 ) {
     fun toJson(): JSONObject {
         return JSONObject().apply {
             put("id", id)
-            put("type", type.name)
             put("scheduleType", scheduleType.name)
             put("isEnabled", isEnabled)
             put("startHour", startHour)
@@ -61,6 +59,7 @@ data class PeriodRule(
             put("year", year)
             put("month", month)
             put("dayOfMonth", dayOfMonth)
+            put("isAllDay", isAllDay)
         }
     }
 
@@ -74,15 +73,14 @@ data class PeriodRule(
         val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
 
         return when (scheduleType) {
-            RuleScheduleType.DAILY_TIME -> {
-                isTimeInRange(currentHour, currentMinute)
-            }
             RuleScheduleType.WEEKLY_DAYS -> {
                 if (currentDayOfWeek !in daysOfWeek) return false
+                if (isAllDay) return true
                 isTimeInRange(currentHour, currentMinute)
             }
             RuleScheduleType.SPECIFIC_DATE -> {
                 if (currentYear != year || currentMonth != month || currentDay != dayOfMonth) return false
+                if (isAllDay) return true
                 isTimeInRange(currentHour, currentMinute)
             }
         }
@@ -102,19 +100,17 @@ data class PeriodRule(
 
     fun conflictsWith(other: PeriodRule): Boolean {
         if (scheduleType != other.scheduleType) return false
-        if (type == other.type) return false
         
         when (scheduleType) {
-            RuleScheduleType.DAILY_TIME -> {
-                return timeRangesOverlap(other)
-            }
             RuleScheduleType.WEEKLY_DAYS -> {
                 val commonDays = daysOfWeek.intersect(other.daysOfWeek)
                 if (commonDays.isEmpty()) return false
+                if (isAllDay || other.isAllDay) return true
                 return timeRangesOverlap(other)
             }
             RuleScheduleType.SPECIFIC_DATE -> {
                 if (year != other.year || month != other.month || dayOfMonth != other.dayOfMonth) return false
+                if (isAllDay || other.isAllDay) return true
                 return timeRangesOverlap(other)
             }
         }
@@ -134,9 +130,12 @@ data class PeriodRule(
     }
 
     fun getDisplayText(): String {
-        val timeRange = String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
+        val timeRange = if (isAllDay) {
+            "00:00 - 23:59"
+        } else {
+            String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
+        }
         return when (scheduleType) {
-            RuleScheduleType.DAILY_TIME -> timeRange
             RuleScheduleType.WEEKLY_DAYS -> {
                 val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
                 val days = daysOfWeek.sorted().map { dayNames[it] }.joinToString(", ")
@@ -158,12 +157,16 @@ data class PeriodRule(
                 }
             }
             
-            val scheduleTypeStr = json.optString("scheduleType", "DAILY_TIME")
+            val scheduleTypeStr = json.optString("scheduleType", "WEEKLY_DAYS")
+            val scheduleType = try {
+                RuleScheduleType.valueOf(scheduleTypeStr)
+            } catch (e: Exception) {
+                RuleScheduleType.WEEKLY_DAYS
+            }
             
             return PeriodRule(
                 id = json.getString("id"),
-                type = PeriodRuleType.valueOf(json.getString("type")),
-                scheduleType = RuleScheduleType.valueOf(scheduleTypeStr),
+                scheduleType = scheduleType,
                 isEnabled = json.optBoolean("isEnabled", true),
                 startHour = json.optInt("startHour", 0),
                 startMinute = json.optInt("startMinute", 0),
@@ -172,7 +175,8 @@ data class PeriodRule(
                 daysOfWeek = days,
                 year = json.optInt("year", 0),
                 month = json.optInt("month", 0),
-                dayOfMonth = json.optInt("dayOfMonth", 0)
+                dayOfMonth = json.optInt("dayOfMonth", 0),
+                isAllDay = json.optBoolean("isAllDay", false)
             )
         }
     }
@@ -190,27 +194,16 @@ data class AppSettings(
     val periodRules: List<PeriodRule> = emptyList()
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
+        // All rules are now "Block" rules.
+        // If ANY enabled rule covers the current time, reminder is BLOCKED (return false).
         val enabledRules = periodRules.filter { it.isEnabled }
-        if (enabledRules.isEmpty()) return true
-
-        val enabledAllowRules = enabledRules.filter { it.type == PeriodRuleType.ALLOW }
-        val enabledBlockRules = enabledRules.filter { it.type == PeriodRuleType.BLOCK }
-
-        for (blockRule in enabledBlockRules) {
-            if (blockRule.isCurrentTimeInRange()) {
+        
+        for (rule in enabledRules) {
+            if (rule.isCurrentTimeInRange()) {
                 return false
             }
         }
-
-        if (enabledAllowRules.isNotEmpty()) {
-            for (allowRule in enabledAllowRules) {
-                if (allowRule.isCurrentTimeInRange()) {
-                    return true
-                }
-            }
-            return false
-        }
-
+        
         return true
     }
 }
