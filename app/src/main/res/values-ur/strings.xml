@@ -94,7 +94,11 @@
     
     <string name="period_rules_section">خاموش اوقات</string>
     <string name="period_rules_desc">وہ اوقات مقرر کریں جب یاد دہانیاں خاموش ہوں</string>
+    <string name="quiet_hours_edit_hint">ترمیم کے لیے قاعدے پر ٹیپ کریں</string>
+    <string name="quiet_hours_delete_hint">قواعد ترمیم کے صفحے سے حذف کیے جا سکتے ہیں</string>
     <string name="add_period_rule">خاموش وقت شامل کریں</string>
+    <string name="select_all_days">سب منتخب کریں</string>
+    <string name="all_week">پورا ہفتہ</string>
     <string name="quiet_hours_active">خاموش اوقات فعال: یاد دہانیاں روکی گئیں</string>
     <string name="all_day">پورا دن</string>
     <string name="period_rule_allow">اجازت</string>

@@ -153,6 +153,7 @@ fun SettingsScreen(
                 showAddPeriodRuleDialog = false
                 ruleToEdit = null
             },
+
             onDelete = if (ruleToEdit != null) {
                 {
                     val updatedRules = settings.periodRules.filter { it.id != ruleToEdit?.id }
@@ -322,12 +323,23 @@ fun SettingsScreen(
                 header = stringResource(R.string.period_rules_section),
                 headerColor = MaterialTheme.colorScheme.primary
             ) {
-                Text(
-                    text = stringResource(R.string.period_rules_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
-                )
+                Column(modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)) {
+                    Text(
+                        text = stringResource(R.string.period_rules_desc),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.quiet_hours_edit_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.quiet_hours_delete_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
@@ -770,25 +782,8 @@ fun SettingsScreen(
         )
     }
 
-    if (showAddPeriodRuleDialog) {
-        AddPeriodRuleDialog(
-            ruleToEdit = ruleToEdit,
-            onDismiss = { 
-                showAddPeriodRuleDialog = false 
-                ruleToEdit = null
-            },
-            onConfirm = { rule ->
-                val updatedRules = if (ruleToEdit != null) {
-                    settings.periodRules.map { if (it.id == rule.id) rule else it }
-                } else {
-                    settings.periodRules + rule
-                }
-                onPeriodRulesChange(updatedRules)
-                showAddPeriodRuleDialog = false
-                ruleToEdit = null
-            }
-        )
-    }
+
+
 
     if (showSoundDialog) {
         SoundSelectionDialog(
@@ -1022,7 +1017,7 @@ private fun AddPeriodRuleDialog(
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { 
             Text(
-                if (ruleToEdit != null) stringResource(R.string.add_period_rule).replace("Add", "Edit") // Fallback if string not changed yet
+                if (ruleToEdit != null) stringResource(R.string.edit_period_rule)
                 else stringResource(R.string.add_period_rule)
             ) 
         },
@@ -1071,6 +1066,17 @@ private fun AddPeriodRuleDialog(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
+                            FilterChip(
+                                selected = selectedDays.size == 7,
+                                onClick = {
+                                    selectedDays = if (selectedDays.size == 7) {
+                                        emptySet()
+                                    } else {
+                                        setOf(0, 1, 2, 3, 4, 5, 6)
+                                    }
+                                },
+                                label = { Text(stringResource(R.string.select_all_days)) }
+                            )
                             dayNames.forEachIndexed { index, name ->
                                 FilterChip(
                                     selected = index in selectedDays,
@@ -1134,10 +1140,26 @@ private fun AddPeriodRuleDialog(
                                 )
                             }
                         }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.all_day),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Switch(
+                                checked = isAllDay,
+                                onCheckedChange = { isAllDay = it }
+                            )
+                        }
                     }
                 }
 
-                if (!(scheduleType == RuleScheduleType.WEEKLY_DAYS && isAllDay)) {
+                if (!isAllDay) {
                     Column {
                         Text(
                             text = stringResource(R.string.period_rule_start),
@@ -1204,6 +1226,7 @@ private fun AddPeriodRuleDialog(
         },
         confirmButton = {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (onDelete != null) {

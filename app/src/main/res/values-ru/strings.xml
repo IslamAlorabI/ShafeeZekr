@@ -94,7 +94,11 @@
     
     <string name="period_rules_section">Тихие часы</string>
     <string name="period_rules_desc">Настройте время, когда напоминания отключены</string>
+    <string name="quiet_hours_edit_hint">Нажмите на правило, чтобы редактировать</string>
+    <string name="quiet_hours_delete_hint">Правила можно удалить на странице редактирования</string>
     <string name="add_period_rule">Добавить тихий час</string>
+    <string name="select_all_days">Выбрать все</string>
+    <string name="all_week">Вся неделя</string>
     <string name="quiet_hours_active">Тихий режим: напоминания приостановлены</string>
     <string name="all_day">Весь день</string>
     <string name="period_rule_allow">Разрешить</string>

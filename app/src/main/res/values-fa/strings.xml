@@ -94,7 +94,11 @@
     
     <string name="period_rules_section">ساعات سکوت</string>
     <string name="period_rules_desc">زمان‌هایی که یادآوری‌ها بی‌صدا می‌شوند را تنظیم کنید</string>
+    <string name="quiet_hours_edit_hint">برای ویرایش روی قانون ضربه بزنید</string>
+    <string name="quiet_hours_delete_hint">قوانین از صفحه ویرایش قابل حذف هستند</string>
     <string name="add_period_rule">افزودن ساعت سکوت</string>
+    <string name="select_all_days">انتخاب همه</string>
+    <string name="all_week">تمام هفته</string>
     <string name="quiet_hours_active">ساعات سکوت فعال: یادآوری‌ها متوقف شده</string>
     <string name="all_day">تمام روز</string>
     <string name="period_rule_allow">مجاز</string>
