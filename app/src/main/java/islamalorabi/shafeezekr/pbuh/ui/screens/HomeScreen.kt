@@ -65,7 +65,6 @@ import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
-import android.media.MediaPlayer
 import kotlinx.coroutines.delay
 
 @Composable
@@ -120,15 +119,11 @@ fun HomeScreen(
         item {
             Card(
                 onClick = {
-                    try {
-                        val resId = getSoundResourceId(settings.selectedSoundIndex)
-                        val mp = MediaPlayer.create(context, resId)
-                        mp?.setVolume(settings.appVolume, settings.appVolume)
-                        mp?.setOnCompletionListener { it.release() }
-                        mp?.start()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
+                        context = context,
+                        soundIndex = settings.selectedSoundIndex,
+                        appVolume = settings.appVolume
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -507,19 +502,5 @@ private fun NumberPickerColumn(
                 }
             }
         }
-    }
-}
-
-private fun getSoundResourceId(index: Int): Int {
-    return when (index) {
-        1 -> R.raw.zikr_sound_1
-        2 -> R.raw.zikr_sound_2
-        3 -> R.raw.zikr_sound_3
-        4 -> R.raw.zikr_sound_4
-        5 -> R.raw.zikr_sound_5
-        6 -> R.raw.zikr_sound_6
-        7 -> R.raw.zikr_sound_7
-        8 -> R.raw.zikr_sound_8
-        else -> R.raw.zikr_sound_1
     }
 }

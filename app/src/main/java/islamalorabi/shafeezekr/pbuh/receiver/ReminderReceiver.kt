@@ -7,15 +7,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.net.Uri
+
 import androidx.core.app.NotificationCompat
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
+
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
-import islamalorabi.shafeezekr.pbuh.data.dataStore
+
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.flow.first
 
@@ -72,61 +69,22 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun playSound(context: Context) {
         try {
-            // Instantiate PreferencesManager to check rules
             val preferencesManager = islamalorabi.shafeezekr.pbuh.data.PreferencesManager(context)
             val settings = kotlinx.coroutines.runBlocking {
                 preferencesManager.settingsFlow.first()
             }
             
-            // Check if blocked by Quiet Hours
             if (!settings.isReminderAllowedByPeriodRules()) {
-                // Reminder is blocked, do not play sound
                 return
             }
 
-            val volume = settings.appVolume
-            val soundIndex = settings.selectedSoundIndex
-
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
-
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setAudioAttributes(audioAttributes)
-            
-            val resId = getSoundResourceId(soundIndex)
-            val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
-            
-            mediaPlayer.setDataSource(context, soundUri)
-            mediaPlayer.setOnPreparedListener { mp ->
-                mp.setVolume(volume, volume)
-                mp.start()
-            }
-            mediaPlayer.setOnCompletionListener { mp ->
-                mp.release()
-            }
-            mediaPlayer.setOnErrorListener { mp, _, _ ->
-                mp.release()
-                true
-            }
-            mediaPlayer.prepareAsync()
+            islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
+                context = context,
+                soundIndex = settings.selectedSoundIndex,
+                appVolume = settings.appVolume
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    private fun getSoundResourceId(index: Int): Int {
-        return when (index) {
-            1 -> R.raw.zikr_sound_1
-            2 -> R.raw.zikr_sound_2
-            3 -> R.raw.zikr_sound_3
-            4 -> R.raw.zikr_sound_4
-            5 -> R.raw.zikr_sound_5
-            6 -> R.raw.zikr_sound_6
-            7 -> R.raw.zikr_sound_7
-            8 -> R.raw.zikr_sound_8
-            else -> R.raw.zikr_sound_1
         }
     }
 }

@@ -1425,16 +1425,12 @@ private fun SoundSelectionDialog(
                                 onClick = {
                                     tempSelected = index
                                     
-                                    try {
-                                        mediaPlayer?.release()
-                                        val resId = getSoundResourceId(index)
-                                        mediaPlayer = MediaPlayer.create(context, resId)
-                                        mediaPlayer?.setVolume(currentVolume, currentVolume)
-                                        mediaPlayer?.setOnCompletionListener { it.release() }
-                                        mediaPlayer?.start()
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
+                                    mediaPlayer?.release()
+                                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
+                                        context = context,
+                                        soundIndex = index,
+                                        appVolume = currentVolume
+                                    )
                                 },
                                 role = Role.RadioButton
                             )
