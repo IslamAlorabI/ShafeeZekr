@@ -1,10 +1,8 @@
 package islamalorabi.shafeezekr.pbuh
 
-import android.app.LocaleManager
 import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
@@ -17,6 +15,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +23,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,13 +51,27 @@ import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
 import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
-            val activity = context as? ComponentActivity
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text(stringResource(R.string.unsupported_version_title)) },
+                    text = { Text(stringResource(R.string.unsupported_version_message)) },
+                    confirmButton = {
+                        TextButton(onClick = { finish() }) {
+                            Text(stringResource(R.string.exit))
+                        }
+                    }
+                )
+                return@setContent
+            }
+            
             val preferencesManager = remember { PreferencesManager(context) }
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
@@ -124,19 +138,10 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                val localeManager = context.getSystemService(LocaleManager::class.java)
-                                if (code.isEmpty()) {
-                                    localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
-                                } else {
-                                    localeManager.applicationLocales = LocaleList.forLanguageTags(code)
-                                }
+                            if (code.isEmpty()) {
+                                AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
                             } else {
-                                if (code.isEmpty()) {
-                                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
-                                } else {
-                                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code))
-                                }
+                                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code))
                             }
                         }
                     },

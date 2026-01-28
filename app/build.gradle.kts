@@ -15,9 +15,9 @@ android {
     defaultConfig {
         applicationId = "islamalorabi.shafeezekr.pbuh"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 30
         versionCode = 3
-        versionName = "1.6"
+        versionName = "1.6-legacy"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(listOf("en", "ar", "de", "fa", "in", "ru", "tr", "ur"))

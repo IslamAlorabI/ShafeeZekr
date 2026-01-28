@@ -22,6 +22,9 @@
     <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
     <string name="minutes">منٹ</string>
     <string name="interval_reset_note">نوٹ: وقفہ تبدیل کرنے سے موجودہ ٹائمر ری سیٹ ہو جائے گا۔</string>
+    <string name="hours_label">گھنٹے</string>
+    <string name="minutes_label">منٹ</string>
+    <string name="total_minutes">کل: %1$d منٹ</string>
     <string name="battery_warning">کچھ آلات پر پس منظر کی سرگرمی کی پابندیاں یاد دہانیوں کو وقت پر پہنچنے سے روک سکتی ہیں۔ قابل اعتماد کارکردگی کی ضمانت کے لیے براہ کرم یقینی بنائیں کہ اس ایپ کے لیے بیٹری کی اصلاح غیر فعال ہے۔</string>
     
     <string name="settings_title">ترتیبات</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">انتباہ: منتخب کرنے پر آواز فوراً بجائی جائے گی۔</string>
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
+    
+    <string name="unsupported_version_title">غیر تعاون یافتہ اینڈرائیڈ ورژن</string>
+    <string name="unsupported_version_message">ایپ کا یہ ورژن صرف اینڈرائیڈ 9-11 کے لیے ڈیزائن کیا گیا ہے۔ براہ کرم اپنے اینڈرائیڈ 12+ ڈیوائس کے لیے ہماری GitHub صفحے سے مرکزی ورژن ڈاؤن لوڈ کریں۔</string>
+    <string name="exit">باہر نکلیں</string>
     </resources>
+

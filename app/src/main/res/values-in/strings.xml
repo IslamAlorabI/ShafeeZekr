@@ -22,6 +22,9 @@
     <string name="custom_interval_title">Interval Kustom</string>
     <string name="minutes">menit</string>
     <string name="interval_reset_note">Catatan: Mengubah interval akan mengatur ulang pengatur waktu saat ini.</string>
+    <string name="hours_label">Jam</string>
+    <string name="minutes_label">Menit</string>
+    <string name="total_minutes">Total: %1$d menit</string>
     <string name="battery_warning">Pembatasan aktivitas latar belakang pada beberapa perangkat dapat mencegah pengingat dikirim tepat waktu. Harap pastikan optimasi baterai dinonaktifkan untuk aplikasi ini guna menjamin kinerja yang andal.</string>
     
     <string name="settings_title">Pengaturan</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">Peringatan: Suara akan diputar segera setelah dipilih.</string>
     <string name="app_volume">Volume Aplikasi</string>
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
+    
+    <string name="unsupported_version_title">Versi Android Tidak Didukung</string>
+    <string name="unsupported_version_message">Versi aplikasi ini dirancang hanya untuk Android 9–11. Silakan unduh versi utama dari halaman GitHub kami untuk perangkat Android 12+ Anda.</string>
+    <string name="exit">Keluar</string>
     </resources>
+

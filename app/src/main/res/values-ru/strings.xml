@@ -22,6 +22,9 @@
     <string name="custom_interval_title">Свой интервал</string>
     <string name="minutes">минут</string>
     <string name="interval_reset_note">Примечание: Изменение интервала сбросит текущий таймер.</string>
+    <string name="hours_label">Часы</string>
+    <string name="minutes_label">Минуты</string>
+    <string name="total_minutes">Всего: %1$d минут</string>
     <string name="battery_warning">Ограничения фоновой активности на некоторых устройствах могут помешать своевременной доставке напоминаний. Пожалуйста, убедитесь, что оптимизация батареи отключена для этого приложения, чтобы гарантировать надежную работу.</string>
     
     <string name="settings_title">Настройки</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">Предупреждение: звук будет воспроизведен сразу после выбора.</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
+    
+    <string name="unsupported_version_title">Неподдерживаемая версия Android</string>
+    <string name="unsupported_version_message">Эта версия приложения предназначена только для Android 9–11. Пожалуйста, загрузите основную версию с нашей страницы GitHub для вашего устройства с Android 12+.</string>
+    <string name="exit">Выход</string>
     </resources>
+

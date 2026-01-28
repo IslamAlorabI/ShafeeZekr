@@ -18,6 +18,9 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.dataStore
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 
 class ReminderReceiver : BroadcastReceiver() {
 
@@ -27,10 +30,24 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        createNotificationChannel(context)
-        showNotification(context)
+        val localizedContext = getLocalizedContext(context)
+        createNotificationChannel(localizedContext)
+        showNotification(localizedContext)
         playSound(context)
         ReminderScheduler.scheduleNextAlarm(context)
+    }
+
+    private fun getLocalizedContext(context: Context): Context {
+        val locales = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales()
+        if (!locales.isEmpty) {
+            val locale = locales.get(0)
+            if (locale != null) {
+                val config = android.content.res.Configuration(context.resources.configuration)
+                config.setLocale(locale)
+                return context.createConfigurationContext(config)
+            }
+        }
+        return context
     }
 
     private fun createNotificationChannel(context: Context) {
@@ -60,6 +77,7 @@ class ReminderReceiver : BroadcastReceiver() {
             .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(context.getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_pbuh_white)
+            .setColor(context.getColor(R.color.teal_700))
             .setLargeIcon(largeIcon)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -71,53 +89,15 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun playSound(context: Context) {
-        try {
-            val preferences = kotlinx.coroutines.runBlocking {
-                context.dataStore.data.first()
-            }
+        val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO)
+        scope.launch {
+            val preferences = context.dataStore.data.first()
             val volume = preferences[floatPreferencesKey("app_volume")] ?: 1.0f
             val soundIndex = preferences[intPreferencesKey("selected_sound_index")] ?: 1
-
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
-
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setAudioAttributes(audioAttributes)
             
-            val resId = getSoundResourceId(soundIndex)
-            val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
-            
-            mediaPlayer.setDataSource(context, soundUri)
-            mediaPlayer.setOnPreparedListener { mp ->
-                mp.setVolume(volume, volume)
-                mp.start()
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                islamalorabi.shafeezekr.pbuh.service.SoundPlayer.play(context, soundIndex, volume)
             }
-            mediaPlayer.setOnCompletionListener { mp ->
-                mp.release()
-            }
-            mediaPlayer.setOnErrorListener { mp, _, _ ->
-                mp.release()
-                true
-            }
-            mediaPlayer.prepareAsync()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun getSoundResourceId(index: Int): Int {
-        return when (index) {
-            1 -> R.raw.zikr_sound_1
-            2 -> R.raw.zikr_sound_2
-            3 -> R.raw.zikr_sound_3
-            4 -> R.raw.zikr_sound_4
-            5 -> R.raw.zikr_sound_5
-            6 -> R.raw.zikr_sound_6
-            7 -> R.raw.zikr_sound_7
-            8 -> R.raw.zikr_sound_8
-            else -> R.raw.zikr_sound_1
         }
     }
 }

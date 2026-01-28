@@ -22,6 +22,9 @@
     <string name="custom_interval_title">فترة مخصصة</string>
     <string name="minutes">دقيقة</string>
     <string name="interval_reset_note">ملاحظة: تغيير الفترة الزمنية سيؤدي إلى إعادة تعيين المؤقت الحالي.</string>
+    <string name="hours_label">ساعات</string>
+    <string name="minutes_label">دقائق</string>
+    <string name="total_minutes">الإجمالي: %1$d دقيقة</string>
     <string name="battery_warning">قد تمنع قيود نشاط الخلفية على بعض الأجهزة وصول التذكيرات في الوقت المحدد. يرجى التأكد من تعطيل تحسين البطارية لهذا التطبيق لضمان أداء موثوق.</string>
     
     <string name="settings_title">الإعدادات</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">تنبيه: سيتم تشغيل الصوت فوراً عند اختياره.</string>
     <string name="app_volume">مستوى صوت التطبيق</string>
     <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
+    
+    <string name="unsupported_version_title">إصدار أندرويد غير مدعوم</string>
+    <string name="unsupported_version_message">هذا الإصدار من التطبيق مصمم لأندرويد 9-11 فقط. يرجى تحميل الإصدار الرئيسي من صفحة GitHub لجهازك الذي يعمل بأندرويد 12+.</string>
+    <string name="exit">خروج</string>
     </resources>
+

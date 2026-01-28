@@ -1,10 +1,5 @@
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -61,11 +56,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
-import android.media.MediaPlayer
 import kotlinx.coroutines.delay
 
 @Composable
@@ -77,25 +70,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var hasNotificationPermission by remember {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            } else true
-        )
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasNotificationPermission = isGranted
-        if (isGranted) {
-            onReminderEnabledChange(true)
-        }
-    }
 
     var showCustomDialog by remember { mutableStateOf(false) }
     
@@ -103,6 +77,25 @@ fun HomeScreen(
     var remainingTime by remember { mutableLongStateOf(0L) }
     
     LaunchedEffect(settings.isReminderEnabled, settings.reminderInterval, settings.customIntervalMinutes) {
+        if (settings.isReminderEnabled) {
+            val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
+            val now = System.currentTimeMillis()
+            
+            // If we have a stale alarm (time passed), reschedule immediately
+            if (nextTrigger < now) {
+                val intervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+                    settings.customIntervalMinutes
+                } else {
+                    settings.reminderInterval.minutes
+                }
+                
+                // Only reschedule if we have a valid interval
+                if (intervalMinutes > 0) {
+                    islamalorabi.shafeezekr.pbuh.service.ReminderScheduler.scheduleNextAlarm(context)
+                }
+            }
+        }
+
         while (settings.isReminderEnabled) {
             val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
             val now = System.currentTimeMillis()
@@ -120,15 +113,11 @@ fun HomeScreen(
         item {
             Card(
                 onClick = {
-                    try {
-                        val resId = getSoundResourceId(settings.selectedSoundIndex)
-                        val mp = MediaPlayer.create(context, resId)
-                        mp?.setVolume(settings.appVolume, settings.appVolume)
-                        mp?.setOnCompletionListener { it.release() }
-                        mp?.start()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    islamalorabi.shafeezekr.pbuh.service.SoundPlayer.play(
+                        context,
+                        settings.selectedSoundIndex,
+                        settings.appVolume
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -247,11 +236,7 @@ fun HomeScreen(
                             Switch(
                                 checked = settings.isReminderEnabled,
                                 onCheckedChange = { enabled ->
-                                    if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        onReminderEnabledChange(enabled)
-                                    }
+                                    onReminderEnabledChange(enabled)
                                 }
                             )
                         },

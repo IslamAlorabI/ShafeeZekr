@@ -800,11 +800,10 @@ private fun SoundSelectionDialog(
 ) {
     val context = LocalContext.current
     var tempSelected by remember { mutableStateOf(currentIndex) }
-    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
     DisposableEffect(Unit) {
         onDispose {
-            mediaPlayer?.release()
+            islamalorabi.shafeezekr.pbuh.service.SoundPlayer.release()
         }
     }
 
@@ -828,17 +827,11 @@ private fun SoundSelectionDialog(
                                 selected = tempSelected == index,
                                 onClick = {
                                     tempSelected = index
-                                    
-                                    try {
-                                        mediaPlayer?.release()
-                                        val resId = getSoundResourceId(index)
-                                        mediaPlayer = MediaPlayer.create(context, resId)
-                                        mediaPlayer?.setVolume(currentVolume, currentVolume)
-                                        mediaPlayer?.setOnCompletionListener { it.release() }
-                                        mediaPlayer?.start()
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
+                                    islamalorabi.shafeezekr.pbuh.service.SoundPlayer.play(
+                                        context,
+                                        index,
+                                        currentVolume
+                                    )
                                 },
                                 role = Role.RadioButton
                             )

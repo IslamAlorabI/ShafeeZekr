@@ -22,6 +22,9 @@
     <string name="custom_interval_title">Özel Aralık</string>
     <string name="minutes">dakika</string>
     <string name="interval_reset_note">Not: Aralığı değiştirmek mevcut zamanlayıcıyı sıfırlar.</string>
+    <string name="hours_label">Saat</string>
+    <string name="minutes_label">Dakika</string>
+    <string name="total_minutes">Toplam: %1$d dakika</string>
     <string name="battery_warning">Bazı cihazlardaki arka plan etkinlik kısıtlamaları, hatırlatıcıların zamanında iletilmesini engelleyebilir. Güvenilir performans sağlamak için lütfen bu uygulama için pil optimizasyonunun devre dışı bırakıldığından emin olun.</string>
     
     <string name="settings_title">Ayarlar</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">Uyarı: Ses seçildiğinde hemen çalınacaktır.</string>
     <string name="app_volume">Uygulama Ses Düzeyi</string>
     <string name="app_volume_desc">Uygulama sesini bağımsız olarak kontrol edin</string>
+    
+    <string name="unsupported_version_title">Desteklenmeyen Android Sürümü</string>
+    <string name="unsupported_version_message">Bu uygulama sürümü yalnızca Android 9–11 için tasarlanmıştır. Lütfen Android 12+ cihazınız için GitHub sayfamızdan ana sürümü indirin.</string>
+    <string name="exit">Çıkış</string>
     </resources>
+

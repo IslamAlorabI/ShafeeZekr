@@ -100,5 +100,8 @@
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
     
+    <string name="unsupported_version_title">Unsupported Android Version</string>
+    <string name="unsupported_version_message">This version of the app is designed for Android 9–11 only. Please download the main version from our GitHub page for your Android 12+ device.</string>
+    <string name="exit">Exit</string>
 
 </resources>

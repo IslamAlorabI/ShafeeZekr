@@ -22,6 +22,9 @@
     <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
     <string name="minutes">Minuten</string>
     <string name="interval_reset_note">Hinweis: Das Ändern des Intervalls setzt den aktuellen Timer zurück.</string>
+    <string name="hours_label">Stunden</string>
+    <string name="minutes_label">Minuten</string>
+    <string name="total_minutes">Gesamt: %1$d Minuten</string>
     <string name="battery_warning">Einschränkungen der Hintergrundaktivität auf einigen Geräten können dazu führen, dass Erinnerungen nicht rechtzeitig zugestellt werden. Bitte stellen Sie sicher, dass die Akku-Optimierung für diese App deaktiviert ist, um eine zuverlässige Leistung zu gewährleisten.</string>
     
     <string name="settings_title">Einstellungen</string>
@@ -91,4 +94,9 @@
     <string name="sound_play_warning">Warnung: Der Ton wird sofort nach der Auswahl abgespielt.</string>
     <string name="app_volume">App-Lautstärke</string>
     <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
+    
+    <string name="unsupported_version_title">Nicht unterstützte Android-Version</string>
+    <string name="unsupported_version_message">Diese Version der App ist nur für Android 9–11 ausgelegt. Bitte laden Sie die Hauptversion von unserer GitHub-Seite für Ihr Android 12+ Gerät herunter.</string>
+    <string name="exit">Beenden</string>
     </resources>
+
