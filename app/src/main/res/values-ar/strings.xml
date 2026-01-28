@@ -94,7 +94,12 @@
     
     <string name="period_rules_section">ساعات الهدوء</string>
     <string name="period_rules_desc">تعيين أوقات كتم التذكيرات</string>
+    <string name="quiet_hours_edit_hint">اضغط على القاعدة لتعديلها</string>
+    <string name="quiet_hours_delete_hint">يمكن حذف القواعد من صفحة التعديل</string>
     <string name="add_period_rule">إضافة ساعة هدوء</string>
+    <string name="select_all_days">تحديد الكل</string>
+    <string name="all_week">كل الأسبوع</string>
+    <string name="edit_period_rule">تعديل ساعة هدوء</string>
     <string name="quiet_hours_active">ساعات الهدوء: التذكيرات متوقفة</string>
     <string name="all_day">اليوم كامل</string>
     <string name="period_rule_allow">سماح</string>
