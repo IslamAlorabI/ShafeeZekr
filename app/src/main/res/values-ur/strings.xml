@@ -120,4 +120,6 @@
     <string name="day_thu">تی</string>
     <string name="day_fri">جمعہ</string>
     <string name="day_sat">ہفتہ</string>
+    <string name="select_time">وقت منتخب کریں</string>
+    <string name="confirm">تصدیق کریں</string>
 </resources>

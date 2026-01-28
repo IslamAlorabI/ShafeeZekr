@@ -120,4 +120,6 @@
     <string name="day_thu">Do</string>
     <string name="day_fri">Fr</string>
     <string name="day_sat">Sa</string>
+    <string name="select_time">Zeit auswählen</string>
+    <string name="confirm">Bestätigen</string>
 </resources>

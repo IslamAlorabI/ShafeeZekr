@@ -120,4 +120,6 @@
     <string name="day_thu">Kam</string>
     <string name="day_fri">Jum</string>
     <string name="day_sat">Sab</string>
+    <string name="select_time">Pilih Waktu</string>
+    <string name="confirm">Konfirmasi</string>
 </resources>
