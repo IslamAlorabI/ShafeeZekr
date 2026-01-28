@@ -120,4 +120,6 @@
     <string name="day_thu">پنج</string>
     <string name="day_fri">جمعه</string>
     <string name="day_sat">شنبه</string>
+    <string name="select_time">انتخاب زمان</string>
+    <string name="confirm">تأیید</string>
 </resources>

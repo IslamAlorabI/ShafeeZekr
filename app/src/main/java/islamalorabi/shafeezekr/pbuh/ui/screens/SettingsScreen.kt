@@ -88,8 +88,16 @@ import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import android.media.MediaPlayer
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.mutableIntStateOf
 
 sealed class UpdateState {
     object Idle : UpdateState()
@@ -953,6 +961,7 @@ private fun LanguageDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun AddPeriodRuleDialog(
     onDismiss: () -> Unit,
@@ -960,16 +969,20 @@ private fun AddPeriodRuleDialog(
 ) {
     var ruleType by remember { mutableStateOf(PeriodRuleType.ALLOW) }
     var scheduleType by remember { mutableStateOf(RuleScheduleType.DAILY_TIME) }
-    var startHour by remember { mutableStateOf(9) }
-    var startMinute by remember { mutableStateOf(0) }
-    var endHour by remember { mutableStateOf(17) }
-    var endMinute by remember { mutableStateOf(0) }
+    var startHour by remember { mutableIntStateOf(9) }
+    var startMinute by remember { mutableIntStateOf(0) }
+    var endHour by remember { mutableIntStateOf(17) }
+    var endMinute by remember { mutableIntStateOf(0) }
     var selectedDays by remember { mutableStateOf(setOf<Int>()) }
     
+    var showStartTimePicker by remember { mutableStateOf(false) }
+    var showEndTimePicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    
     val calendar = Calendar.getInstance()
-    var selectedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
-    var selectedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
-    var selectedDay by remember { mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
+    var selectedDateMillis by remember { 
+        mutableStateOf(calendar.timeInMillis) 
+    }
 
     val dayNames = listOf(
         stringResource(R.string.day_sun),
@@ -980,6 +993,18 @@ private fun AddPeriodRuleDialog(
         stringResource(R.string.day_fri),
         stringResource(R.string.day_sat)
     )
+
+    fun formatTime(hour: Int, minute: Int): String {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+        }
+        return java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(cal.time)
+    }
+    
+    fun formatDate(millis: Long): String {
+        return java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(java.util.Date(millis))
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1032,9 +1057,10 @@ private fun AddPeriodRuleDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         FilterChip(
                             selected = scheduleType == RuleScheduleType.DAILY_TIME,
@@ -1062,9 +1088,10 @@ private fun AddPeriodRuleDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        Row(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             dayNames.forEachIndexed { index, name ->
                                 FilterChip(
@@ -1076,8 +1103,7 @@ private fun AddPeriodRuleDialog(
                                             selectedDays + index
                                         }
                                     },
-                                    label = { Text(name.take(2)) },
-                                    modifier = Modifier.weight(1f)
+                                    label = { Text(name.take(2)) }
                                 )
                             }
                         }
@@ -1092,34 +1118,27 @@ private fun AddPeriodRuleDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        OutlinedCard(
+                            onClick = { showDatePicker = true },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            TimePickerField(
-                                value = selectedYear,
-                                onValueChange = { selectedYear = it.coerceIn(2024, 2030) },
-                                maxValue = 2030,
-                                minValue = 2024,
-                                modifier = Modifier.weight(1.5f)
-                            )
-                            Text("-")
-                            TimePickerField(
-                                value = selectedMonth + 1,
-                                onValueChange = { selectedMonth = (it - 1).coerceIn(0, 11) },
-                                maxValue = 12,
-                                minValue = 1,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text("-")
-                            TimePickerField(
-                                value = selectedDay,
-                                onValueChange = { selectedDay = it.coerceIn(1, 31) },
-                                maxValue = 31,
-                                minValue = 1,
-                                modifier = Modifier.weight(1f)
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = formatDate(selectedDateMillis),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }
@@ -1131,30 +1150,27 @@ private fun AddPeriodRuleDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    OutlinedCard(
+                        onClick = { showStartTimePicker = true },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        TimePickerField(
-                            value = startHour,
-                            onValueChange = { startHour = it.coerceIn(0, 23) },
-                            maxValue = 23,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(":", style = MaterialTheme.typography.titleMedium)
-                        TimePickerField(
-                            value = startMinute,
-                            onValueChange = { startMinute = it.coerceIn(0, 59) },
-                            maxValue = 59,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (startHour < 12) "AM" else "PM",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = formatTime(startHour, startMinute),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Schedule,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
                 
@@ -1165,30 +1181,27 @@ private fun AddPeriodRuleDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    OutlinedCard(
+                        onClick = { showEndTimePicker = true },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        TimePickerField(
-                            value = endHour,
-                            onValueChange = { endHour = it.coerceIn(0, 23) },
-                            maxValue = 23,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(":", style = MaterialTheme.typography.titleMedium)
-                        TimePickerField(
-                            value = endMinute,
-                            onValueChange = { endMinute = it.coerceIn(0, 59) },
-                            maxValue = 59,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (endHour < 12) "AM" else "PM",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = formatTime(endHour, endMinute),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Schedule,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             }
@@ -1196,6 +1209,9 @@ private fun AddPeriodRuleDialog(
         confirmButton = {
             TextButton(
                 onClick = {
+                    val cal = Calendar.getInstance().apply { 
+                        timeInMillis = selectedDateMillis 
+                    }
                     onConfirm(
                         PeriodRule(
                             type = ruleType,
@@ -1205,9 +1221,9 @@ private fun AddPeriodRuleDialog(
                             endHour = endHour,
                             endMinute = endMinute,
                             daysOfWeek = selectedDays,
-                            year = selectedYear,
-                            month = selectedMonth,
-                            dayOfMonth = selectedDay,
+                            year = cal.get(Calendar.YEAR),
+                            month = cal.get(Calendar.MONTH),
+                            dayOfMonth = cal.get(Calendar.DAY_OF_MONTH),
                             isEnabled = true
                         )
                     )
@@ -1226,40 +1242,116 @@ private fun AddPeriodRuleDialog(
             }
         }
     )
-}
-
-@Composable
-private fun TimePickerField(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    maxValue: Int,
-    modifier: Modifier = Modifier,
-    minValue: Int = 0
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        IconButton(
-            onClick = { onValueChange(if (value > minValue) value - 1 else maxValue) },
-            modifier = Modifier.size(32.dp)
-        ) {
-            Text("-", style = MaterialTheme.typography.titleLarge)
-        }
-        Text(
-            text = String.format("%02d", value),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 4.dp)
+    
+    if (showStartTimePicker) {
+        TimePickerDialog(
+            initialHour = startHour,
+            initialMinute = startMinute,
+            onDismiss = { showStartTimePicker = false },
+            onConfirm = { hour, minute ->
+                startHour = hour
+                startMinute = minute
+                showStartTimePicker = false
+            }
         )
-        IconButton(
-            onClick = { onValueChange(if (value < maxValue) value + 1 else minValue) },
-            modifier = Modifier.size(32.dp)
-        ) {
-            Text("+", style = MaterialTheme.typography.titleLarge)
-        }
+    }
+    
+    if (showEndTimePicker) {
+        TimePickerDialog(
+            initialHour = endHour,
+            initialMinute = endMinute,
+            onDismiss = { showEndTimePicker = false },
+            onConfirm = { hour, minute ->
+                endHour = hour
+                endMinute = minute
+                showEndTimePicker = false
+            }
+        )
+    }
+    
+    if (showDatePicker) {
+        DatePickerModal(
+            initialDateMillis = selectedDateMillis,
+            onDismiss = { showDatePicker = false },
+            onConfirm = { millis ->
+                selectedDateMillis = millis
+                showDatePicker = false
+            }
+        )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerDialog(
+    initialHour: Int,
+    initialMinute: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int, Int) -> Unit
+) {
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialHour,
+        initialMinute = initialMinute,
+        is24Hour = false
+    )
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        title = { Text(stringResource(R.string.select_time)) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TimePicker(state = timePickerState)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { 
+                onConfirm(timePickerState.hour, timePickerState.minute) 
+            }) {
+                Text(stringResource(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DatePickerModal(
+    initialDateMillis: Long,
+    onDismiss: () -> Unit,
+    onConfirm: (Long) -> Unit
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis
+    )
+    
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = { 
+                datePickerState.selectedDateMillis?.let { onConfirm(it) }
+            }) {
+                Text(stringResource(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
 
 @Composable
 private fun SoundSelectionDialog(
