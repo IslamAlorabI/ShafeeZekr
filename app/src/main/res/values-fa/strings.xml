@@ -101,8 +101,7 @@
     <string name="all_week">تمام هفته</string>
     <string name="quiet_hours_active">ساعات سکوت فعال: یادآوری‌ها متوقف شده</string>
     <string name="all_day">تمام روز</string>
-    <string name="period_rule_allow">مجاز</string>
-    <string name="period_rule_block">مسدود</string>
+
     <string name="period_rule_start">زمان شروع</string>
     <string name="period_rule_end">زمان پایان</string>
     <string name="period_rule_conflict_warning">فعال‌سازی امکان‌پذیر نیست: تعارض با قانون فعال دیگر</string>

@@ -101,8 +101,7 @@
     <string name="all_week">پورا ہفتہ</string>
     <string name="quiet_hours_active">خاموش اوقات فعال: یاد دہانیاں روکی گئیں</string>
     <string name="all_day">پورا دن</string>
-    <string name="period_rule_allow">اجازت</string>
-    <string name="period_rule_block">بلاک</string>
+
     <string name="period_rule_start">شروع وقت</string>
     <string name="period_rule_end">اختتام وقت</string>
     <string name="period_rule_conflict_warning">فعال نہیں کیا جا سکتا: دوسرے فعال قاعدے سے تصادم</string>
