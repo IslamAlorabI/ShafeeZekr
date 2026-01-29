@@ -1,77 +1,82 @@
-# ShafeeZekr (ذكرُ الشفيع)
+# ShafeeZekr
 
 <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="128" align="left" style="margin-right: 16px;" />
 
-**ShafeeZekr** is a beautiful, modern Android application designed to remind you to send blessings upon the Prophet Muhammad ﷺ (Peace Be Upon Him). With a clean Material Design 3 interface, customizable intervals, and multi-language support, it serves as a gentle spiritual companion for your daily life.
+**ShafeeZekr** is a modern Android application designed to remind you to send blessings upon the Prophet Muhammad (Peace Be Upon Him). Built with Jetpack Compose and Material Design 3, it provides a clean, customizable experience with multi-language support and privacy-focused design.
 
 <br clear="all" />
 
-## ✨ Features
+## Features
 
-*   **Periodic Reminders**: Set automatic audio reminders to play at intervals that suit you (every 5, 10, 30 minutes, 1 hour, or custom).
-*   **Beautiful UI**: Built with **Jetpack Compose** and **Material Design 3**, featuring dynamic color theming (Monet), Light/Dark modes, and smooth animations.
-*   **Multi-language Support**: Fully localized in:
-    *   English
-    *   العربية (Arabic)
-    *   Bahasa Indonesia
-    *   Русский (Russian)
-    *   Deutsch (German)
-    *   اردو (Urdu)
-    *   فارسی (Persian)
-    *   Türkçe (Turkish)
-*   **Battery Optimization**: Intelligent handling of battery optimization settings to ensure reliable reminders.
-*   **Auto-Updates**: Integrated check for updates directly from GitHub Releases.
-*   **Boot Persistence**: Reminders automatically restart when you reboot your device.
-*   **Privacy Focused**: No data collection or tracking. See our [Privacy Policy](PRIVACY_POLICY.md).
+- **Periodic Reminders**: Set automatic audio reminders at customizable intervals (1 minute to 2 hours, or custom intervals)
+- **Quiet Hours**: Configure time-based rules to pause reminders during specific periods, with support for weekly schedules and specific dates
+- **Master Volume Control**: Independent volume control that temporarily overrides system volume during playback
+- **Multiple Sound Options**: Choose from various reminder sounds with instant preview
+- **Material Design 3**: Dynamic color theming (Monet), Light/Dark mode support, and smooth animations
+- **Multi-language Support**: Fully localized in 8 languages:
+  - English
+  - Arabic (العربية)
+  - Indonesian (Bahasa Indonesia)
+  - Russian (Русский)
+  - German (Deutsch)
+  - Urdu (اردو)
+  - Persian (فارسی)
+  - Turkish (Türkçe)
+- **Boot Persistence**: Reminders automatically resume after device restart
+- **Battery Optimization Handling**: Intelligent management of battery optimization settings for reliable reminder delivery
+- **Privacy Focused**: No data collection, no tracking, no analytics. See our [Privacy Policy](PRIVACY_POLICY.md)
 
-## 📱 Screenshots
+## Screenshots
 
-> **Note**: Screenshots below are placeholders. Please capture screenshots from your device and place them in a `docs/screenshots` folder, then update the paths below.
+<p align="center">
+  <img src="Screenshots/Screenshot_20260129_020251.png" width="250" alt="Home Screen" />
+  <img src="Screenshots/Screenshot_20260129_020325.png" width="250" alt="Settings Screen" />
+  <img src="Screenshots/Screenshot_20260129_020331.png" width="250" alt="About Screen" />
+</p>
 
-| Home Screen | Settings (Light) | Settings (Dark) |
-|:-----------:|:----------------:|:---------------:|
-| *[Add Home Screenshot]* | *[Add Settings Light Screenshot]* | *[Add Settings Dark Screenshot]* |
+## Requirements
 
-## 🛠️ Tech Stack
+- Android 12 (API 31) or higher
+- Android Studio Ladybug or newer
+- JDK 17
 
-*   **Language**: [Kotlin](https://kotlinlang.org/)
-*   **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose)
-*   **Design System**: [Material 3](https://m3.material.io/)
-*   **Architecture**: MVVM (Model-View-ViewModel) recommended patterns.
-*   **Libraries**:
-    *   `androidx.core` & `androidx.lifecycle`
-    *   `androidx.datastore` (Preferences)
-    *   `retrofit` & `gson` (GitHub API updates)
-    *   `kotlinx.coroutines`
+## Installation
 
-## 🚀 Getting Started
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/islamalorabi/ShafeeZekr.git
+   ```
+2. Open the project in Android Studio
+3. Sync Gradle files
+4. Build and run on your device or emulator
 
-### Prerequisites
+## Tech Stack
 
-*   Android Studio Ladybug (or newer recommended)
-*   JDK 17
-*   Android SDK API 31+
+- **Language**: Kotlin
+- **UI Framework**: Jetpack Compose
+- **Design System**: Material 3
+- **Data Persistence**: DataStore Preferences
+- **Architecture**: MVVM pattern
+- **Libraries**:
+  - AndroidX Core and Lifecycle
+  - Compose Navigation
+  - Retrofit and Gson
 
-### Installation
+## Contributing
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/islamalorabi/ShafeeZekr.git
-    ```
-2.  Open the project in **Android Studio**.
-3.  Sync Gradle files.
-4.  Build and Run on your device or emulator.
+Contributions are welcome. To contribute:
 
-## 🤝 Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a Pull Request
 
-Contributions are welcome! If you have suggestions for improvements or bug fixes, please follow these steps:
+## Contact
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/YourFeature`).
-3.  Commit your changes (`git commit -m 'Add some feature'`).
-4.  Push to the branch (`git push origin feature/YourFeature`).
-5.  Open a Pull Request.
+- Telegram: [@IslamAlorabI](https://t.me/IslamAlorabI)
+- GitHub: [github.com/islamalorabi](https://github.com/islamalorabi)
 
-## 📄 License
+## License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
