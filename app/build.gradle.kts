@@ -1,16 +1,14 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
 
-import java.util.Properties
-import java.io.FileInputStream
-
 android {
     namespace = "islamalorabi.shafeezekr.pbuh"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "islamalorabi.shafeezekr.pbuh"
@@ -20,7 +18,7 @@ android {
         versionName = "1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations.addAll(listOf("en", "ar", "de", "fa", "in", "ru", "tr", "ur"))
+        androidResources.localeFilters.addAll(listOf("en", "ar", "de", "fa", "in", "ru", "tr", "ur"))
     }
 
     splits {
@@ -94,6 +92,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Retrofit & Gson
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
 }
