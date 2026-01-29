@@ -76,16 +76,7 @@
     <string name="battery_optimization_disabled">Sınırsız</string>
     <string name="battery_optimization_enabled">Kısıtlı</string>
     
-    <string name="updates_section">Güncellemeler</string>
-    <string name="check_updates">Güncelleme kontrolü</string>
-    <string name="checking_updates">Güncellemeler kontrol ediliyor...</string>
-    <string name="no_updates">Uygulama güncel</string>
-    <string name="update_error">Güncelleme kontrol hatası</string>
-    <string name="update_available">Güncelleme mevcut</string>
-    <string name="update_message">Yeni bir sürüm (%1$s) mevcut.</string>
-    <string name="update_button">Güncelle</string>
-    <string name="later_button">Sonra</string>
-    
+
     <string name="sound_section">Ses</string>
     <string name="sound_selection">Ses Seçimi</string>
     <string name="sound_name">Ses %1$d</string>

@@ -84,7 +84,6 @@ import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
 import java.util.UUID
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
-import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import android.media.MediaPlayer
@@ -99,13 +98,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.mutableIntStateOf
 
-sealed class UpdateState {
-    object Idle : UpdateState()
-    object Checking : UpdateState()
-    object UpToDate : UpdateState()
-    data class UpdateAvailable(val release: GithubRelease) : UpdateState()
-    object Error : UpdateState()
-}
 
 data class LanguageOption(
     val code: String,
@@ -172,7 +164,6 @@ fun SettingsScreen(
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onSoundChange: (Int) -> Unit,
-    onCheckForUpdates: suspend () -> GithubRelease?,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -181,7 +172,6 @@ fun SettingsScreen(
     var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
     var ruleToEdit by remember { mutableStateOf<PeriodRule?>(null) }
     var showSoundDialog by remember { mutableStateOf(false) }
-    var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -659,130 +649,6 @@ fun SettingsScreen(
                             context.startActivity(intent)
                         }
                     )
-                }
-            }
-        }
-
-        item {
-            SettingsGroup(
-                header = stringResource(R.string.updates_section),
-                headerColor = MaterialTheme.colorScheme.primary
-            ) {
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column {
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    text = stringResource(R.string.check_updates),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            },
-                            leadingContent = {
-                                if (updateState is UpdateState.Checking) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        strokeWidth = 2.dp
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            },
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            modifier = Modifier.clickable(
-                                enabled = updateState !is UpdateState.Checking
-                            ) {
-                                scope.launch {
-                                    updateState = UpdateState.Checking
-                                    try {
-                                        val release = onCheckForUpdates()
-                                        updateState = if (release != null) {
-                                            UpdateState.UpdateAvailable(release)
-                                        } else {
-                                            UpdateState.UpToDate
-                                        }
-                                    } catch (e: Exception) {
-                                        updateState = UpdateState.Error
-                                    }
-                                }
-                            }
-                        )
-                        
-                        AnimatedVisibility(
-                            visible = updateState !is UpdateState.Idle && updateState !is UpdateState.Checking,
-                            enter = fadeIn() + expandVertically(),
-                            exit = fadeOut() + shrinkVertically()
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
-                                when (updateState) {
-                                    is UpdateState.UpToDate -> {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                            Text(
-                                                text = stringResource(R.string.no_updates),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                    is UpdateState.UpdateAvailable -> {
-                                        val release = (updateState as UpdateState.UpdateAvailable).release
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Text(
-                                                text = stringResource(R.string.update_message, release.tagName),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                            Button(
-                                                onClick = {
-                                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl))
-                                                    context.startActivity(intent)
-                                                },
-                                                modifier = Modifier.fillMaxWidth()
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Download,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text(stringResource(R.string.update_button))
-                                            }
-                                        }
-                                    }
-                                    is UpdateState.Error -> {
-                                        Text(
-                                            text = stringResource(R.string.update_error),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                    else -> {}
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-                        }
-                    }
                 }
             }
         }

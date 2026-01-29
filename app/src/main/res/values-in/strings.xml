@@ -76,16 +76,7 @@
     <string name="battery_optimization_disabled">Tidak Dibatasi</string>
     <string name="battery_optimization_enabled">Dibatasi</string>
     
-    <string name="updates_section">Pembaruan</string>
-    <string name="check_updates">Periksa pembaruan</string>
-    <string name="checking_updates">Memeriksa pembaruan...</string>
-    <string name="no_updates">Aplikasi sudah terbaru</string>
-    <string name="update_error">Gagal memeriksa pembaruan</string>
-    <string name="update_available">Pembaruan tersedia</string>
-    <string name="update_message">Versi baru (%1$s) tersedia.</string>
-    <string name="update_button">Perbarui</string>
-    <string name="later_button">Nanti</string>
-    
+
     <string name="sound_section">Suara</string>
     <string name="sound_selection">Pilihan Suara</string>
     <string name="sound_name">Suara %1$d</string>

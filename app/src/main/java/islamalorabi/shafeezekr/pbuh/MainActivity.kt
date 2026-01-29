@@ -49,7 +49,6 @@ import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
-import islamalorabi.shafeezekr.pbuh.update.GithubRelease
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -63,19 +62,6 @@ class MainActivity : ComponentActivity() {
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
             
-            var updateRelease by remember { androidx.compose.runtime.mutableStateOf<islamalorabi.shafeezekr.pbuh.update.GithubRelease?>(null) }
-            
-            LaunchedEffect(Unit) {
-               updateRelease = islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
-            }
-            
-            if (updateRelease != null) {
-                islamalorabi.shafeezekr.pbuh.update.UpdateDialog(
-                    release = updateRelease!!,
-                    onDismiss = { updateRelease = null }
-                )
-            }
-
             ShafeeZekrTheme(
                 themeMode = settings.themeMode,
                 colorScheme = settings.colorScheme
@@ -142,9 +128,6 @@ class MainActivity : ComponentActivity() {
                     onSoundChange = { index ->
                         scope.launch { preferencesManager.setSelectedSoundIndex(index) }
                     },
-                    onCheckForUpdates = {
-                        islamalorabi.shafeezekr.pbuh.update.UpdateManager.checkForUpdates()
-                    }
                 )
             }
         }
@@ -163,8 +146,7 @@ fun MainApp(
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
-    onSoundChange: (Int) -> Unit,
-    onCheckForUpdates: suspend () -> GithubRelease?
+    onSoundChange: (Int) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -240,7 +222,6 @@ fun MainApp(
                 onVolumeChange = onVolumeChange,
                 onPeriodRulesChange = onPeriodRulesChange,
                 onSoundChange = onSoundChange,
-                onCheckForUpdates = onCheckForUpdates,
                 modifier = Modifier.padding(innerPadding)
             )
             2 -> AboutScreen(
