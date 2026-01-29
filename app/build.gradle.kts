@@ -14,7 +14,7 @@ android {
         applicationId = "islamalorabi.shafeezekr.pbuh"
         minSdk = 31
         targetSdk = 36
-        versionCode = 4
+        versionCode = 5
         versionName = "1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
