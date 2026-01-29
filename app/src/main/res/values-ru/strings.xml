@@ -76,16 +76,7 @@
     <string name="battery_optimization_disabled">Без ограничений</string>
     <string name="battery_optimization_enabled">Ограничено</string>
     
-    <string name="updates_section">Обновления</string>
-    <string name="check_updates">Проверить обновления</string>
-    <string name="checking_updates">Проверка обновлений...</string>
-    <string name="no_updates">Приложение обновлено</string>
-    <string name="update_error">Ошибка проверки обновлений</string>
-    <string name="update_available">Доступно обновление</string>
-    <string name="update_message">Доступна новая версия (%1$s).</string>
-    <string name="update_button">Обновить</string>
-    <string name="later_button">Позже</string>
-    
+
     <string name="sound_section">Звук</string>
     <string name="sound_selection">Выбор звука</string>
     <string name="sound_name">Звук %1$d</string>
