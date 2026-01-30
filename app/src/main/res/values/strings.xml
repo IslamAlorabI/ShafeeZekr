@@ -24,7 +24,7 @@
     <string name="interval_reset_note">Note: Changing the interval will reset the current timer.</string>
     <string name="battery_warning">Background activity restrictions on some devices may prevent reminders from being delivered on time. Please ensure battery optimization is disabled for this app to guarantee reliable performance.</string>
     
-    <string name="settings_title">Settings</string>
+
     <string name="theme_section">Appearance</string>
     <string name="theme_mode">Theme Mode</string>
     <string name="theme_light">Light</string>
@@ -52,7 +52,7 @@
     <string name="lang_fa">فارسی</string>
     <string name="lang_tr">Türkçe</string>
     
-    <string name="about_title">About</string>
+
     <string name="about_app_name">Praising the Intercessor</string>
     <string name="about_description">A simple reminder app to send blessings upon the Prophet Muhammad ﷺ</string>
     <string name="about_version">Version %1$s</string>
@@ -74,13 +74,13 @@
     
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+
     <string name="next_reminder">Next Reminder</string>
     <string name="battery_section">Battery</string>
     <string name="battery_optimization">Battery Optimization</string>
     <string name="battery_optimization_desc">Disable to ensure reminders work reliably</string>
     <string name="battery_optimization_disabled">Unrestricted</string>
-    <string name="battery_optimization_enabled">Restricted</string>
+
     
 
     <string name="sound_section">Sound</string>
@@ -98,21 +98,21 @@
     <string name="select_all_days">Select All</string>
     <string name="all_week">All week</string>
     <string name="add_period_rule">Add Quiet Hour</string>
-    <string name="edit_period_rule">Edit Quiet Hour</string>
+    <string name="edit_period_rule" translatable="false">Edit Quiet Hour</string>
     <string name="period_rule_start">Start Time</string>
     <string name="period_rule_end">End Time</string>
     <string name="period_rule_conflict_warning">Cannot enable: conflicts with another active rule</string>
     <string name="quiet_hours_active">Quiet Hours Active: Reminders Paused</string>
-    <string name="period_rule_currently_blocked">Currently blocked by period rule</string>
+
     <string name="delete">Delete</string>
     <string name="period_rule_empty">No quiet hours configured</string>
     <string name="hours_label">Hours</string>
     <string name="minutes_label">Minutes</string>
     <string name="total_minutes">Total: %1$d minutes</string>
-    <string name="rule_type_daily">Daily Time Range</string>
+
     <string name="rule_type_weekly">Weekly Days</string>
     <string name="rule_type_date">Specific Date</string>
-    <string name="rule_action">Action</string>
+
     <string name="schedule_type">Schedule Type</string>
     <string name="select_days">Select Days</string>
     <string name="select_date">Select Date</string>
