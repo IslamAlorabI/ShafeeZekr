@@ -133,7 +133,7 @@ data class PeriodRule(
         val timeRange = if (isAllDay) {
             "00:00 - 23:59"
         } else {
-            String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
+            String.format(java.util.Locale.getDefault(), "%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
         }
         return when (scheduleType) {
             RuleScheduleType.WEEKLY_DAYS -> {
@@ -146,7 +146,7 @@ data class PeriodRule(
                 "$days | $timeRange"
             }
             RuleScheduleType.SPECIFIC_DATE -> {
-                String.format("%04d-%02d-%02d | %s", year, month + 1, dayOfMonth, timeRange)
+                String.format(java.util.Locale.getDefault(), "%04d-%02d-%02d | %s", year, month + 1, dayOfMonth, timeRange)
             }
         }
     }

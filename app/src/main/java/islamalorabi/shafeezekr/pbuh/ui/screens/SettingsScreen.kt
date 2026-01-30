@@ -136,7 +136,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
     val timeRange = if (isEffectivelyAllDay) {
         allDay
     } else {
-        String.format("%02d:%02d - %02d:%02d", rule.startHour, rule.startMinute, rule.endHour, rule.endMinute)
+        String.format(java.util.Locale.getDefault(), "%02d:%02d - %02d:%02d", rule.startHour, rule.startMinute, rule.endHour, rule.endMinute)
     }
 
     return when (rule.scheduleType) {
@@ -149,7 +149,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
             "$days | $timeRange"
         }
         RuleScheduleType.SPECIFIC_DATE -> {
-            String.format("%04d-%02d-%02d | %s", rule.year, rule.month + 1, rule.dayOfMonth, timeRange)
+            String.format(java.util.Locale.getDefault(), "%04d-%02d-%02d | %s", rule.year, rule.month + 1, rule.dayOfMonth, timeRange)
         }
     }
 }
