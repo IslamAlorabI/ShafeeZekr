@@ -111,12 +111,12 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            val localeManager = context.getSystemService(LocaleManager::class.java)
-                            if (code.isEmpty()) {
-                                localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                            val appLocale = if (code.isEmpty()) {
+                                LocaleListCompat.getEmptyLocaleList()
                             } else {
-                                localeManager.applicationLocales = LocaleList.forLanguageTags(code)
+                                LocaleListCompat.forLanguageTags(code)
                             }
+                            AppCompatDelegate.setApplicationLocales(appLocale)
                         }
                     },
                     onVolumeChange = { volume ->

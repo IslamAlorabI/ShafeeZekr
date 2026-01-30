@@ -488,7 +488,7 @@ private fun NumberPickerColumn(
                 }
                 
                 Text(
-                    text = String.format("%02d", value),
+                    text = String.format(java.util.Locale.getDefault(), "%02d", value),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -510,7 +510,7 @@ private fun NumberPickerColumn(
 }
 
 private fun formatLocaleTime(minutes: Int, seconds: Int, localeTag: String): String {
-    val formatted = String.format("%02d:%02d", minutes, seconds)
+    val formatted = String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds)
     val lang = localeTag.split("-").first().lowercase()
     
     return when (lang) {
