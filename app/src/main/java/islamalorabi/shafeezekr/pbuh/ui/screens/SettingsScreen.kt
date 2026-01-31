@@ -87,6 +87,7 @@ import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import android.media.MediaPlayer
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.verticalScroll
@@ -136,7 +137,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
     val timeRange = if (isEffectivelyAllDay) {
         allDay
     } else {
-        String.format(java.util.Locale.getDefault(), "%02d:%02d - %02d:%02d", rule.startHour, rule.startMinute, rule.endHour, rule.endMinute)
+        LocaleUtils.formatLocalizedTimeRange(rule.startHour, rule.startMinute, rule.endHour, rule.endMinute)
     }
 
     return when (rule.scheduleType) {
@@ -149,7 +150,8 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
             "$days | $timeRange"
         }
         RuleScheduleType.SPECIFIC_DATE -> {
-            String.format(java.util.Locale.getDefault(), "%04d-%02d-%02d | %s", rule.year, rule.month + 1, rule.dayOfMonth, timeRange)
+            val localizedDate = LocaleUtils.localizeString(String.format(java.util.Locale.US, "%04d-%02d-%02d", rule.year, rule.month + 1, rule.dayOfMonth))
+            "$localizedDate | $timeRange"
         }
     }
 }
@@ -327,7 +329,7 @@ fun SettingsScreen(
                                 )
                             }
                             Text(
-                                text = "${(settings.appVolume * 100).toInt()}%",
+                                text = "${LocaleUtils.formatLocalizedNumber((settings.appVolume * 100).toInt())}%",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
