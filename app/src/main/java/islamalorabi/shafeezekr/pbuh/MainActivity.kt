@@ -1,9 +1,6 @@
 package islamalorabi.shafeezekr.pbuh
 
-import android.app.LocaleManager
-import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +22,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,7 +54,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
-            val activity = context as? ComponentActivity
             val preferencesManager = remember { PreferencesManager(context) }
             val settings by preferencesManager.settingsFlow.collectAsState(initial = AppSettings())
             val scope = rememberCoroutineScope()
