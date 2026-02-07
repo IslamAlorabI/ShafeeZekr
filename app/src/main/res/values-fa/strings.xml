@@ -12,12 +12,12 @@
     <string name="enable_reminder_desc">پخش یادآوری صوتی در فواصل منظم</string>
     
     <string name="interval_title">فاصله یادآوری</string>
-    <string name="interval_1_min">هر 1 دقیقه</string>
-    <string name="interval_5_min">هر 5 دقیقه</string>
-    <string name="interval_10_min">هر 10 دقیقه</string>
-    <string name="interval_30_min">هر 30 دقیقه</string>
-    <string name="interval_1_hour">هر 1 ساعت</string>
-    <string name="interval_2_hours">هر 2 ساعت</string>
+    <string name="interval_1_min">هر ۱ دقیقه</string>
+    <string name="interval_5_min">هر ۵ دقیقه</string>
+    <string name="interval_10_min">هر ۱۰ دقیقه</string>
+    <string name="interval_30_min">هر ۳۰ دقیقه</string>
+    <string name="interval_1_hour">هر ۱ ساعت</string>
+    <string name="interval_2_hours">هر ۲ ساعت</string>
     <string name="interval_custom">سفارشی</string>
     <string name="custom_interval_title">فاصله سفارشی</string>
     <string name="minutes">دقیقه</string>
