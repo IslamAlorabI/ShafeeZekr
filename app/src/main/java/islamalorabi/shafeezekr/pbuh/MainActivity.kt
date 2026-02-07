@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatDelegate
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.core.os.LocaleListCompat
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
@@ -49,6 +49,12 @@ import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val preferencesManager = PreferencesManager(newBase)
+        val languageCode = preferencesManager.getLanguageCodeSync()
+        super.attachBaseContext(LocaleUtils.updateResources(newBase, languageCode))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -107,12 +113,7 @@ class MainActivity : ComponentActivity() {
                     onLanguageChange = { code ->
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            val appLocale = if (code.isEmpty()) {
-                                LocaleListCompat.getEmptyLocaleList()
-                            } else {
-                                LocaleListCompat.forLanguageTags(code)
-                            }
-                            AppCompatDelegate.setApplicationLocales(appLocale)
+                            recreate()
                         }
                     },
                     onVolumeChange = { volume ->
