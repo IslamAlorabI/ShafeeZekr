@@ -12,6 +12,8 @@ import androidx.core.app.NotificationCompat
 
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.flow.first
@@ -24,8 +26,12 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        createNotificationChannel(context)
-        showNotification(context)
+        val preferencesManager = PreferencesManager(context)
+        val languageCode = preferencesManager.getLanguageCodeSync()
+        val localizedContext = LocaleUtils.updateResources(context, languageCode)
+        
+        createNotificationChannel(localizedContext)
+        showNotification(localizedContext)
         playSound(context)
         ReminderScheduler.scheduleNextAlarm(context)
     }
