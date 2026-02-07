@@ -302,6 +302,16 @@ class PreferencesManager(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LANGUAGE_CODE] = code
         }
+        // Also save to SharedPreferences for synchronous access
+        context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
+            .edit()
+            .putString("language_code", code)
+            .apply()
+    }
+
+    fun getLanguageCodeSync(): String {
+        return context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
+            .getString("language_code", "") ?: ""
     }
 
     suspend fun setAppVolume(volume: Float) {
