@@ -79,7 +79,7 @@
 
     <string name="sound_section">Ses</string>
     <string name="sound_selection">Ses Seçimi</string>
-    <string name="sound_name">Ses %1$d</string>
+    <string name="sound_name">Ses %1$s</string>
     <string name="sound_play_warning">Uyarı: Ses seçildiğinde hemen çalınacaktır.</string>
     <string name="app_volume">Uygulama Ses Düzeyi</string>
     <string name="app_volume_desc">Uygulama sesini bağımsız olarak kontrol edin</string>

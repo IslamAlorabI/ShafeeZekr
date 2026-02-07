@@ -277,7 +277,7 @@ fun SettingsScreen(
                             },
                             supportingContent = {
                                 Text(
-                                    text = stringResource(R.string.sound_name, settings.selectedSoundIndex),
+                                    text = stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex)),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -1347,7 +1347,7 @@ private fun SoundSelectionDialog(
                         RadioButton(selected = tempSelected == index, onClick = null)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = stringResource(R.string.sound_name, index), 
+                            text = stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(index)), 
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

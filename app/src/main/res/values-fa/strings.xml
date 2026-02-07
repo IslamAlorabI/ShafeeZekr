@@ -79,7 +79,7 @@
 
     <string name="sound_section">صدا</string>
     <string name="sound_selection">انتخاب صدا</string>
-    <string name="sound_name">صدای %1$d</string>
+    <string name="sound_name">صدای %1$s</string>
     <string name="sound_play_warning">هشدار: صدا بلافاصله پس از انتخاب پخش خواهد شد.</string>
     <string name="app_volume">صدای برنامه</string>
     <string name="app_volume_desc">کنترل مستقل صدای برنامه</string>
