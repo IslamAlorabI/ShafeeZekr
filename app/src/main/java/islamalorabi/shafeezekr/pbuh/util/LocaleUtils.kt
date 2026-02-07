@@ -124,4 +124,18 @@ object LocaleUtils {
             else -> char
         }
     }
+    fun updateResources(context: android.content.Context, language: String): android.content.Context {
+        val locale = if (language.isEmpty()) {
+            java.util.Locale.getDefault()
+        } else {
+            java.util.Locale.Builder().setLanguage(language).build()
+        }
+        java.util.Locale.setDefault(locale)
+        
+        val configuration = android.content.res.Configuration(context.resources.configuration)
+        configuration.setLocale(locale)
+        configuration.setLayoutDirection(locale)
+        
+        return context.createConfigurationContext(configuration)
+    }
 }
