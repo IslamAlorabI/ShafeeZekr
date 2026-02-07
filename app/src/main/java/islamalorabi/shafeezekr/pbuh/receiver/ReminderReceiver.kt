@@ -6,7 +6,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+
+import android.graphics.ImageDecoder
 
 import androidx.core.app.NotificationCompat
 
@@ -57,7 +58,9 @@ class ReminderReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_pbuh)
+        val largeIcon = ImageDecoder.decodeBitmap(
+            ImageDecoder.createSource(context.resources, R.drawable.ic_pbuh)
+        )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title))
