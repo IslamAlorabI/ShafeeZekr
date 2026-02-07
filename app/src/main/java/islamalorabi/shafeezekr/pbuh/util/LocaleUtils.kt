@@ -124,9 +124,20 @@ object LocaleUtils {
             else -> char
         }
     }
+    fun getSystemLocale(): java.util.Locale {
+        return android.os.Build.VERSION.SDK_INT.let { sdk ->
+            if (sdk >= android.os.Build.VERSION_CODES.N) {
+                android.content.res.Resources.getSystem().configuration.locales[0]
+            } else {
+                @Suppress("DEPRECATION")
+                android.content.res.Resources.getSystem().configuration.locale
+            }
+        }
+    }
+
     fun updateResources(context: android.content.Context, language: String): android.content.Context {
         val locale = if (language.isEmpty()) {
-            java.util.Locale.getDefault()
+            getSystemLocale()
         } else {
             java.util.Locale.Builder().setLanguage(language).build()
         }
