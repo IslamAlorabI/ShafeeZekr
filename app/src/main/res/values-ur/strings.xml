@@ -79,7 +79,7 @@
 
     <string name="sound_section">آواز</string>
     <string name="sound_selection">آواز کا انتخاب</string>
-    <string name="sound_name">آواز %1$d</string>
+    <string name="sound_name">آواز %1$s</string>
     <string name="sound_play_warning">انتباہ: منتخب کرنے پر آواز فوراً بجائی جائے گی۔</string>
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
