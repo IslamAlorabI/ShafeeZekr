@@ -88,8 +88,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import android.media.MediaPlayer
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
-
-
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -867,7 +867,7 @@ private fun LanguageDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun AddPeriodRuleDialog(
     ruleToEdit: PeriodRule? = null,
@@ -942,9 +942,10 @@ private fun AddPeriodRuleDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         FilterChip(
                             selected = scheduleType == RuleScheduleType.WEEKLY_DAYS,
@@ -967,62 +968,34 @@ private fun AddPeriodRuleDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        Column(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
+                            FilterChip(
+                                selected = selectedDays.size == 7,
+                                onClick = {
+                                    selectedDays = if (selectedDays.size == 7) {
+                                        emptySet()
+                                    } else {
+                                        setOf(0, 1, 2, 3, 4, 5, 6)
+                                    }
+                                },
+                                label = { Text(stringResource(R.string.select_all_days)) }
+                            )
+                            dayNames.forEachIndexed { index, name ->
                                 FilterChip(
-                                    selected = selectedDays.size == 7,
+                                    selected = index in selectedDays,
                                     onClick = {
-                                        selectedDays = if (selectedDays.size == 7) {
-                                            emptySet()
+                                        selectedDays = if (index in selectedDays) {
+                                            selectedDays - index
                                         } else {
-                                            setOf(0, 1, 2, 3, 4, 5, 6)
+                                            selectedDays + index
                                         }
                                     },
-                                    label = { Text(stringResource(R.string.select_all_days)) }
+                                    label = { Text(name) }
                                 )
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                dayNames.take(4).forEachIndexed { index, name ->
-                                    FilterChip(
-                                        selected = index in selectedDays,
-                                        onClick = {
-                                            selectedDays = if (index in selectedDays) {
-                                                selectedDays - index
-                                            } else {
-                                                selectedDays + index
-                                            }
-                                        },
-                                        label = { Text(name) }
-                                    )
-                                }
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                dayNames.drop(4).forEachIndexed { offset, name ->
-                                    val index = offset + 4
-                                    FilterChip(
-                                        selected = index in selectedDays,
-                                        onClick = {
-                                            selectedDays = if (index in selectedDays) {
-                                                selectedDays - index
-                                            } else {
-                                                selectedDays + index
-                                            }
-                                        },
-                                        label = { Text(name) }
-                                    )
-                                }
                             }
                         }
                         
