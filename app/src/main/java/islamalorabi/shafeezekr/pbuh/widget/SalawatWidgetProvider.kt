@@ -1,68 +1,121 @@
 package islamalorabi.shafeezekr.pbuh.widget
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.widget.RemoteViews
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.provideContent
+import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.layout.width
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
+import androidx.glance.ColorFilter
+import androidx.glance.appwidget.cornerRadius
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.util.AudioHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import androidx.glance.unit.Dimension
+import androidx.glance.layout.fillMaxWidth
 
-class SalawatWidgetProvider : AppWidgetProvider() {
+class SalawatWidget : GlanceAppWidget() {
 
-    companion object {
-        const val ACTION_PLAY_SOUND = "islamalorabi.shafeezekr.pbuh.action.WIDGET_PLAY_SOUND"
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        provideContent {
+            GlanceTheme {
+                Column(
+                    modifier = GlanceModifier
+                        .fillMaxSize()
+                        .cornerRadius(24)
+                        .background(GlanceTheme.colors.widgetBackground)
+                        .padding(horizontal = androidx.compose.ui.unit.Dp(16f), vertical = androidx.compose.ui.unit.Dp(16f))
+                        .clickable(actionRunCallback<PlaySoundAction>()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = context.getString(R.string.notification_title),
+                        style = TextStyle(
+                            color = GlanceTheme.colors.primary,
+                            fontSize = androidx.compose.ui.unit.TextUnit(22f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+
+                    Spacer(modifier = GlanceModifier.height(4))
+
+                    Text(
+                        text = context.getString(R.string.home_subtitle),
+                        style = TextStyle(
+                            color = GlanceTheme.colors.onSurfaceVariant,
+                            fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            textAlign = TextAlign.Center
+                        )
+                    )
+
+                    Spacer(modifier = GlanceModifier.height(12))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            provider = ImageProvider(R.drawable.ic_volume_up),
+                            contentDescription = null,
+                            modifier = GlanceModifier.size(16),
+                            colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant)
+                        )
+
+                        Spacer(modifier = GlanceModifier.width(6))
+
+                        Text(
+                            text = context.getString(R.string.tap_to_listen),
+                            style = TextStyle(
+                                color = GlanceTheme.colors.onSurfaceVariant,
+                                fontSize = androidx.compose.ui.unit.TextUnit(11f, androidx.compose.ui.unit.TextUnitType.Sp)
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
+}
 
-    override fun onUpdate(
+class SalawatWidgetReceiver : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget: GlanceAppWidget = SalawatWidget()
+}
+
+class PlaySoundAction : ActionCallback {
+    override suspend fun onAction(
         context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+        glanceId: GlanceId,
+        parameters: ActionParameters
     ) {
-        for (appWidgetId in appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId)
-        }
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        if (intent.action == ACTION_PLAY_SOUND) {
-            playSound(context)
-        }
-    }
-
-    private fun updateWidget(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int
-    ) {
-        val views = RemoteViews(context.packageName, R.layout.salawat_widget)
-
-        val playIntent = Intent(context, SalawatWidgetProvider::class.java).apply {
-            action = ACTION_PLAY_SOUND
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            playIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
-
-        appWidgetManager.updateAppWidget(appWidgetId, views)
-    }
-
-    private fun playSound(context: Context) {
         try {
             val preferencesManager = PreferencesManager(context)
-            val settings = runBlocking {
-                preferencesManager.settingsFlow.first()
-            }
+            val settings = preferencesManager.settingsFlow.first()
             AudioHelper.playWithMasterVolume(
                 context = context,
                 soundIndex = settings.selectedSoundIndex,

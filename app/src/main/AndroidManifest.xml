@@ -45,11 +45,10 @@
         </receiver>
 
         <receiver
-            android:name=".widget.SalawatWidgetProvider"
+            android:name=".widget.SalawatWidgetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="islamalorabi.shafeezekr.pbuh.action.WIDGET_PLAY_SOUND" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
