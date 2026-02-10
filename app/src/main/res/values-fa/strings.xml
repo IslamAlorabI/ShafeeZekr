@@ -126,4 +126,6 @@
     <string name="day_sat_full">شنبه</string>
     <string name="select_time">انتخاب زمان</string>
     <string name="confirm">تأیید</string>
+
+    <string name="widget_description">برای شنیدن ستایش پیامبر ﷺ ضربه بزنید</string>
 </resources>

@@ -126,4 +126,6 @@
     <string name="day_sat_full">Суббота</string>
     <string name="select_time">Выбрать время</string>
     <string name="confirm">Подтвердить</string>
+
+    <string name="widget_description">Нажмите, чтобы услышать восхваление Пророка ﷺ</string>
 </resources>

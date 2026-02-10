@@ -126,4 +126,6 @@
     <string name="day_sat_full">ہفتہ</string>
     <string name="select_time">وقت منتخب کریں</string>
     <string name="confirm">تصدیق کریں</string>
+
+    <string name="widget_description">نبی ﷺ کی تعریف سننے کے لیے ٹیپ کریں</string>
 </resources>
