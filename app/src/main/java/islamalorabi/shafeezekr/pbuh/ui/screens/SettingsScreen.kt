@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -1138,12 +1139,19 @@ private fun AddPeriodRuleDialog(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (onDelete != null) {
-                    TextButton(
-                        onClick = onDelete
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     ) {
-                        Text(
-                            text = stringResource(R.string.delete),
-                            color = MaterialTheme.colorScheme.error
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete),
+                            tint = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
