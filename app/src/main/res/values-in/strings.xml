@@ -126,4 +126,6 @@
     <string name="day_sat_full">Sabtu</string>
     <string name="select_time">Pilih Waktu</string>
     <string name="confirm">Konfirmasi</string>
+
+    <string name="widget_description">Ketuk untuk mendengar pujian kepada Nabi ﷺ</string>
 </resources>
