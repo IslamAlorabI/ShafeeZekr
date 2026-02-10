@@ -34,11 +34,20 @@ import androidx.glance.appwidget.cornerRadius
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.util.AudioHelper
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import kotlinx.coroutines.flow.first
 
 class SalawatWidget : GlanceAppWidget() {
 
+    private fun getLocalizedContext(context: Context): Context {
+        val preferencesManager = PreferencesManager(context)
+        val languageCode = preferencesManager.getLanguageCodeSync()
+        return LocaleUtils.updateResources(context, languageCode)
+    }
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val localizedContext = getLocalizedContext(context)
+
         provideContent {
             GlanceTheme {
                 Column(
@@ -46,33 +55,33 @@ class SalawatWidget : GlanceAppWidget() {
                         .fillMaxSize()
                         .cornerRadius(24.dp)
                         .background(GlanceTheme.colors.widgetBackground)
-                        .padding(16.dp)
+                        .padding(horizontal = 12.dp, vertical = 10.dp)
                         .clickable(actionRunCallback<PlaySoundAction>()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = context.getString(R.string.notification_title),
+                        text = localizedContext.getString(R.string.notification_title),
                         style = TextStyle(
                             color = GlanceTheme.colors.primary,
-                            fontSize = 22.sp,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                     )
 
-                    Spacer(modifier = GlanceModifier.height(4.dp))
+                    Spacer(modifier = GlanceModifier.height(2.dp))
 
                     Text(
-                        text = context.getString(R.string.home_subtitle),
+                        text = localizedContext.getString(R.string.home_subtitle),
                         style = TextStyle(
                             color = GlanceTheme.colors.onSurfaceVariant,
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             textAlign = TextAlign.Center
                         )
                     )
 
-                    Spacer(modifier = GlanceModifier.height(12.dp))
+                    Spacer(modifier = GlanceModifier.height(8.dp))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -80,17 +89,17 @@ class SalawatWidget : GlanceAppWidget() {
                         Image(
                             provider = ImageProvider(R.drawable.ic_volume_up),
                             contentDescription = null,
-                            modifier = GlanceModifier.size(16.dp),
+                            modifier = GlanceModifier.size(18.dp),
                             colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant)
                         )
 
                         Spacer(modifier = GlanceModifier.width(6.dp))
 
                         Text(
-                            text = context.getString(R.string.tap_to_listen),
+                            text = localizedContext.getString(R.string.tap_to_listen),
                             style = TextStyle(
                                 color = GlanceTheme.colors.onSurfaceVariant,
-                                fontSize = 11.sp
+                                fontSize = 13.sp
                             )
                         )
                     }
