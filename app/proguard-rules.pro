@@ -55,3 +55,17 @@
 # -- Android/Compose General Rules --
 # Often redundant if using consumer rules, but good for safety
 -keep class androidx.appcompat.widget.** { *; }
+
+# -- WorkManager / Room (required by Glance) --
+-keep class androidx.work.** { *; }
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-keep @androidx.room.Dao class *
+-keepclassmembers class * extends androidx.room.RoomDatabase {
+    abstract *;
+}
+-keep class **_Impl { *; }
+
+# -- Glance --
+-keep class androidx.glance.** { *; }
