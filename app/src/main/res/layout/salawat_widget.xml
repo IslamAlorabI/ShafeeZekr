@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/notification_title"
-        android:textColor="#FFFFFFFF"
+        android:textColor="@android:color/system_accent1_100"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center" />
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/home_subtitle"
-        android:textColor="#CCFFFFFF"
+        android:textColor="@android:color/system_accent1_200"
         android:textSize="12sp"
         android:gravity="center" />
 
@@ -39,6 +39,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/ic_volume_up"
+            android:tint="@android:color/system_accent1_200"
             android:contentDescription="@string/tap_to_listen"
             android:importantForAccessibility="no" />
 
@@ -48,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:text="@string/tap_to_listen"
-            android:textColor="#BBFFFFFF"
+            android:textColor="@android:color/system_accent1_200"
             android:textSize="11sp" />
 
     </LinearLayout>
