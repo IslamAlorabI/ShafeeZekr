@@ -126,4 +126,6 @@
     <string name="day_sat_full">Samstag</string>
     <string name="select_time">Zeit auswählen</string>
     <string name="confirm">Bestätigen</string>
+
+    <string name="widget_description">Tippen, um das Lob des Propheten ﷺ zu hören</string>
 </resources>

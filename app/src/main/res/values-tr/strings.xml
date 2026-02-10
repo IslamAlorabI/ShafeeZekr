@@ -126,4 +126,6 @@
     <string name="day_sat_full">Cumartesi</string>
     <string name="select_time">Zaman Seç</string>
     <string name="confirm">Onayla</string>
+
+    <string name="widget_description">Peygamberin (sav) övgüsünü dinlemek için dokunun</string>
 </resources>
