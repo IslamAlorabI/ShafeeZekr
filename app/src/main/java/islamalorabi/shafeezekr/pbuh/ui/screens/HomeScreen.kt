@@ -313,8 +313,9 @@ fun HomeScreen(
                                             onClick = {
                                                 if (interval == ReminderInterval.CUSTOM) {
                                                     showCustomDialog = true
+                                                } else {
+                                                    onIntervalChange(interval)
                                                 }
-                                                onIntervalChange(interval)
                                             },
                                             role = Role.RadioButton
                                         )
@@ -348,6 +349,7 @@ fun HomeScreen(
             currentValue = settings.customIntervalMinutes,
             onDismiss = { showCustomDialog = false },
             onConfirm = { minutes ->
+                onIntervalChange(ReminderInterval.CUSTOM)
                 onCustomIntervalChange(minutes)
                 showCustomDialog = false
             }
