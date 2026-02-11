@@ -69,3 +69,10 @@
 
 # -- Glance --
 -keep class androidx.glance.** { *; }
+-keep class * extends androidx.glance.appwidget.GlanceAppWidget { *; }
+-keep class * extends androidx.glance.appwidget.GlanceAppWidgetReceiver { *; }
+-keep class * implements androidx.glance.appwidget.action.ActionCallback { *; }
+
+# -- App widget & audio classes --
+-keep class islamalorabi.shafeezekr.pbuh.widget.** { *; }
+-keep class islamalorabi.shafeezekr.pbuh.util.AudioHelper { *; }
