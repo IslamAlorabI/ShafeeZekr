@@ -3,5 +3,7 @@
 
     <style name="Theme.ShafeeZekr" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowSplashScreenBackground">@color/splash_background_dark</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_monochrome</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/splash_background_dark</item>
     </style>
 </resources>
