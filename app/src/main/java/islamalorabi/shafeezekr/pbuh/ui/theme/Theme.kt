@@ -14,7 +14,6 @@ import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import android.app.Activity
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -320,8 +319,6 @@ fun ShafeeZekrTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            @Suppress("DEPRECATION")
-            window.statusBarColor = Color.Transparent.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
