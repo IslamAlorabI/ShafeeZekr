@@ -128,4 +128,11 @@
     <string name="confirm">Подтвердить</string>
 
     <string name="widget_description">Нажмите, чтобы услышать восхваление Пророка ﷺ</string>
+
+    <string name="tile_pause_dhikr">Пауза зикра</string>
+    <string name="tile_pause_dhikr_active">Зикр активен</string>
+    <string name="tile_pause_dhikr_inactive">Зикр приостановлен</string>
+    <string name="quick_settings_tile_section">Быстрые настройки</string>
+    <string name="quick_settings_tile_title">Плитка быстрых настроек</string>
+    <string name="quick_settings_tile_desc">Добавьте плитку «Пауза зикра» в панель быстрых настроек для быстрого доступа</string>
 </resources>

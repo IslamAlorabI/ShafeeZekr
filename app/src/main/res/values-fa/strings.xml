@@ -128,4 +128,11 @@
     <string name="confirm">تأیید</string>
 
     <string name="widget_description">برای شنیدن ستایش پیامبر ﷺ ضربه بزنید</string>
+
+    <string name="tile_pause_dhikr">توقف ذکر</string>
+    <string name="tile_pause_dhikr_active">ذکر فعال</string>
+    <string name="tile_pause_dhikr_inactive">ذکر متوقف</string>
+    <string name="quick_settings_tile_section">تنظیمات سریع</string>
+    <string name="quick_settings_tile_title">کاشی تنظیمات سریع</string>
+    <string name="quick_settings_tile_desc">کاشی «توقف ذکر» را به پنل تنظیمات سریع خود اضافه کنید</string>
 </resources>

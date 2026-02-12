@@ -128,4 +128,11 @@
     <string name="confirm">Konfirmasi</string>
 
     <string name="widget_description">Ketuk untuk mendengar pujian kepada Nabi ﷺ</string>
+
+    <string name="tile_pause_dhikr">Jeda Dzikir</string>
+    <string name="tile_pause_dhikr_active">Dzikir Aktif</string>
+    <string name="tile_pause_dhikr_inactive">Dzikir Dijeda</string>
+    <string name="quick_settings_tile_section">Pengaturan Cepat</string>
+    <string name="quick_settings_tile_title">Ubin Pengaturan Cepat</string>
+    <string name="quick_settings_tile_desc">Tambahkan ubin "Jeda Dzikir" ke panel Pengaturan Cepat untuk akses mudah</string>
 </resources>

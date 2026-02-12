@@ -657,6 +657,66 @@ fun SettingsScreen(
                 }
             }
         }
+
+        item {
+            SettingsGroup(
+                header = stringResource(R.string.quick_settings_tile_section),
+                headerColor = MaterialTheme.colorScheme.primary
+            ) {
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.quick_settings_tile_title),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(R.string.quick_settings_tile_desc),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        modifier = Modifier.clickable {
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                                val statusBarManager = context.getSystemService(android.app.StatusBarManager::class.java)
+                                statusBarManager.requestAddTileService(
+                                    android.content.ComponentName(
+                                        context,
+                                        islamalorabi.shafeezekr.pbuh.service.DhikrTileService::class.java
+                                    ),
+                                    context.getString(R.string.tile_pause_dhikr),
+                                    android.graphics.drawable.Icon.createWithResource(context, R.drawable.ic_tile_pause),
+                                    context.mainExecutor
+                                ) { }
+                            } else {
+                                val intent = Intent(Settings.ACTION_SETTINGS)
+                                context.startActivity(intent)
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
 
     if (showThemeDialog) {

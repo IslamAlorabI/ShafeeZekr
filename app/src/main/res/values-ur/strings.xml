@@ -128,4 +128,11 @@
     <string name="confirm">تصدیق کریں</string>
 
     <string name="widget_description">نبی ﷺ کی تعریف سننے کے لیے ٹیپ کریں</string>
+
+    <string name="tile_pause_dhikr">ذکر روکیں</string>
+    <string name="tile_pause_dhikr_active">ذکر فعال</string>
+    <string name="tile_pause_dhikr_inactive">ذکر رکا ہوا</string>
+    <string name="quick_settings_tile_section">فوری ترتیبات</string>
+    <string name="quick_settings_tile_title">فوری ترتیبات ٹائل</string>
+    <string name="quick_settings_tile_desc">آسان رسائی کے لیے فوری ترتیبات پینل میں «ذکر روکیں» ٹائل شامل کریں</string>
 </resources>

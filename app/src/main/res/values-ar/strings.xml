@@ -129,4 +129,11 @@
     <string name="confirm">تأكيد</string>
 
     <string name="widget_description">اضغط لتستمع إلى الثناء على النبي ﷺ</string>
+
+    <string name="tile_pause_dhikr">إيقاف الذكر</string>
+    <string name="tile_pause_dhikr_active">الذكر مفعّل</string>
+    <string name="tile_pause_dhikr_inactive">الذكر متوقف</string>
+    <string name="quick_settings_tile_section">الإعدادات السريعة</string>
+    <string name="quick_settings_tile_title">بلاطة الإعدادات السريعة</string>
+    <string name="quick_settings_tile_desc">أضف بلاطة \"إيقاف الذكر\" إلى لوحة الإعدادات السريعة للوصول السهل</string>
 </resources>
