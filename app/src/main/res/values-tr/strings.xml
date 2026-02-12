@@ -128,4 +128,11 @@
     <string name="confirm">Onayla</string>
 
     <string name="widget_description">Peygamberin (sav) övgüsünü dinlemek için dokunun</string>
+
+    <string name="tile_pause_dhikr">Zikri Duraklat</string>
+    <string name="tile_pause_dhikr_active">Zikir Aktif</string>
+    <string name="tile_pause_dhikr_inactive">Zikir Duraklatıldı</string>
+    <string name="quick_settings_tile_section">Hızlı Ayarlar</string>
+    <string name="quick_settings_tile_title">Hızlı Ayarlar Kutucuğu</string>
+    <string name="quick_settings_tile_desc">Kolay erişim için Hızlı Ayarlar paneline "Zikri Duraklat" kutucuğu ekleyin</string>
 </resources>

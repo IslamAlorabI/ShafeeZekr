@@ -142,4 +142,11 @@
     <string name="confirm">Confirm</string>
 
     <string name="widget_description">Tap to listen to the praise of the Prophet ﷺ</string>
+
+    <string name="tile_pause_dhikr">Pause Dhikr</string>
+    <string name="tile_pause_dhikr_active">Dhikr Active</string>
+    <string name="tile_pause_dhikr_inactive">Dhikr Paused</string>
+    <string name="quick_settings_tile_section">Quick Settings</string>
+    <string name="quick_settings_tile_title">Quick Settings Tile</string>
+    <string name="quick_settings_tile_desc">Add \"Pause Dhikr\" tile to your Quick Settings panel for easy access</string>
 </resources>

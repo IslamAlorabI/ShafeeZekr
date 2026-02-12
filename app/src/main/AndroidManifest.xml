@@ -66,6 +66,17 @@
                 android:resource="@xml/salawat_icon_widget_info" />
         </receiver>
 
+        <service
+            android:name=".service.DhikrTileService"
+            android:exported="true"
+            android:label="@string/tile_pause_dhikr"
+            android:icon="@drawable/ic_tile_pause"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
