@@ -128,4 +128,12 @@
     <string name="confirm">Bestätigen</string>
 
     <string name="widget_description">Tippen, um das Lob des Propheten ﷺ zu hören</string>
+
+    <string name="tile_pause_dhikr">Dhikr pausieren</string>
+    <string name="tile_pause_dhikr_active">Dhikr aktiv</string>
+    <string name="tile_pause_dhikr_inactive">Dhikr pausiert</string>
+    <string name="quick_settings_tile_section">Schnelleinstellungen</string>
+    <string name="quick_settings_tile_title">Schnelleinstellungen-Kachel</string>
+    <string name="quick_settings_tile_desc">Fügen Sie die Kachel "Dhikr pausieren" zu Ihren Schnelleinstellungen hinzu</string>
+
 </resources>
