@@ -1,11 +1,14 @@
-name: Build Release APK
+name: Build & Release APK
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: Build Release APK
+    name: Build & Release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +37,18 @@ jobs:
           VERSION_CODE=$(grep 'versionCode' app/build.gradle.kts | head -1 | sed 's/[^0-9]*//g')
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "Building ShafeeZekr v$VERSION_NAME (build $VERSION_CODE)"
+
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        run: |
+          NOTES=$(awk '/^## v'"${{ steps.version.outputs.name }}"'/{found=1; next} found && /^## v/{exit} found{print}' CHANGELOG.md)
+          if [ -z "$NOTES" ]; then
+            NOTES="Release v${{ steps.version.outputs.name }}"
+          fi
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "body<<$EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/release-key.jks
@@ -52,9 +66,13 @@ jobs:
           APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
           cp "$APK_PATH" "ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.apk"
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}
-          path: ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.apk
-          retention-days: 90
+          tag_name: v${{ steps.version.outputs.name }}
+          name: v${{ steps.version.outputs.name }} STABLE BUILD [A12+]
+          body: ${{ steps.notes.outputs.body }}
+          files: ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.apk
+          draft: false
+          prerelease: false
+          make_latest: true
