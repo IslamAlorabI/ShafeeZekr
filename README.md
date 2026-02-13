@@ -2,29 +2,52 @@
 
 <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="128" align="left" style="margin-right: 16px;" />
 
-**ShafeeZekr** is a modern Android application designed to remind you to send blessings upon the Prophet Muhammad (Peace Be Upon Him). Built with Jetpack Compose and Material Design 3, it provides a clean, customizable experience with multi-language support and privacy-focused design.
+**ShafeeZekr** (ذكرُ الشفيع) is a modern Android application designed to remind you to send blessings upon the Prophet Muhammad (Peace Be Upon Him). Built with Jetpack Compose and Material Design 3, it provides a beautiful, customizable experience with multi-language support and privacy-focused design.
 
 <br clear="all" />
 
 ## Features
 
-- **Periodic Reminders**: Set automatic audio reminders at customizable intervals (1 minute to 2 hours, or custom intervals)
-- **Quiet Hours**: Configure time-based rules to pause reminders during specific periods, with support for weekly schedules and specific dates
-- **Master Volume Control**: Independent volume control that temporarily overrides system volume during playback
-- **Multiple Sound Options**: Choose from various reminder sounds with instant preview
-- **Material Design 3**: Dynamic color theming (Monet), Light/Dark mode support, and smooth animations
-- **Multi-language Support**: Fully localized in 8 languages:
-  - English
-  - Arabic (العربية)
-  - Indonesian (Bahasa Indonesia)
-  - Russian (Русский)
-  - German (Deutsch)
-  - Urdu (اردو)
-  - Persian (فارسی)
-  - Turkish (Türkçe)
+### 🔔 Reminders
+- **Periodic Audio Reminders**: Set automatic reminders at customizable intervals (1 minute to 2 hours, or fully custom intervals)
+- **Live Countdown Timer**: See the time remaining until your next reminder on the home screen
+- **Quiet Hours**: Configure time-based rules to pause reminders — supports weekly schedules and specific dates, with conflict detection
 - **Boot Persistence**: Reminders automatically resume after device restart
 - **Battery Optimization Handling**: Intelligent management of battery optimization settings for reliable reminder delivery
-- **Privacy Focused**: No data collection, no tracking, no analytics. See our [Privacy Policy](PRIVACY_POLICY.md)
+
+### 🎵 Sound & Volume
+- **Multiple Sound Options**: Choose from various reminder sounds with instant preview
+- **Independent Volume Control**: App-level volume slider that temporarily overrides system volume during playback
+
+### 🧩 Widgets
+- **Salawat Widget**: Home screen widget with Material You theming and a play sound button
+- **Icon Widget**: Compact 1×1 icon widget that plays zikr sound on tap
+- Built with **Jetpack Glance** for native Material 3 integration
+
+### ⚡ Quick Settings Tile
+- **Pause/Resume Tile**: Toggle Dhikr reminders directly from the notification shade without opening the app
+- Supports `requestAddTileService()` for easy setup on Android 13+
+
+### 🎨 Appearance
+- **Material Design 3**: Dynamic color theming with Monet, Light/Dark mode support, and smooth animations
+- **Color Schemes**: Choose from 8 color palettes — Monet (dynamic), Green, Blue, Purple, Teal, Orange, Pink, Red
+- **Localized Numerals**: Numbers automatically display in Arabic, Persian, or Urdu numerals based on the selected language
+
+### 🌍 Multi-Language Support
+Fully localized in 8 languages with system language auto-detection:
+- English
+- Arabic (العربية)
+- Indonesian (Bahasa Indonesia)
+- Russian (Русский)
+- German (Deutsch)
+- Urdu (اردو)
+- Persian (فارسی)
+- Turkish (Türkçe)
+
+### 🔒 Privacy
+- No data collection, no tracking, no analytics, no ads
+- Works completely offline — no internet required
+- Open source — see our [Privacy Policy](PRIVACY_POLICY.md)
 
 ## Screenshots
 
@@ -38,7 +61,7 @@
 
 - Android 12 (API 31) or higher
 - Android Studio Ladybug or newer
-- JDK 17
+- JDK 11+
 
 ## Installation
 
@@ -52,15 +75,18 @@
 
 ## Tech Stack
 
-- **Language**: Kotlin
-- **UI Framework**: Jetpack Compose
-- **Design System**: Material 3
-- **Data Persistence**: DataStore Preferences
-- **Architecture**: MVVM pattern
-- **Libraries**:
-  - AndroidX Core and Lifecycle
-  - Compose Navigation
-  - Retrofit and Gson
+| Layer | Technology |
+|-------|-----------|
+| **Language** | Kotlin |
+| **UI Framework** | Jetpack Compose |
+| **Design System** | Material 3 (Monet dynamic colors) |
+| **Widgets** | Jetpack Glance + Glance Material 3 |
+| **Data Persistence** | DataStore Preferences |
+| **Architecture** | MVVM |
+| **Networking** | Retrofit 3.0 + Gson |
+| **Build** | AGP 9.0, Compose BOM 2026.01.01 |
+| **Min SDK** | 31 (Android 12) |
+| **Target SDK** | 36 |
 
 ## Contributing
 
