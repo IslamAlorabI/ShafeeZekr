@@ -125,6 +125,9 @@ class MainActivity : ComponentActivity() {
                     onSoundChange = { index ->
                         scope.launch { preferencesManager.setSelectedSoundIndex(index) }
                     },
+                    onMuteOnCallChange = { enabled ->
+                        scope.launch { preferencesManager.setMuteOnCall(enabled) }
+                    },
                 )
             }
         }
@@ -143,7 +146,8 @@ fun MainApp(
     onLanguageChange: (String) -> Unit,
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
-    onSoundChange: (Int) -> Unit
+    onSoundChange: (Int) -> Unit,
+    onMuteOnCallChange: (Boolean) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -219,6 +223,7 @@ fun MainApp(
                 onVolumeChange = onVolumeChange,
                 onPeriodRulesChange = onPeriodRulesChange,
                 onSoundChange = onSoundChange,
+                onMuteOnCallChange = onMuteOnCallChange,
                 modifier = Modifier.padding(innerPadding)
             )
             2 -> AboutScreen(

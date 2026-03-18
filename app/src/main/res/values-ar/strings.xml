@@ -83,6 +83,8 @@
     <string name="sound_play_warning">تنبيه: سيتم تشغيل الصوت فوراً عند اختياره.</string>
     <string name="app_volume">مستوى صوت التطبيق</string>
     <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
+    <string name="mute_on_call">كتم أثناء المكالمات</string>
+    <string name="mute_on_call_desc">منع تشغيل الصوت أثناء إجراء مكالمة هاتفية</string>
     
     <string name="period_rules_section">ساعات الهدوء</string>
     <string name="period_rules_desc">تعيين أوقات كتم التذكيرات</string>
