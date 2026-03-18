@@ -83,6 +83,8 @@
     <string name="sound_play_warning">Uyarı: Ses seçildiğinde hemen çalınacaktır.</string>
     <string name="app_volume">Uygulama Ses Düzeyi</string>
     <string name="app_volume_desc">Uygulama sesini bağımsız olarak kontrol edin</string>
+    <string name="mute_on_call">Arama Sırasında Sessiz</string>
+    <string name="mute_on_call_desc">Telefon görüşmesi sırasında ses çalmayı önle</string>
     
     <string name="period_rules_section">Sessiz Saatler</string>
     <string name="period_rules_desc">Hatırlatıcıların sessize alındığı zamanları ayarlayın</string>

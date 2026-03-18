@@ -94,6 +94,8 @@
     <string name="sound_play_warning">Warning: The sound will play immediately when selected.</string>
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
+    <string name="mute_on_call">Mute During Calls</string>
+    <string name="mute_on_call_desc">Prevent sound from playing while you are on a phone call</string>
     
     <string name="period_rules_section">Quiet Hours</string>
     <string name="period_rules_desc">Set times when reminders are muted</string>

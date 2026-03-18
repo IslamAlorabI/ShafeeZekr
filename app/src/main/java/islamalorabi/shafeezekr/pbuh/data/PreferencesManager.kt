@@ -195,7 +195,8 @@ data class AppSettings(
     val languageCode: String = "",
     val appVolume: Float = 1.0f,
     val selectedSoundIndex: Int = 1,
-    val periodRules: List<PeriodRule> = emptyList()
+    val periodRules: List<PeriodRule> = emptyList(),
+    val muteOnCall: Boolean = true
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
         // All rules are now "Block" rules.
@@ -224,6 +225,7 @@ class PreferencesManager(private val context: Context) {
         val APP_VOLUME = floatPreferencesKey("app_volume")
         val SELECTED_SOUND_INDEX = intPreferencesKey("selected_sound_index")
         val PERIOD_RULES = stringPreferencesKey("period_rules")
+        val MUTE_ON_CALL = booleanPreferencesKey("mute_on_call")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -264,7 +266,8 @@ class PreferencesManager(private val context: Context) {
             languageCode = preferences[PreferencesKeys.LANGUAGE_CODE] ?: "",
             appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f,
             selectedSoundIndex = preferences[PreferencesKeys.SELECTED_SOUND_INDEX] ?: 1,
-            periodRules = parsePeriodRules(preferences[PreferencesKeys.PERIOD_RULES] ?: "")
+            periodRules = parsePeriodRules(preferences[PreferencesKeys.PERIOD_RULES] ?: ""),
+            muteOnCall = preferences[PreferencesKeys.MUTE_ON_CALL] ?: true
         )
     }
 
@@ -329,6 +332,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setSelectedSoundIndex(index: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SELECTED_SOUND_INDEX] = index
+        }
+    }
+
+    suspend fun setMuteOnCall(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.MUTE_ON_CALL] = enabled
         }
     }
 }

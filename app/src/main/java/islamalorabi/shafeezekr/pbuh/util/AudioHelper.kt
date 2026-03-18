@@ -10,6 +10,12 @@ import islamalorabi.shafeezekr.pbuh.R
 
 object AudioHelper {
 
+    fun isInCall(context: Context): Boolean {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val mode = audioManager.mode
+        return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION
+    }
+
     fun shouldPlaySound(context: Context): Boolean {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -87,6 +87,10 @@ class ReminderReceiver : BroadcastReceiver() {
                 return
             }
 
+            if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
+                return
+            }
+
             islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                 context = context,
                 soundIndex = settings.selectedSoundIndex,

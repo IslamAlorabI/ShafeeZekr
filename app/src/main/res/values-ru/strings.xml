@@ -83,6 +83,8 @@
     <string name="sound_play_warning">Предупреждение: звук будет воспроизведен сразу после выбора.</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
+    <string name="mute_on_call">Без звука во время звонка</string>
+    <string name="mute_on_call_desc">Не воспроизводить звук во время телефонного разговора</string>
     
     <string name="period_rules_section">Тихие часы</string>
     <string name="period_rules_desc">Настройте время, когда напоминания отключены</string>
