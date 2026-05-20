@@ -157,4 +157,5 @@
     <string name="record_max_duration_note">Maximale Aufnahmedauer: 10 Sekunden</string>
     <string name="record_permission_note">Diese Funktion erfordert eine Mikrofonberechtigung</string>
     <string name="error_audio_too_long">Audiodatei darf maximal 10 Sekunden lang sein</string>
+    <string name="delete_btn">Löschen</string>
 </resources>

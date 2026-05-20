@@ -157,4 +157,5 @@
     <string name="record_max_duration_note">الحد الأقصى لمدة التسجيل: ١٠ ثوانٍ</string>
     <string name="record_permission_note">هذه الميزة تتطلب إذن الميكروفون</string>
     <string name="error_audio_too_long">يجب ألا يتجاوز ملف الصوت ١٠ ثوانٍ</string>
+    <string name="delete_btn">حذف</string>
 </resources>

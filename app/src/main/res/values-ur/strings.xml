@@ -156,4 +156,5 @@
     <string name="record_max_duration_note">زیادہ سے زیادہ ریکارڈنگ مدت: ۱۰ سیکنڈ</string>
     <string name="record_permission_note">اس فیچر کو مائیکروفون کی اجازت درکار ہے</string>
     <string name="error_audio_too_long">آڈیو فائل ۱۰ سیکنڈ یا اس سے کم ہونی چاہیے</string>
+    <string name="delete_btn">حذف کریں</string>
 </resources>

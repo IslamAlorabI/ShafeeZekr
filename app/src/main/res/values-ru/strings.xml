@@ -156,4 +156,5 @@
     <string name="record_max_duration_note">Максимальная длительность записи: 10 секунд</string>
     <string name="record_permission_note">Эта функция требует разрешение на микрофон</string>
     <string name="error_audio_too_long">Аудиофайл должен быть не более 10 секунд</string>
+    <string name="delete_btn">Удалить</string>
 </resources>
