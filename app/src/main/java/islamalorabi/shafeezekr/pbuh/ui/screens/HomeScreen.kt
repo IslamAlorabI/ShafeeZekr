@@ -232,7 +232,7 @@ fun HomeScreen(
                         }
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isPlaying) "Playing..." else stringResource(R.string.tap_to_listen),
+                            text = if (isPlaying) stringResource(R.string.playing) else stringResource(R.string.tap_to_listen),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                         )
