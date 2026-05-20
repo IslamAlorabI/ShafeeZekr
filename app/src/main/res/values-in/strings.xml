@@ -137,4 +137,19 @@
     <string name="quick_settings_tile_section">Pengaturan Cepat</string>
     <string name="quick_settings_tile_title">Ubin Pengaturan Cepat</string>
     <string name="quick_settings_tile_desc">Tambahkan ubin "Jeda Dzikir" ke panel Pengaturan Cepat untuk akses mudah</string>
+    <string name="mute_on_silent">Senyap saat Mode Hening</string>
+    <string name="mute_on_silent_desc">Jangan putar suara pengingat saat perangkat diatur ke hening atau getar</string>
+    <string name="mute_on_dnd">Senyap saat Jangan Ganggu</string>
+    <string name="mute_on_dnd_desc">Jangan putar suara pengingat saat mode Jangan Ganggu aktif</string>
+    <string name="custom_audio_option">Audio Kustom</string>
+    <string name="select_audio_file">Pilih Berkas Audio</string>
+    <string name="record_voice">Rekam Pengingat Suara</string>
+    <string name="record_dialog_title">Rekam Zikir</string>
+    <string name="record_dialog_desc">Rekam suara Anda melafalkan zikir untuk digunakan sebagai suara pengingat</string>
+    <string name="record_btn">Rekam</string>
+    <string name="stop_btn">Hentikan</string>
+    <string name="play_btn">Putar</string>
+    <string name="error_permission">Izin merekam audio ditolak</string>
+    <string name="error_record">Gagal merekam atau memutar audio</string>
+    <string name="sound_custom_selected">Audio kustom terpilih</string>
 </resources>

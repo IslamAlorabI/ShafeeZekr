@@ -151,4 +151,19 @@
     <string name="quick_settings_tile_section">Quick Settings</string>
     <string name="quick_settings_tile_title">Quick Settings Tile</string>
     <string name="quick_settings_tile_desc">Add \"Pause Dhikr\" tile to your Quick Settings panel for easy access</string>
+    <string name="mute_on_silent">Mute on Silent Mode</string>
+    <string name="mute_on_silent_desc">Do not play reminder sounds when your device is set to silent or vibrate</string>
+    <string name="mute_on_dnd">Mute on Do Not Disturb</string>
+    <string name="mute_on_dnd_desc">Do not play reminder sounds when Do Not Disturb mode is active</string>
+    <string name="custom_audio_option">Custom Audio</string>
+    <string name="select_audio_file">Select Audio File</string>
+    <string name="record_voice">Record Voice Reminder</string>
+    <string name="record_dialog_title">Record Dhikr</string>
+    <string name="record_dialog_desc">Record your voice reciting zikr to use as a reminder</string>
+    <string name="record_btn">Record</string>
+    <string name="stop_btn">Stop</string>
+    <string name="play_btn">Play</string>
+    <string name="error_permission">Permission to record audio was denied</string>
+    <string name="error_record">Failed to record or play audio</string>
+    <string name="sound_custom_selected">Custom sound selected</string>
 </resources>

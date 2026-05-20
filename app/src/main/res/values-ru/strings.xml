@@ -137,4 +137,19 @@
     <string name="quick_settings_tile_section">Быстрые настройки</string>
     <string name="quick_settings_tile_title">Плитка быстрых настроек</string>
     <string name="quick_settings_tile_desc">Добавьте плитку «Пауза зикра» в панель быстрых настроек для быстрого доступа</string>
+    <string name="mute_on_silent">Без звука в беззвучном режиме</string>
+    <string name="mute_on_silent_desc">Не воспроизводить напоминания, когда устройство находится в беззвучном режиме или режиме вибрации</string>
+    <string name="mute_on_dnd">Без звука в режиме \"Не беспокоить\"</string>
+    <string name="mute_on_dnd_desc">Не воспроизводить напоминания, когда активен режим \"Не беспокоить\"</string>
+    <string name="custom_audio_option">Пользовательский звук</string>
+    <string name="select_audio_file">Выбрать аудиофайл</string>
+    <string name="record_voice">Записать голосовое напоминание</string>
+    <string name="record_dialog_title">Запись зикра</string>
+    <string name="record_dialog_desc">Запишите свой голос с произнесением зикра, чтобы использовать его как напоминание</string>
+    <string name="record_btn">Запись</string>
+    <string name="stop_btn">Стоп</string>
+    <string name="play_btn">Слушать</string>
+    <string name="error_permission">Доступ к микрофону отклонен</string>
+    <string name="error_record">Ошибка записи или воспроизведения звука</string>
+    <string name="sound_custom_selected">Выбран пользовательский звук</string>
 </resources>

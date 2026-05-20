@@ -16,19 +16,27 @@ object AudioHelper {
         return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION
     }
 
-    fun shouldPlaySound(context: Context): Boolean {
+    fun shouldPlaySound(
+        context: Context,
+        muteOnSilent: Boolean = true,
+        muteOnDND: Boolean = true
+    ): Boolean {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val ringerMode = audioManager.ringerMode
-        if (ringerMode == AudioManager.RINGER_MODE_SILENT ||
-            ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
-            return false
+        if (muteOnSilent) {
+            val ringerMode = audioManager.ringerMode
+            if (ringerMode == AudioManager.RINGER_MODE_SILENT ||
+                ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
+                return false
+            }
         }
 
-        val interruptionFilter = notificationManager.currentInterruptionFilter
-        if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
-            return false
+        if (muteOnDND) {
+            val interruptionFilter = notificationManager.currentInterruptionFilter
+            if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
+                return false
+            }
         }
 
         return true
@@ -38,9 +46,13 @@ object AudioHelper {
         context: Context,
         soundIndex: Int,
         appVolume: Float,
+        muteOnSilent: Boolean = true,
+        muteOnDND: Boolean = true,
+        customSoundPath: String? = null,
+        isCustomSoundEnabled: Boolean = false,
         onComplete: (() -> Unit)? = null
     ) {
-        if (!shouldPlaySound(context)) {
+        if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
             onComplete?.invoke()
             return
         }
@@ -59,12 +71,23 @@ object AudioHelper {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
 
-            val resId = getSoundResourceId(soundIndex)
-            val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
-
             val mediaPlayer = MediaPlayer()
             mediaPlayer.setAudioAttributes(audioAttributes)
-            mediaPlayer.setDataSource(context, soundUri)
+            
+            if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
+                val file = java.io.File(customSoundPath)
+                if (file.exists()) {
+                    mediaPlayer.setDataSource(file.absolutePath)
+                } else {
+                    val resId = getSoundResourceId(soundIndex)
+                    val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
+                    mediaPlayer.setDataSource(context, soundUri)
+                }
+            } else {
+                val resId = getSoundResourceId(soundIndex)
+                val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
+                mediaPlayer.setDataSource(context, soundUri)
+            }
             
             mediaPlayer.setOnPreparedListener { mp ->
                 mp.start()
@@ -93,9 +116,13 @@ object AudioHelper {
     fun playWithMasterVolumeSync(
         context: Context,
         soundIndex: Int,
-        appVolume: Float
+        appVolume: Float,
+        muteOnSilent: Boolean = true,
+        muteOnDND: Boolean = true,
+        customSoundPath: String? = null,
+        isCustomSoundEnabled: Boolean = false
     ): MediaPlayer? {
-        if (!shouldPlaySound(context)) {
+        if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
             return null
         }
 
@@ -108,8 +135,27 @@ object AudioHelper {
             
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
 
-            val resId = getSoundResourceId(soundIndex)
-            val mediaPlayer = MediaPlayer.create(context, resId)
+            val mediaPlayer = if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
+                val file = java.io.File(customSoundPath)
+                if (file.exists()) {
+                    MediaPlayer().apply {
+                        setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .build()
+                        )
+                        setDataSource(file.absolutePath)
+                        prepare()
+                    }
+                } else {
+                    val resId = getSoundResourceId(soundIndex)
+                    MediaPlayer.create(context, resId)
+                }
+            } else {
+                val resId = getSoundResourceId(soundIndex)
+                MediaPlayer.create(context, resId)
+            }
             
             mediaPlayer?.setOnCompletionListener { mp ->
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0)

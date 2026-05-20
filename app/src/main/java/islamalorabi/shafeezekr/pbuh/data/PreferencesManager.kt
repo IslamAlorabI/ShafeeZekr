@@ -196,7 +196,11 @@ data class AppSettings(
     val appVolume: Float = 1.0f,
     val selectedSoundIndex: Int = 1,
     val periodRules: List<PeriodRule> = emptyList(),
-    val muteOnCall: Boolean = true
+    val muteOnCall: Boolean = true,
+    val muteOnSilent: Boolean = true,
+    val muteOnDND: Boolean = true,
+    val customSoundPath: String? = null,
+    val isCustomSoundEnabled: Boolean = false
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
         // All rules are now "Block" rules.
@@ -226,6 +230,10 @@ class PreferencesManager(private val context: Context) {
         val SELECTED_SOUND_INDEX = intPreferencesKey("selected_sound_index")
         val PERIOD_RULES = stringPreferencesKey("period_rules")
         val MUTE_ON_CALL = booleanPreferencesKey("mute_on_call")
+        val MUTE_ON_SILENT = booleanPreferencesKey("mute_on_silent")
+        val MUTE_ON_DND = booleanPreferencesKey("mute_on_dnd")
+        val CUSTOM_SOUND_PATH = stringPreferencesKey("custom_sound_path")
+        val IS_CUSTOM_SOUND_ENABLED = booleanPreferencesKey("is_custom_sound_enabled")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -267,7 +275,11 @@ class PreferencesManager(private val context: Context) {
             appVolume = preferences[PreferencesKeys.APP_VOLUME] ?: 1.0f,
             selectedSoundIndex = preferences[PreferencesKeys.SELECTED_SOUND_INDEX] ?: 1,
             periodRules = parsePeriodRules(preferences[PreferencesKeys.PERIOD_RULES] ?: ""),
-            muteOnCall = preferences[PreferencesKeys.MUTE_ON_CALL] ?: true
+            muteOnCall = preferences[PreferencesKeys.MUTE_ON_CALL] ?: true,
+            muteOnSilent = preferences[PreferencesKeys.MUTE_ON_SILENT] ?: true,
+            muteOnDND = preferences[PreferencesKeys.MUTE_ON_DND] ?: true,
+            customSoundPath = preferences[PreferencesKeys.CUSTOM_SOUND_PATH],
+            isCustomSoundEnabled = preferences[PreferencesKeys.IS_CUSTOM_SOUND_ENABLED] ?: false
         )
     }
 
@@ -338,6 +350,34 @@ class PreferencesManager(private val context: Context) {
     suspend fun setMuteOnCall(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.MUTE_ON_CALL] = enabled
+        }
+    }
+
+    suspend fun setMuteOnSilent(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.MUTE_ON_SILENT] = enabled
+        }
+    }
+
+    suspend fun setMuteOnDND(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.MUTE_ON_DND] = enabled
+        }
+    }
+
+    suspend fun setCustomSoundPath(path: String?) {
+        context.dataStore.edit { preferences ->
+            if (path == null) {
+                preferences.remove(PreferencesKeys.CUSTOM_SOUND_PATH)
+            } else {
+                preferences[PreferencesKeys.CUSTOM_SOUND_PATH] = path
+            }
+        }
+    }
+
+    suspend fun setCustomSoundEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_CUSTOM_SOUND_ENABLED] = enabled
         }
     }
 }

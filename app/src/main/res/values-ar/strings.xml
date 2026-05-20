@@ -138,4 +138,19 @@
     <string name="quick_settings_tile_section">الإعدادات السريعة</string>
     <string name="quick_settings_tile_title">زر الإعدادات السريعة</string>
     <string name="quick_settings_tile_desc">أضف زر \"إيقاف الذكر\" إلى لوحة الإعدادات السريعة للوصول السهل</string>
+    <string name="mute_on_silent">كتم الصوت في الوضع الصامت</string>
+    <string name="mute_on_silent_desc">عدم تشغيل أصوات التذكير عندما يكون جهازك في الوضع الصامت أو الاهتزاز</string>
+    <string name="mute_on_dnd">كتم الصوت في وضع عدم الإزعاج</string>
+    <string name="mute_on_dnd_desc">عدم تشغيل أصوات التذكير عند تفعيل وضع عدم الإزعاج</string>
+    <string name="custom_audio_option">صوت مخصص</string>
+    <string name="select_audio_file">اختيار ملف صوتي</string>
+    <string name="record_voice">تسجيل تذكير صوتي</string>
+    <string name="record_dialog_title">تسجيل الذكر</string>
+    <string name="record_dialog_desc">سجل صوتك وأنت تتلو الذكر لاستخدامه كصوت للتذكير</string>
+    <string name="record_btn">تسجيل</string>
+    <string name="stop_btn">إيقاف</string>
+    <string name="play_btn">تشغيل</string>
+    <string name="error_permission">تم رفض إذن تسجيل الصوت</string>
+    <string name="error_record">فشل تسجيل أو تشغيل الصوت</string>
+    <string name="sound_custom_selected">تم اختيار صوت مخصص</string>
 </resources>
