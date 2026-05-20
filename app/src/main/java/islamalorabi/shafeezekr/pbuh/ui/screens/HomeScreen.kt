@@ -29,6 +29,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -59,6 +68,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
@@ -96,6 +111,43 @@ fun HomeScreen(
     }
 
     var showCustomDialog by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isPlaying) {
+        if (isPlaying) {
+            delay(4000)
+            isPlaying = false
+        }
+    }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "visualizer")
+    val bar1Scale by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 450, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "bar1"
+    )
+    val bar2Scale by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 350, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "bar2"
+    )
+    val bar3Scale by infiniteTransition.animateFloat(
+        initialValue = 0.1f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 550, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "bar3"
+    )
     
     val sharedPrefs = remember { context.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE) }
     var remainingTime by remember { mutableLongStateOf(0L) }
@@ -118,6 +170,7 @@ fun HomeScreen(
         item {
             Card(
                 onClick = {
+                    isPlaying = true
                     islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                         context = context,
                         soundIndex = settings.selectedSoundIndex,
@@ -149,22 +202,35 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_volume_up),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                        )
+                        if (isPlaying) {
+                            Row(
+                                modifier = Modifier.padding(end = 6.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                val barColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                Box(Modifier.size(3.dp, 16.dp * bar1Scale).background(barColor, RoundedCornerShape(1.dp)))
+                                Box(Modifier.size(3.dp, 16.dp * bar2Scale).background(barColor, RoundedCornerShape(1.dp)))
+                                Box(Modifier.size(3.dp, 16.dp * bar3Scale).background(barColor, RoundedCornerShape(1.dp)))
+                            }
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_volume_up),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            )
+                        }
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = stringResource(R.string.tap_to_listen),
+                            text = if (isPlaying) "Playing..." else stringResource(R.string.tap_to_listen),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                         )
                     }
                 }
@@ -177,15 +243,16 @@ fun HomeScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                val minutes = (remainingTime / 60000).toInt()
-                val seconds = ((remainingTime % 60000) / 1000).toInt()
-                val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
-                val formattedTime = formatLocaleTime(minutes, seconds, locale)
+                val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+                    settings.customIntervalMinutes
+                } else {
+                    settings.reminderInterval.minutes
+                }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
                 ) {
                     Column(
@@ -194,17 +261,9 @@ fun HomeScreen(
                             .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = stringResource(R.string.next_reminder),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = formattedTime,
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        CircularCountdownDial(
+                            remainingTime = remainingTime,
+                            totalIntervalMinutes = totalIntervalMinutes
                         )
                     }
                 }
@@ -292,13 +351,13 @@ fun HomeScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .selectableGroup()
+                                .padding(bottom = 16.dp)
                         ) {
                             Text(
                                 text = stringResource(R.string.interval_reset_note),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 12.dp)
                             )
 
                             val intervals = listOf(
@@ -311,38 +370,54 @@ fun HomeScreen(
                                 ReminderInterval.CUSTOM to stringResource(R.string.interval_custom)
                             )
 
-                            intervals.forEach { (interval, label) ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .selectable(
-                                            selected = settings.reminderInterval == interval,
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                for (i in 0 until 6 step 2) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        val first = intervals[i]
+                                        val second = intervals[i + 1]
+                                        
+                                        IntervalPillButton(
+                                            label = first.second,
+                                            isSelected = settings.reminderInterval == first.first,
                                             onClick = {
-                                                if (interval == ReminderInterval.CUSTOM) {
-                                                    showCustomDialog = true
-                                                } else {
-                                                    onIntervalChange(interval)
-                                                }
+                                                onIntervalChange(first.first)
                                             },
-                                            role = Role.RadioButton
+                                            modifier = Modifier.weight(1f)
                                         )
-                                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = settings.reminderInterval == interval,
-                                        onClick = null
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Text(
-                                        text = if (interval == ReminderInterval.CUSTOM && settings.reminderInterval == ReminderInterval.CUSTOM) {
-                                            "$label (${LocaleUtils.formatLocalizedNumber(settings.customIntervalMinutes)} ${stringResource(R.string.minutes)})"
-                                        } else {
-                                            label
-                                        },
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
+                                        
+                                        IntervalPillButton(
+                                            label = second.second,
+                                            isSelected = settings.reminderInterval == second.first,
+                                            onClick = {
+                                                onIntervalChange(second.first)
+                                            },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
                                 }
+                                
+                                val customInterval = intervals[6]
+                                val customLabel = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+                                    "${customInterval.second} (${LocaleUtils.formatLocalizedNumber(settings.customIntervalMinutes)} ${stringResource(R.string.minutes)})"
+                                } else {
+                                    customInterval.second
+                                }
+                                IntervalPillButton(
+                                    label = customLabel,
+                                    isSelected = settings.reminderInterval == ReminderInterval.CUSTOM,
+                                    onClick = {
+                                        showCustomDialog = true
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }
@@ -523,4 +598,115 @@ private fun NumberPickerColumn(
 private fun formatLocaleTime(minutes: Int, seconds: Int, localeTag: String): String {
     val formatted = String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds)
     return LocaleUtils.localizeString(formatted)
+}
+
+@Composable
+private fun IntervalPillButton(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val containerColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    }
+    val contentColor = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    
+    Card(
+        onClick = onClick,
+        modifier = modifier.height(48.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        )
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CircularCountdownDial(
+    remainingTime: Long,
+    totalIntervalMinutes: Int,
+    modifier: Modifier = Modifier
+) {
+    val totalTimeMs = totalIntervalMinutes * 60 * 1000L
+    val progress = if (totalTimeMs > 0) {
+        (remainingTime.toFloat() / totalTimeMs).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+
+    val minutes = (remainingTime / 60000).toInt()
+    val seconds = ((remainingTime % 60000) / 1000).toInt()
+    val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
+    val formattedTime = formatLocaleTime(minutes, seconds, locale)
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        label = "countdownProgress"
+    )
+
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val trackColor = MaterialTheme.colorScheme.surfaceVariant
+
+    Box(
+        modifier = modifier.size(160.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+            val strokeWidth = 8.dp.toPx()
+            
+            // Draw background track ring
+            drawCircle(
+                color = trackColor,
+                style = Stroke(width = strokeWidth)
+            )
+
+            // Draw active countdown progress arc
+            drawArc(
+                color = primaryColor,
+                startAngle = 270f,
+                sweepAngle = animatedProgress * 360f,
+                useCenter = false,
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+            )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.next_reminder),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = formattedTime,
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 28.sp),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
 }
