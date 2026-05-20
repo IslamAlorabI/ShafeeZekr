@@ -153,4 +153,7 @@
     <string name="error_permission">مجوز ضبط صدا رد شد</string>
     <string name="error_record">خطا در ضبط یا پخش صدا</string>
     <string name="sound_custom_selected">صدای سفارشی انتخاب شد</string>
+    <string name="record_max_duration_note">حداکثر مدت ضبط: ۱۰ ثانیه</string>
+    <string name="record_permission_note">این قابلیت نیاز به مجوز میکروفون دارد</string>
+    <string name="error_audio_too_long">فایل صوتی باید ۱۰ ثانیه یا کمتر باشد</string>
 </resources>

@@ -153,4 +153,7 @@
     <string name="error_permission">Izin merekam audio ditolak</string>
     <string name="error_record">Gagal merekam atau memutar audio</string>
     <string name="sound_custom_selected">Audio kustom terpilih</string>
+    <string name="record_max_duration_note">Durasi rekaman maksimal: 10 detik</string>
+    <string name="record_permission_note">Fitur ini memerlukan izin mikrofon</string>
+    <string name="error_audio_too_long">File audio harus 10 detik atau kurang</string>
 </resources>

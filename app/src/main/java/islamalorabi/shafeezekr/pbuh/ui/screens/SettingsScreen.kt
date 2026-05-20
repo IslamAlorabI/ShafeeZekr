@@ -203,12 +203,29 @@ fun SettingsScreen(
         uri?.let { sourceUri ->
             scope.launch {
                 try {
-                    val destFile = java.io.File(context.filesDir, "custom_zikr.mp3")
+                    val tempFile = java.io.File(context.filesDir, "temp_import.mp3")
                     context.contentResolver.openInputStream(sourceUri)?.use { input ->
-                        destFile.outputStream().use { output ->
+                        tempFile.outputStream().use { output ->
                             input.copyTo(output)
                         }
                     }
+
+                    val mp = android.media.MediaPlayer()
+                    mp.setDataSource(tempFile.absolutePath)
+                    mp.prepare()
+                    val durationMs = mp.duration
+                    mp.release()
+
+                    if (durationMs > 10_000) {
+                        tempFile.delete()
+                        kotlinx.coroutines.Dispatchers.Main.let {
+                            android.widget.Toast.makeText(context, context.getString(R.string.error_audio_too_long), android.widget.Toast.LENGTH_SHORT).show()
+                        }
+                        return@launch
+                    }
+
+                    val destFile = java.io.File(context.filesDir, "custom_zikr.mp3")
+                    tempFile.renameTo(destFile)
                     onCustomSoundPathChange(destFile.absolutePath)
                     onCustomSoundEnabledChange(true)
                 } catch (e: Exception) {
@@ -1809,9 +1826,19 @@ private fun RecordDhikrDialog(
     LaunchedEffect(isRecording) {
         if (isRecording) {
             durationSeconds = 0
-            while (isRecording) {
+            while (isRecording && durationSeconds < 10) {
                 kotlinx.coroutines.delay(1000)
                 durationSeconds++
+            }
+            if (durationSeconds >= 10 && isRecording) {
+                try {
+                    mediaRecorder?.stop()
+                    mediaRecorder?.release()
+                    mediaRecorder = null
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                isRecording = false
             }
         }
     }
@@ -1832,143 +1859,166 @@ private fun RecordDhikrDialog(
         title = { Text(stringResource(R.string.record_dialog_title)) },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
                     text = stringResource(R.string.record_dialog_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                
+
+                Text(
+                    text = stringResource(R.string.record_max_duration_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+
+                Text(
+                    text = stringResource(R.string.record_permission_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
                 if (isRecording) {
-                    val minutes = durationSeconds / 60
-                    val seconds = durationSeconds % 60
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds),
-                        style = MaterialTheme.typography.displaySmall,
+                        text = String.format(java.util.Locale.US, "00:%02d / 00:10", durationSeconds),
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.error
                     )
                 } else if (recordFile.exists()) {
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.sound_custom_selected),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-            }
-        },
-        confirmButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (isRecording) {
-                    Button(
-                        onClick = {
-                            try {
-                                mediaRecorder?.stop()
-                                mediaRecorder?.release()
-                                mediaRecorder = null
-                                isRecording = false
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.Stop, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.stop_btn))
-                    }
-                } else {
-                    Button(
-                        onClick = {
-                            try {
-                                if (isPlayingRecorded) {
-                                    recorderMediaPlayer?.stop()
-                                    recorderMediaPlayer?.release()
-                                    recorderMediaPlayer = null
-                                    isPlayingRecorded = false
-                                }
-                                if (recordFile.exists()) {
-                                    recordFile.delete()
-                                }
-                                val recorder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                                    android.media.MediaRecorder(context)
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    android.media.MediaRecorder()
-                                }
-                                recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
-                                recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
-                                recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
-                                recorder.setOutputFile(recordFile.absolutePath)
-                                recorder.prepare()
-                                recorder.start()
-                                mediaRecorder = recorder
-                                isRecording = true
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                android.widget.Toast.makeText(context, context.getString(R.string.error_record), android.widget.Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.Mic, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.record_btn))
-                    }
-                }
 
-                if (!isRecording && recordFile.exists()) {
-                    Button(
-                        onClick = {
-                            if (isPlayingRecorded) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (isRecording) {
+                        Button(
+                            onClick = {
                                 try {
-                                    recorderMediaPlayer?.stop()
-                                    recorderMediaPlayer?.release()
-                                    recorderMediaPlayer = null
-                                } catch (e: Exception) {}
-                                isPlayingRecorded = false
-                            } else {
-                                try {
-                                    val mp = android.media.MediaPlayer().apply {
-                                        setDataSource(recordFile.absolutePath)
-                                        prepare()
-                                        start()
-                                    }
-                                    recorderMediaPlayer = mp
-                                    isPlayingRecorded = true
-                                    mp.setOnCompletionListener {
-                                        isPlayingRecorded = false
-                                        it.release()
-                                        recorderMediaPlayer = null
-                                    }
+                                    mediaRecorder?.stop()
+                                    mediaRecorder?.release()
+                                    mediaRecorder = null
+                                    isRecording = false
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(imageVector = Icons.Default.Stop, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.stop_btn))
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                try {
+                                    if (isPlayingRecorded) {
+                                        recorderMediaPlayer?.stop()
+                                        recorderMediaPlayer?.release()
+                                        recorderMediaPlayer = null
+                                        isPlayingRecorded = false
+                                    }
+                                    if (recordFile.exists()) {
+                                        recordFile.delete()
+                                    }
+                                    val recorder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                        android.media.MediaRecorder(context)
+                                    } else {
+                                        @Suppress("DEPRECATION")
+                                        android.media.MediaRecorder()
+                                    }
+                                    recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
+                                    recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
+                                    recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
+                                    recorder.setMaxDuration(10_000)
+                                    recorder.setOutputFile(recordFile.absolutePath)
+                                    recorder.prepare()
+                                    recorder.start()
+                                    mediaRecorder = recorder
+                                    isRecording = true
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    android.widget.Toast.makeText(context, context.getString(R.string.error_record), android.widget.Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(imageVector = Icons.Default.Mic, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.record_btn))
+                        }
+
+                        if (recordFile.exists()) {
+                            Button(
+                                onClick = {
+                                    if (isPlayingRecorded) {
+                                        try {
+                                            recorderMediaPlayer?.stop()
+                                            recorderMediaPlayer?.release()
+                                            recorderMediaPlayer = null
+                                        } catch (e: Exception) {}
+                                        isPlayingRecorded = false
+                                    } else {
+                                        try {
+                                            val mp = android.media.MediaPlayer().apply {
+                                                setDataSource(recordFile.absolutePath)
+                                                prepare()
+                                                start()
+                                            }
+                                            recorderMediaPlayer = mp
+                                            isPlayingRecorded = true
+                                            mp.setOnCompletionListener {
+                                                isPlayingRecorded = false
+                                                it.release()
+                                                recorderMediaPlayer = null
+                                            }
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = if (isPlayingRecorded) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(if (isPlayingRecorded) stringResource(R.string.stop_btn) else stringResource(R.string.play_btn))
+                            }
+
+                            Button(
+                                onClick = {
+                                    onRecordSaved(recordFile.absolutePath)
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.save))
                             }
                         }
-                    ) {
-                        Icon(
-                            imageVector = if (isPlayingRecorded) Icons.Default.Stop else Icons.Default.PlayArrow,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(if (isPlayingRecorded) stringResource(R.string.stop_btn) else stringResource(R.string.play_btn))
-                    }
-                }
-                
-                if (!isRecording && recordFile.exists()) {
-                    TextButton(
-                        onClick = {
-                            onRecordSaved(recordFile.absolutePath)
-                        }
-                    ) {
-                        Text(stringResource(R.string.save))
                     }
                 }
             }
         },
+        confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
