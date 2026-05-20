@@ -138,4 +138,19 @@
     <string name="quick_settings_tile_title">Schnelleinstellungen-Kachel</string>
     <string name="quick_settings_tile_desc">Fügen Sie die Kachel "Dhikr pausieren" zu Ihren Schnelleinstellungen hinzu</string>
 
+    <string name="mute_on_silent">Stumm im Lautlos-Modus</string>
+    <string name="mute_on_silent_desc">Keine Erinnerungstöne abspielen, wenn das Gerät auf stumm oder vibrieren eingestellt ist</string>
+    <string name="mute_on_dnd">Stumm bei \"Bitte nicht stören\"</string>
+    <string name="mute_on_dnd_desc">Keine Erinnerungstöne abspielen, wenn der \"Bitte nicht stören\"-Modus aktiv ist</string>
+    <string name="custom_audio_option">Eigener Ton</string>
+    <string name="select_audio_file">Audiodatei auswählen</string>
+    <string name="record_voice">Spracherinnerung aufnehmen</string>
+    <string name="record_dialog_title">Dhikr aufnehmen</string>
+    <string name="record_dialog_desc">Nehmen Sie Ihre Stimme beim Rezitieren von Dhikr auf, um sie als Erinnerungston zu verwenden</string>
+    <string name="record_btn">Aufnehmen</string>
+    <string name="stop_btn">Stopp</string>
+    <string name="play_btn">Abspielen</string>
+    <string name="error_permission">Berechtigung zur Audioaufnahme verweigert</string>
+    <string name="error_record">Fehler bei der Aufnahme oder Wiedergabe</string>
+    <string name="sound_custom_selected">Eigener Ton ausgewählt</string>
 </resources>
