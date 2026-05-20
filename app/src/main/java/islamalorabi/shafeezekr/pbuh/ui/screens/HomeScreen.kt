@@ -130,7 +130,7 @@ fun HomeScreen(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(28.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -183,27 +183,30 @@ fun HomeScreen(
                 val seconds = ((remainingTime % 60000) / 1000).toInt()
                 val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
                 val formattedTime = formatLocaleTime(minutes, seconds, locale)
-                OutlinedCard(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = stringResource(R.string.next_reminder),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = formattedTime,
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
@@ -215,9 +218,12 @@ fun HomeScreen(
                 header = stringResource(R.string.enable_reminder),
                 headerColor = MaterialTheme.colorScheme.primary
             ) {
-                OutlinedCard(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    )
                 ) {
                     ListItem(
                         headlineContent = {
@@ -278,9 +284,12 @@ fun HomeScreen(
                     header = stringResource(R.string.interval_title),
                     headerColor = MaterialTheme.colorScheme.primary
                 ) {
-                    OutlinedCard(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
                     ) {
                         Column(
                             modifier = Modifier
@@ -471,8 +480,11 @@ private fun NumberPickerColumn(
         
         Spacer(modifier = Modifier.height(8.dp))
         
-        OutlinedCard(
-            shape = RoundedCornerShape(12.dp)
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
