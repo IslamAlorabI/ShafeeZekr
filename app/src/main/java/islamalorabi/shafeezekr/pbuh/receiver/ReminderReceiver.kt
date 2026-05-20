@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 
@@ -33,7 +34,10 @@ class ReminderReceiver : BroadcastReceiver() {
         
         createNotificationChannel(localizedContext)
         showNotification(localizedContext)
-        playSound(context)
+        val didPlay = playSound(context)
+        if (didPlay) {
+            DhikrStatsManager(context).recordDhikr()
+        }
         ReminderScheduler.scheduleNextAlarm(context)
     }
 
@@ -76,7 +80,7 @@ class ReminderReceiver : BroadcastReceiver() {
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
-    private fun playSound(context: Context) {
+    private fun playSound(context: Context): Boolean {
         try {
             val preferencesManager = islamalorabi.shafeezekr.pbuh.data.PreferencesManager(context)
             val settings = kotlinx.coroutines.runBlocking {
@@ -84,11 +88,19 @@ class ReminderReceiver : BroadcastReceiver() {
             }
             
             if (!settings.isReminderAllowedByPeriodRules()) {
-                return
+                return false
             }
 
             if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
-                return
+                return false
+            }
+
+            if (!islamalorabi.shafeezekr.pbuh.util.AudioHelper.shouldPlaySound(context, settings.muteOnSilent, settings.muteOnDND)) {
+                return false
+            }
+
+            if (settings.appVolume < 0.2f) {
+                return false
             }
 
             islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
@@ -100,9 +112,10 @@ class ReminderReceiver : BroadcastReceiver() {
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled
             )
+            return true
         } catch (e: Exception) {
             e.printStackTrace()
+            return false
         }
     }
 }
-

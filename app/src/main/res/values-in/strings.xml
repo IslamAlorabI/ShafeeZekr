@@ -158,4 +158,15 @@
     <string name="record_permission_note">Fitur ini memerlukan izin mikrofon</string>
     <string name="error_audio_too_long">File audio harus 10 detik atau kurang</string>
     <string name="delete_btn">Hapus</string>
+
+    <string name="nav_statistics">Statistik</string>
+    <string name="stats_today">Hari Ini</string>
+    <string name="stats_this_week">Minggu Ini</string>
+    <string name="stats_this_month">Bulan Ini</string>
+    <string name="stats_all_time">Semua</string>
+    <string name="stats_streak">Beruntun</string>
+    <string name="stats_streak_days">hari</string>
+    <string name="stats_no_data">Belum ada dzikir yang tercatat</string>
+    <string name="stats_reminders_today">Pengingat Hari Ini</string>
 </resources>
+

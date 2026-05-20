@@ -8,9 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
@@ -44,6 +46,7 @@ import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
+import islamalorabi.shafeezekr.pbuh.ui.screens.StatisticsScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
 import kotlinx.coroutines.launch
@@ -169,6 +172,7 @@ fun MainApp(
 
     val titles = listOf(
         stringResource(R.string.nav_home),
+        stringResource(R.string.nav_statistics),
         stringResource(R.string.nav_settings),
         stringResource(R.string.nav_about)
     )
@@ -203,7 +207,7 @@ fun MainApp(
                     onClick = { selectedTab = 1 },
                     icon = {
                         Icon(
-                            imageVector = if (selectedTab == 1) Icons.Filled.Settings else Icons.Outlined.Settings,
+                            imageVector = if (selectedTab == 1) Icons.Filled.BarChart else Icons.Outlined.BarChart,
                             contentDescription = titles[1]
                         )
                     },
@@ -214,11 +218,22 @@ fun MainApp(
                     onClick = { selectedTab = 2 },
                     icon = {
                         Icon(
-                            imageVector = if (selectedTab == 2) Icons.Filled.Info else Icons.Outlined.Info,
+                            imageVector = if (selectedTab == 2) Icons.Filled.Settings else Icons.Outlined.Settings,
                             contentDescription = titles[2]
                         )
                     },
                     label = { Text(titles[2]) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
+                    icon = {
+                        Icon(
+                            imageVector = if (selectedTab == 3) Icons.Filled.Info else Icons.Outlined.Info,
+                            contentDescription = titles[3]
+                        )
+                    },
+                    label = { Text(titles[3]) }
                 )
             }
         }
@@ -231,7 +246,10 @@ fun MainApp(
                 onCustomIntervalChange = onCustomIntervalChange,
                 modifier = Modifier.padding(innerPadding)
             )
-            1 -> SettingsScreen(
+            1 -> StatisticsScreen(
+                modifier = Modifier.padding(innerPadding)
+            )
+            2 -> SettingsScreen(
                 settings = settings,
                 onThemeModeChange = onThemeModeChange,
                 onColorSchemeChange = onColorSchemeChange,
@@ -246,7 +264,7 @@ fun MainApp(
                 onCustomSoundEnabledChange = onCustomSoundEnabledChange,
                 modifier = Modifier.padding(innerPadding)
             )
-            2 -> AboutScreen(
+            3 -> AboutScreen(
                 modifier = Modifier.padding(innerPadding)
             )
         }
