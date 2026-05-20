@@ -1779,7 +1779,7 @@ private fun SoundSelectionDialog(
                     .selectableGroup()
                     .verticalScroll(rememberScrollState())
             ) {
-                (1..8).forEach { index ->
+                (1..9).forEach { index ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -2149,6 +2149,7 @@ private fun getSoundResourceId(index: Int): Int {
         6 -> R.raw.zikr_sound_6
         7 -> R.raw.zikr_sound_7
         8 -> R.raw.zikr_sound_8
+        9 -> R.raw.zikr_sound_9
         else -> R.raw.zikr_sound_1
     }
 }
