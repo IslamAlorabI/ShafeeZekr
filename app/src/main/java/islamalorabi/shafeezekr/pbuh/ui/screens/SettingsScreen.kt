@@ -1111,9 +1111,6 @@ private fun ThemeModeDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.theme_mode)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
@@ -1157,9 +1154,6 @@ private fun ColorSchemeDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.color_scheme)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
@@ -1208,9 +1202,6 @@ private fun LanguageDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.language)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
@@ -1296,9 +1287,6 @@ private fun AddPeriodRuleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { 
             Text(
                 if (ruleToEdit != null) stringResource(R.string.edit_period_rule)
@@ -1633,7 +1621,6 @@ private fun TimePickerDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
         title = { Text(stringResource(R.string.select_time)) },
         text = {
             Column(
@@ -1712,9 +1699,6 @@ private fun SoundSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.sound_selection)) },
         text = {
             Column(
