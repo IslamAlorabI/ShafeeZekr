@@ -156,4 +156,5 @@
     <string name="record_max_duration_note">حداکثر مدت ضبط: ۱۰ ثانیه</string>
     <string name="record_permission_note">این قابلیت نیاز به مجوز میکروفون دارد</string>
     <string name="error_audio_too_long">فایل صوتی باید ۱۰ ثانیه یا کمتر باشد</string>
+    <string name="delete_btn">حذف</string>
 </resources>

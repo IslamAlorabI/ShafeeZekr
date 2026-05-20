@@ -156,4 +156,5 @@
     <string name="record_max_duration_note">Maksimum kayıt süresi: 10 saniye</string>
     <string name="record_permission_note">Bu özellik mikrofon izni gerektirir</string>
     <string name="error_audio_too_long">Ses dosyası 10 saniye veya daha kısa olmalıdır</string>
+    <string name="delete_btn">Sil</string>
 </resources>
