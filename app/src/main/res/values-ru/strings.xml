@@ -153,4 +153,7 @@
     <string name="error_permission">Доступ к микрофону отклонен</string>
     <string name="error_record">Ошибка записи или воспроизведения звука</string>
     <string name="sound_custom_selected">Выбран пользовательский звук</string>
+    <string name="record_max_duration_note">Максимальная длительность записи: 10 секунд</string>
+    <string name="record_permission_note">Эта функция требует разрешение на микрофон</string>
+    <string name="error_audio_too_long">Аудиофайл должен быть не более 10 секунд</string>
 </resources>

@@ -154,4 +154,7 @@
     <string name="error_permission">Berechtigung zur Audioaufnahme verweigert</string>
     <string name="error_record">Fehler bei der Aufnahme oder Wiedergabe</string>
     <string name="sound_custom_selected">Eigener Ton ausgewählt</string>
+    <string name="record_max_duration_note">Maximale Aufnahmedauer: 10 Sekunden</string>
+    <string name="record_permission_note">Diese Funktion erfordert eine Mikrofonberechtigung</string>
+    <string name="error_audio_too_long">Audiodatei darf maximal 10 Sekunden lang sein</string>
 </resources>
