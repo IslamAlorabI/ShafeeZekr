@@ -193,8 +193,40 @@ fun SettingsScreen(
     var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
     var ruleToEdit by remember { mutableStateOf<PeriodRule?>(null) }
     var showSoundDialog by remember { mutableStateOf(false) }
+    var showRecordDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { sourceUri ->
+            scope.launch {
+                try {
+                    val destFile = java.io.File(context.filesDir, "custom_zikr.mp3")
+                    context.contentResolver.openInputStream(sourceUri)?.use { input ->
+                        destFile.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    onCustomSoundPathChange(destFile.absolutePath)
+                    onCustomSoundEnabledChange(true)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            showRecordDialog = true
+        } else {
+            android.widget.Toast.makeText(context, context.getString(R.string.error_permission), android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
 
     if (showAddPeriodRuleDialog) {
         AddPeriodRuleDialog(
@@ -328,7 +360,110 @@ fun SettingsScreen(
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             modifier = Modifier.clickable { showSoundDialog = true }
                         )
-                        
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.custom_audio_option),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = if (settings.isCustomSoundEnabled && !settings.customSoundPath.isNullOrEmpty()) {
+                                        stringResource(R.string.sound_custom_selected)
+                                    } else {
+                                        stringResource(R.string.custom_audio_desc)
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (settings.isCustomSoundEnabled && !settings.customSoundPath.isNullOrEmpty()) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Mic,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        )
+
+                        AnimatedVisibility(
+                            visible = true,
+                            enter = fadeIn() + expandVertically(),
+                            exit = fadeOut() + shrinkVertically()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        filePickerLauncher.launch("audio/*")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MusicNote,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(stringResource(R.string.select_audio_file))
+                                }
+
+                                Button(
+                                    onClick = {
+                                        val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                            context,
+                                            android.Manifest.permission.RECORD_AUDIO
+                                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                        if (hasPermission) {
+                                            showRecordDialog = true
+                                        } else {
+                                            permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Mic,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(stringResource(R.string.record_voice))
+                                }
+
+                                if (settings.isCustomSoundEnabled) {
+                                    TextButton(
+                                        onClick = {
+                                            onCustomSoundEnabledChange(false)
+                                            onCustomSoundPathChange(null)
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.outlineVariant
@@ -909,8 +1044,18 @@ fun SettingsScreen(
                 onSoundChange(it)
                 showSoundDialog = false
             },
-            onCustomSoundEnabledChange = onCustomSoundEnabledChange,
-            onCustomSoundPathChange = onCustomSoundPathChange
+            onCustomSoundEnabledChange = onCustomSoundEnabledChange
+        )
+    }
+
+    if (showRecordDialog) {
+        RecordDhikrDialog(
+            onDismiss = { showRecordDialog = false },
+            onRecordSaved = { path ->
+                onCustomSoundPathChange(path)
+                onCustomSoundEnabledChange(true)
+                showRecordDialog = false
+            }
         )
     }
 }
@@ -1530,86 +1675,17 @@ private fun SoundSelectionDialog(
     customSoundPath: String?,
     onDismiss: () -> Unit,
     onSelect: (Int) -> Unit,
-    onCustomSoundEnabledChange: (Boolean) -> Unit,
-    onCustomSoundPathChange: (String?) -> Unit
+    onCustomSoundEnabledChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     var tempSelected by remember { mutableStateOf(currentIndex) }
     var tempCustomEnabled by remember { mutableStateOf(isCustomSoundEnabled) }
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
-    var showRecordDialog by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { sourceUri ->
-            scope.launch {
-                try {
-                    val destFile = java.io.File(context.filesDir, "custom_zikr.mp3")
-                    context.contentResolver.openInputStream(sourceUri)?.use { input ->
-                        destFile.outputStream().use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-                    onCustomSoundPathChange(destFile.absolutePath)
-                    onCustomSoundEnabledChange(true)
-                    tempCustomEnabled = true
-                    
-                    mediaPlayer?.release()
-                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
-                        context = context,
-                        soundIndex = tempSelected,
-                        appVolume = currentVolume,
-                        muteOnSilent = false,
-                        muteOnDND = false,
-                        customSoundPath = destFile.absolutePath,
-                        isCustomSoundEnabled = true
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            showRecordDialog = true
-        } else {
-            android.widget.Toast.makeText(context, context.getString(R.string.error_permission), android.widget.Toast.LENGTH_SHORT).show()
-        }
-    }
 
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.release()
         }
-    }
-
-    if (showRecordDialog) {
-        RecordDhikrDialog(
-            onDismiss = { showRecordDialog = false },
-            onRecordSaved = { path ->
-                onCustomSoundPathChange(path)
-                onCustomSoundEnabledChange(true)
-                tempCustomEnabled = true
-                showRecordDialog = false
-                
-                mediaPlayer?.release()
-                mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
-                    context = context,
-                    soundIndex = tempSelected,
-                    appVolume = currentVolume,
-                    muteOnSilent = false,
-                    muteOnDND = false,
-                    customSoundPath = path,
-                    isCustomSoundEnabled = true
-                )
-            }
-        )
     }
 
     AlertDialog(
@@ -1659,14 +1735,14 @@ private fun SoundSelectionDialog(
                     }
                 }
                 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = tempCustomEnabled,
-                            onClick = {
-                                tempCustomEnabled = true
-                                if (!customSoundPath.isNullOrEmpty()) {
+                if (!customSoundPath.isNullOrEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = tempCustomEnabled,
+                                onClick = {
+                                    tempCustomEnabled = true
                                     mediaPlayer?.release()
                                     mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
                                         context = context,
@@ -1677,80 +1753,18 @@ private fun SoundSelectionDialog(
                                         customSoundPath = customSoundPath,
                                         isCustomSoundEnabled = true
                                     )
-                                }
-                            },
-                            role = Role.RadioButton
-                        )
-                        .padding(vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(selected = tempCustomEnabled, onClick = null)
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = stringResource(R.string.custom_audio_option),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = tempCustomEnabled,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 48.dp, bottom = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (!customSoundPath.isNullOrEmpty()) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.sound_custom_selected),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Button(
-                                onClick = {
-                                    filePickerLauncher.launch("audio/*")
-                                }
-                            ) {
-                                Text(stringResource(R.string.select_audio_file))
-                            }
-                            
-                            Button(
-                                onClick = {
-                                    val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
-                                        context,
-                                        android.Manifest.permission.RECORD_AUDIO
-                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-                                    if (hasPermission) {
-                                        showRecordDialog = true
-                                    } else {
-                                        permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                                    }
-                                }
-                            ) {
-                                Text(stringResource(R.string.record_voice))
-                            }
-                        }
+                        RadioButton(selected = tempCustomEnabled, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = stringResource(R.string.custom_audio_option),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
                 
