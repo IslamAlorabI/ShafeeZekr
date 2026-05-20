@@ -52,8 +52,6 @@ fun AboutScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
         Card(
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
