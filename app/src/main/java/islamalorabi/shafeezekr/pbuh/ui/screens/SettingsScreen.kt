@@ -420,17 +420,18 @@ fun SettingsScreen(
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically()
                         ) {
-                            Row(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .padding(bottom = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Button(
                                     onClick = {
                                         filePickerLauncher.launch("audio/*")
-                                    }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.MusicNote,
@@ -441,41 +442,47 @@ fun SettingsScreen(
                                     Text(stringResource(R.string.select_audio_file))
                                 }
 
-                                Button(
-                                    onClick = {
-                                        val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
-                                            context,
-                                            android.Manifest.permission.RECORD_AUDIO
-                                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-                                        if (hasPermission) {
-                                            showRecordDialog = true
-                                        } else {
-                                            permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                                        }
-                                    }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Mic,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(stringResource(R.string.record_voice))
-                                }
-
-                                if (settings.isCustomSoundEnabled) {
-                                    TextButton(
+                                    Button(
                                         onClick = {
-                                            onCustomSoundEnabledChange(false)
-                                            onCustomSoundPathChange(null)
-                                        }
+                                            val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                                context,
+                                                android.Manifest.permission.RECORD_AUDIO
+                                            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                            if (hasPermission) {
+                                                showRecordDialog = true
+                                            } else {
+                                                permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f)
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Default.Delete,
+                                            imageVector = Icons.Default.Mic,
                                             contentDescription = null,
                                             modifier = Modifier.size(18.dp)
                                         )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(stringResource(R.string.record_voice))
+                                    }
+
+                                    if (settings.isCustomSoundEnabled) {
+                                        TextButton(
+                                            onClick = {
+                                                onCustomSoundEnabledChange(false)
+                                                onCustomSoundPathChange(null)
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
