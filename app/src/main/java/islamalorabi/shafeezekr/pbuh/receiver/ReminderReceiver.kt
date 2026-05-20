@@ -94,7 +94,11 @@ class ReminderReceiver : BroadcastReceiver() {
             islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                 context = context,
                 soundIndex = settings.selectedSoundIndex,
-                appVolume = settings.appVolume
+                appVolume = settings.appVolume,
+                muteOnSilent = settings.muteOnSilent,
+                muteOnDND = settings.muteOnDND,
+                customSoundPath = settings.customSoundPath,
+                isCustomSoundEnabled = settings.isCustomSoundEnabled
             )
         } catch (e: Exception) {
             e.printStackTrace()

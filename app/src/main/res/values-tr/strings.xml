@@ -137,4 +137,19 @@
     <string name="quick_settings_tile_section">Hızlı Ayarlar</string>
     <string name="quick_settings_tile_title">Hızlı Ayarlar Kutucuğu</string>
     <string name="quick_settings_tile_desc">Kolay erişim için Hızlı Ayarlar paneline "Zikri Duraklat" kutucuğu ekleyin</string>
+    <string name="mute_on_silent">Sessiz Modda Sessize Al</string>
+    <string name="mute_on_silent_desc">Cihazınız sessiz veya titreşim modundayken hatırlatıcı seslerini çalma</string>
+    <string name="mute_on_dnd">Rahatsız Etmeyinde Sessize Al</string>
+    <string name="mute_on_dnd_desc">Rahatsız Etmeyin modu aktifken hatırlatıcı seslerini çalma</string>
+    <string name="custom_audio_option">Özel Ses</string>
+    <string name="select_audio_file">Ses Dosyası Seç</string>
+    <string name="record_voice">Sesli Hatırlatıcı Kaydet</string>
+    <string name="record_dialog_title">Zikir Kaydet</string>
+    <string name="record_dialog_desc">Hatırlatıcı sesi olarak kullanmak için zikir okurken sesinizi kaydedin</string>
+    <string name="record_btn">Kaydet</string>
+    <string name="stop_btn">Durdur</string>
+    <string name="play_btn">Oynat</string>
+    <string name="error_permission">Ses kaydetme izni reddedildi</string>
+    <string name="error_record">Ses kaydetme veya çalma başarısız oldu</string>
+    <string name="sound_custom_selected">Özel ses seçildi</string>
 </resources>

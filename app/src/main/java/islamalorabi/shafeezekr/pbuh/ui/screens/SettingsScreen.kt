@@ -32,6 +32,10 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.BatteryStd
@@ -45,6 +49,11 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PhoneInTalk
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.filled.DoNotDisturbOn
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -172,6 +181,10 @@ fun SettingsScreen(
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onSoundChange: (Int) -> Unit,
     onMuteOnCallChange: (Boolean) -> Unit,
+    onMuteOnSilentChange: (Boolean) -> Unit,
+    onMuteOnDNDChange: (Boolean) -> Unit,
+    onCustomSoundPathChange: (String?) -> Unit,
+    onCustomSoundEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -289,7 +302,11 @@ fun SettingsScreen(
                             },
                             supportingContent = {
                                 Text(
-                                    text = stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex)),
+                                    text = if (settings.isCustomSoundEnabled) {
+                                        stringResource(R.string.custom_audio_option)
+                                    } else {
+                                        stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex))
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -387,6 +404,76 @@ fun SettingsScreen(
                                 Switch(
                                     checked = settings.muteOnCall,
                                     onCheckedChange = { onMuteOnCallChange(it) }
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_silent),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_silent_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = settings.muteOnSilent,
+                                    onCheckedChange = { onMuteOnSilentChange(it) }
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_dnd),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_dnd_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.DoNotDisturbOn,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = settings.muteOnDND,
+                                    onCheckedChange = { onMuteOnDNDChange(it) }
                                 )
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent)
@@ -815,11 +902,15 @@ fun SettingsScreen(
         SoundSelectionDialog(
             currentIndex = settings.selectedSoundIndex,
             currentVolume = settings.appVolume,
+            isCustomSoundEnabled = settings.isCustomSoundEnabled,
+            customSoundPath = settings.customSoundPath,
             onDismiss = { showSoundDialog = false },
             onSelect = {
                 onSoundChange(it)
                 showSoundDialog = false
-            }
+            },
+            onCustomSoundEnabledChange = onCustomSoundEnabledChange,
+            onCustomSoundPathChange = onCustomSoundPathChange
         )
     }
 }
@@ -1435,17 +1526,90 @@ private fun DatePickerModal(
 private fun SoundSelectionDialog(
     currentIndex: Int,
     currentVolume: Float,
+    isCustomSoundEnabled: Boolean,
+    customSoundPath: String?,
     onDismiss: () -> Unit,
-    onSelect: (Int) -> Unit
+    onSelect: (Int) -> Unit,
+    onCustomSoundEnabledChange: (Boolean) -> Unit,
+    onCustomSoundPathChange: (String?) -> Unit
 ) {
     val context = LocalContext.current
     var tempSelected by remember { mutableStateOf(currentIndex) }
+    var tempCustomEnabled by remember { mutableStateOf(isCustomSoundEnabled) }
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    var showRecordDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { sourceUri ->
+            scope.launch {
+                try {
+                    val destFile = java.io.File(context.filesDir, "custom_zikr.mp3")
+                    context.contentResolver.openInputStream(sourceUri)?.use { input ->
+                        destFile.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    onCustomSoundPathChange(destFile.absolutePath)
+                    onCustomSoundEnabledChange(true)
+                    tempCustomEnabled = true
+                    
+                    mediaPlayer?.release()
+                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
+                        context = context,
+                        soundIndex = tempSelected,
+                        appVolume = currentVolume,
+                        muteOnSilent = false,
+                        muteOnDND = false,
+                        customSoundPath = destFile.absolutePath,
+                        isCustomSoundEnabled = true
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            showRecordDialog = true
+        } else {
+            android.widget.Toast.makeText(context, context.getString(R.string.error_permission), android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
 
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.release()
         }
+    }
+
+    if (showRecordDialog) {
+        RecordDhikrDialog(
+            onDismiss = { showRecordDialog = false },
+            onRecordSaved = { path ->
+                onCustomSoundPathChange(path)
+                onCustomSoundEnabledChange(true)
+                tempCustomEnabled = true
+                showRecordDialog = false
+                
+                mediaPlayer?.release()
+                mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
+                    context = context,
+                    soundIndex = tempSelected,
+                    appVolume = currentVolume,
+                    muteOnSilent = false,
+                    muteOnDND = false,
+                    customSoundPath = path,
+                    isCustomSoundEnabled = true
+                )
+            }
+        )
     }
 
     AlertDialog(
@@ -1465,15 +1629,20 @@ private fun SoundSelectionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .selectable(
-                                selected = tempSelected == index,
+                                selected = (!tempCustomEnabled && tempSelected == index),
                                 onClick = {
                                     tempSelected = index
+                                    tempCustomEnabled = false
                                     
                                     mediaPlayer?.release()
                                     mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
                                         context = context,
                                         soundIndex = index,
-                                        appVolume = currentVolume
+                                        appVolume = currentVolume,
+                                        muteOnSilent = false,
+                                        muteOnDND = false,
+                                        customSoundPath = customSoundPath,
+                                        isCustomSoundEnabled = false
                                     )
                                 },
                                 role = Role.RadioButton
@@ -1481,12 +1650,107 @@ private fun SoundSelectionDialog(
                             .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        RadioButton(selected = tempSelected == index, onClick = null)
+                        RadioButton(selected = (!tempCustomEnabled && tempSelected == index), onClick = null)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(index)), 
                             style = MaterialTheme.typography.bodyLarge
                         )
+                    }
+                }
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = tempCustomEnabled,
+                            onClick = {
+                                tempCustomEnabled = true
+                                if (!customSoundPath.isNullOrEmpty()) {
+                                    mediaPlayer?.release()
+                                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
+                                        context = context,
+                                        soundIndex = tempSelected,
+                                        appVolume = currentVolume,
+                                        muteOnSilent = false,
+                                        muteOnDND = false,
+                                        customSoundPath = customSoundPath,
+                                        isCustomSoundEnabled = true
+                                    )
+                                }
+                            },
+                            role = Role.RadioButton
+                        )
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(selected = tempCustomEnabled, onClick = null)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = stringResource(R.string.custom_audio_option),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = tempCustomEnabled,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 48.dp, bottom = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (!customSoundPath.isNullOrEmpty()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.sound_custom_selected),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    filePickerLauncher.launch("audio/*")
+                                }
+                            ) {
+                                Text(stringResource(R.string.select_audio_file))
+                            }
+                            
+                            Button(
+                                onClick = {
+                                    val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                        context,
+                                        android.Manifest.permission.RECORD_AUDIO
+                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                    if (hasPermission) {
+                                        showRecordDialog = true
+                                    } else {
+                                        permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                                    }
+                                }
+                            ) {
+                                Text(stringResource(R.string.record_voice))
+                            }
+                        }
                     }
                 }
                 
@@ -1501,9 +1765,194 @@ private fun SoundSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = {
+                onCustomSoundEnabledChange(tempCustomEnabled)
                 onSelect(tempSelected)
             }) {
                 Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun RecordDhikrDialog(
+    onDismiss: () -> Unit,
+    onRecordSaved: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var isRecording by remember { mutableStateOf(false) }
+    var isPlayingRecorded by remember { mutableStateOf(false) }
+    var mediaRecorder by remember { mutableStateOf<android.media.MediaRecorder?>(null) }
+    var recorderMediaPlayer by remember { mutableStateOf<android.media.MediaPlayer?>(null) }
+    val recordFile = remember { java.io.File(context.filesDir, "recorded_zikr.m4a") }
+    var durationSeconds by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(isRecording) {
+        if (isRecording) {
+            durationSeconds = 0
+            while (isRecording) {
+                kotlinx.coroutines.delay(1000)
+                durationSeconds++
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                mediaRecorder?.release()
+            } catch (e: Exception) {}
+            try {
+                recorderMediaPlayer?.release()
+            } catch (e: Exception) {}
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.record_dialog_title)) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.record_dialog_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                
+                if (isRecording) {
+                    val minutes = durationSeconds / 60
+                    val seconds = durationSeconds % 60
+                    Text(
+                        text = String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds),
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else if (recordFile.exists()) {
+                    Text(
+                        text = stringResource(R.string.sound_custom_selected),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (isRecording) {
+                    Button(
+                        onClick = {
+                            try {
+                                mediaRecorder?.stop()
+                                mediaRecorder?.release()
+                                mediaRecorder = null
+                                isRecording = false
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Default.Stop, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.stop_btn))
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            try {
+                                if (isPlayingRecorded) {
+                                    recorderMediaPlayer?.stop()
+                                    recorderMediaPlayer?.release()
+                                    recorderMediaPlayer = null
+                                    isPlayingRecorded = false
+                                }
+                                if (recordFile.exists()) {
+                                    recordFile.delete()
+                                }
+                                val recorder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                    android.media.MediaRecorder(context)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    android.media.MediaRecorder()
+                                }
+                                recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
+                                recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
+                                recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
+                                recorder.setOutputFile(recordFile.absolutePath)
+                                recorder.prepare()
+                                recorder.start()
+                                mediaRecorder = recorder
+                                isRecording = true
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                android.widget.Toast.makeText(context, context.getString(R.string.error_record), android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Default.Mic, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.record_btn))
+                    }
+                }
+
+                if (!isRecording && recordFile.exists()) {
+                    Button(
+                        onClick = {
+                            if (isPlayingRecorded) {
+                                try {
+                                    recorderMediaPlayer?.stop()
+                                    recorderMediaPlayer?.release()
+                                    recorderMediaPlayer = null
+                                } catch (e: Exception) {}
+                                isPlayingRecorded = false
+                            } else {
+                                try {
+                                    val mp = android.media.MediaPlayer().apply {
+                                        setDataSource(recordFile.absolutePath)
+                                        prepare()
+                                        start()
+                                    }
+                                    recorderMediaPlayer = mp
+                                    isPlayingRecorded = true
+                                    mp.setOnCompletionListener {
+                                        isPlayingRecorded = false
+                                        it.release()
+                                        recorderMediaPlayer = null
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isPlayingRecorded) Icons.Default.Stop else Icons.Default.PlayArrow,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(if (isPlayingRecorded) stringResource(R.string.stop_btn) else stringResource(R.string.play_btn))
+                    }
+                }
+                
+                if (!isRecording && recordFile.exists()) {
+                    TextButton(
+                        onClick = {
+                            onRecordSaved(recordFile.absolutePath)
+                        }
+                    ) {
+                        Text(stringResource(R.string.save))
+                    }
+                }
             }
         },
         dismissButton = {

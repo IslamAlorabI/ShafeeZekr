@@ -128,6 +128,18 @@ class MainActivity : ComponentActivity() {
                     onMuteOnCallChange = { enabled ->
                         scope.launch { preferencesManager.setMuteOnCall(enabled) }
                     },
+                    onMuteOnSilentChange = { enabled ->
+                        scope.launch { preferencesManager.setMuteOnSilent(enabled) }
+                    },
+                    onMuteOnDNDChange = { enabled ->
+                        scope.launch { preferencesManager.setMuteOnDND(enabled) }
+                    },
+                    onCustomSoundPathChange = { path ->
+                        scope.launch { preferencesManager.setCustomSoundPath(path) }
+                    },
+                    onCustomSoundEnabledChange = { enabled ->
+                        scope.launch { preferencesManager.setCustomSoundEnabled(enabled) }
+                    }
                 )
             }
         }
@@ -147,7 +159,11 @@ fun MainApp(
     onVolumeChange: (Float) -> Unit,
     onPeriodRulesChange: (List<PeriodRule>) -> Unit,
     onSoundChange: (Int) -> Unit,
-    onMuteOnCallChange: (Boolean) -> Unit
+    onMuteOnCallChange: (Boolean) -> Unit,
+    onMuteOnSilentChange: (Boolean) -> Unit,
+    onMuteOnDNDChange: (Boolean) -> Unit,
+    onCustomSoundPathChange: (String?) -> Unit,
+    onCustomSoundEnabledChange: (Boolean) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -224,6 +240,10 @@ fun MainApp(
                 onPeriodRulesChange = onPeriodRulesChange,
                 onSoundChange = onSoundChange,
                 onMuteOnCallChange = onMuteOnCallChange,
+                onMuteOnSilentChange = onMuteOnSilentChange,
+                onMuteOnDNDChange = onMuteOnDNDChange,
+                onCustomSoundPathChange = onCustomSoundPathChange,
+                onCustomSoundEnabledChange = onCustomSoundEnabledChange,
                 modifier = Modifier.padding(innerPadding)
             )
             2 -> AboutScreen(

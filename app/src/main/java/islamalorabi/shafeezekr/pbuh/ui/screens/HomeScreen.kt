@@ -174,7 +174,11 @@ fun HomeScreen(
                     islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                         context = context,
                         soundIndex = settings.selectedSoundIndex,
-                        appVolume = settings.appVolume
+                        appVolume = settings.appVolume,
+                        muteOnSilent = false,
+                        muteOnDND = false,
+                        customSoundPath = settings.customSoundPath,
+                        isCustomSoundEnabled = settings.isCustomSoundEnabled
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
