@@ -180,6 +180,7 @@ object AudioHelper {
             6 -> R.raw.zikr_sound_6
             7 -> R.raw.zikr_sound_7
             8 -> R.raw.zikr_sound_8
+            9 -> R.raw.zikr_sound_9
             else -> R.raw.zikr_sound_1
         }
     }
