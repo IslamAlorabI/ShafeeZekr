@@ -1146,7 +1146,11 @@ private fun ThemeModeDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text(stringResource(R.string.cancel))
             }
         }
@@ -1194,7 +1198,11 @@ private fun ColorSchemeDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text(stringResource(R.string.cancel))
             }
         }
@@ -1235,7 +1243,11 @@ private fun LanguageDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text(stringResource(R.string.cancel))
             }
         }
@@ -1515,59 +1527,74 @@ private fun AddPeriodRuleDialog(
             }
         },
         confirmButton = {
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (onDelete != null) {
-                    IconButton(
-                        onClick = onDelete,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.errorContainer,
-                                shape = RoundedCornerShape(12.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                    Button(
+                        onClick = {
+                            val cal = Calendar.getInstance().apply { 
+                                timeInMillis = selectedDateMillis 
+                            }
+                            onConfirm(
+                                PeriodRule(
+                                    id = ruleToEdit?.id ?: UUID.randomUUID().toString(),
+                                    scheduleType = scheduleType,
+                                    startHour = if (isAllDay) 0 else startHour,
+                                    startMinute = if (isAllDay) 0 else startMinute,
+                                    endHour = if (isAllDay) 23 else endHour,
+                                    endMinute = if (isAllDay) 59 else endMinute,
+                                    daysOfWeek = selectedDays,
+                                    year = cal.get(Calendar.YEAR),
+                                    month = cal.get(Calendar.MONTH),
+                                    dayOfMonth = cal.get(Calendar.DAY_OF_MONTH),
+                                    isEnabled = ruleToEdit?.isEnabled ?: true,
+                                    isAllDay = isAllDay
+                                )
                             )
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = when (scheduleType) {
+                            RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
+                            else -> true
+                        }
+                    ) {
+                        Text(stringResource(R.string.save))
+                    }
+                }
+                if (onDelete != null) {
+                    Button(
+                        onClick = onDelete,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete),
-                            tint = MaterialTheme.colorScheme.onErrorContainer
+                            contentDescription = null
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.delete))
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel))
-                }
-                TextButton(
-                    onClick = {
-                        val cal = Calendar.getInstance().apply { 
-                            timeInMillis = selectedDateMillis 
-                        }
-                        onConfirm(
-                            PeriodRule(
-                                id = ruleToEdit?.id ?: UUID.randomUUID().toString(),
-                                scheduleType = scheduleType,
-                                startHour = if (isAllDay) 0 else startHour,
-                                startMinute = if (isAllDay) 0 else startMinute,
-                                endHour = if (isAllDay) 23 else endHour,
-                                endMinute = if (isAllDay) 59 else endMinute,
-                                daysOfWeek = selectedDays,
-                                year = cal.get(Calendar.YEAR),
-                                month = cal.get(Calendar.MONTH),
-                                dayOfMonth = cal.get(Calendar.DAY_OF_MONTH),
-                                isEnabled = ruleToEdit?.isEnabled ?: true,
-                                isAllDay = isAllDay
-                            )
-                        )
-                    },
-                    enabled = when (scheduleType) {
-                        RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
-                        else -> true
-                    }
-                ) {
-                    Text(stringResource(R.string.save))
                 }
             }
         },
@@ -1638,17 +1665,33 @@ private fun TimePickerDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { 
-                onConfirm(timePickerState.hour, timePickerState.minute) 
-            }) {
-                Text(stringResource(R.string.confirm))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+                Button(
+                    onClick = { 
+                        onConfirm(timePickerState.hour, timePickerState.minute) 
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+        dismissButton = {}
     )
 }
 
@@ -1666,17 +1709,33 @@ private fun DatePickerModal(
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = { 
-                datePickerState.selectedDateMillis?.let { onConfirm(it) }
-            }) {
-                Text(stringResource(R.string.confirm))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+                Button(
+                    onClick = { 
+                        datePickerState.selectedDateMillis?.let { onConfirm(it) }
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+        dismissButton = {}
     ) {
         DatePicker(state = datePickerState)
     }
@@ -1791,18 +1850,34 @@ private fun SoundSelectionDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                onCustomSoundEnabledChange(tempCustomEnabled)
-                onSelect(tempSelected)
-            }) {
-                Text(stringResource(R.string.save))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+                Button(
+                    onClick = {
+                        onCustomSoundEnabledChange(tempCustomEnabled)
+                        onSelect(tempSelected)
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.save))
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+        dismissButton = {}
     )
 }
 
@@ -2037,12 +2112,20 @@ private fun RecordDhikrDialog(
                 }
             }
         },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
                 Text(stringResource(R.string.cancel))
             }
-        }
+        },
+        dismissButton = {}
     )
 }
 
