@@ -170,4 +170,5 @@
     <string name="record_max_duration_note">Maximum recording duration: 10 seconds</string>
     <string name="record_permission_note">This feature requires microphone permission</string>
     <string name="error_audio_too_long">Audio file must be 10 seconds or shorter</string>
+    <string name="delete_btn">Delete</string>
 </resources>

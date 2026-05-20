@@ -1072,6 +1072,11 @@ fun SettingsScreen(
                 onCustomSoundPathChange(path)
                 onCustomSoundEnabledChange(true)
                 showRecordDialog = false
+            },
+            onDelete = {
+                onCustomSoundPathChange(null)
+                onCustomSoundEnabledChange(false)
+                showRecordDialog = false
             }
         )
     }
@@ -1813,7 +1818,8 @@ private fun SoundSelectionDialog(
 @Composable
 private fun RecordDhikrDialog(
     onDismiss: () -> Unit,
-    onRecordSaved: (String) -> Unit
+    onRecordSaved: (String) -> Unit,
+    onDelete: () -> Unit
 ) {
     val context = LocalContext.current
     var isRecording by remember { mutableStateOf(false) }
@@ -2012,6 +2018,28 @@ private fun RecordDhikrDialog(
                                 Icon(imageVector = Icons.Default.Check, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(stringResource(R.string.save))
+                            }
+
+                            Button(
+                                onClick = {
+                                    if (isPlayingRecorded) {
+                                        try {
+                                            recorderMediaPlayer?.stop()
+                                            recorderMediaPlayer?.release()
+                                            recorderMediaPlayer = null
+                                        } catch (e: Exception) {}
+                                        isPlayingRecorded = false
+                                    }
+                                    if (recordFile.exists()) {
+                                        recordFile.delete()
+                                    }
+                                    onDelete()
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.delete_btn))
                             }
                         }
                     }
