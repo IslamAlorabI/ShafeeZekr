@@ -164,12 +164,14 @@
     <string name="stats_this_week">Эта неделя</string>
     <string name="stats_this_month">Этот месяц</string>
     <string name="stats_all_time">Всего</string>
-    <string name="stats_streak">Серия</string>
-    <string name="stats_streak_days">дней</string>
+    <string name="stats_streak">Постоянство</string>
+    <string name="stats_streak_days">день подряд</string>
     <string name="stats_no_data">Зикр ещё не записан</string>
     <string name="stats_reminders_today">Напоминания сегодня</string>
     <string name="stats_daily_goal">Дневная цель</string>
     <string name="stats_daily_goal_desc">Установите ежедневную цель зикра</string>
     <string name="stats_set_goal">Установить дневную цель</string>
+    <string name="stats_dhikr_unit">зикр</string>
+    <string name="stats_no_dhikr">Ничего</string>
 </resources>
 
