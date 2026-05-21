@@ -47,6 +47,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -76,6 +77,7 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
+import android.content.SharedPreferences
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -100,13 +102,24 @@ fun StatisticsScreen(
     var dataLoaded by remember { mutableStateOf(false) }
     var showGoalDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    fun loadStats() {
         todayCount = statsManager.getTodayCount()
         weeklyData = statsManager.getWeeklyData()
         monthlyTotal = statsManager.getMonthlyTotal()
         allTimeTotal = statsManager.getAllTimeTotal()
         currentStreak = statsManager.getCurrentStreak()
         dataLoaded = true
+    }
+
+    DisposableEffect(statsManager) {
+        loadStats()
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            loadStats()
+        }
+        statsManager.registerChangeListener(listener)
+        onDispose {
+            statsManager.unregisterChangeListener(listener)
+        }
     }
 
     if (showGoalDialog) {
