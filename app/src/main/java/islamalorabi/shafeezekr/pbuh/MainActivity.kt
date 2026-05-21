@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     settings.reminderInterval.minutes
                                 }
-                                ReminderScheduler.startReminder(context, intervalMinutes)
+                                ReminderScheduler.resumeReminder(context, intervalMinutes)
                             } else {
                                 ReminderScheduler.stopReminder(context)
                             }
