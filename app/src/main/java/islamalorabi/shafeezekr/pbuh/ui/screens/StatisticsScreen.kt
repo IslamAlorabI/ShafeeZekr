@@ -36,6 +36,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInclusive
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material3.AlertDialog
@@ -220,7 +221,10 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onEditGoal() },
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onEditGoal() },
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -259,6 +263,14 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
                         modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(bottom = 14.dp, start = 6.dp)
+                            .size(16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -314,11 +326,6 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
                         val tipX = centerX + radius * cos(angleRad).toFloat()
                         val tipY = centerY + radius * sin(angleRad).toFloat()
 
-                        drawCircle(
-                            color = primaryColor.copy(alpha = 0.25f),
-                            radius = strokeWidth * 1.5f,
-                            center = Offset(tipX, tipY)
-                        )
                         drawCircle(
                             color = Color.White,
                             radius = strokeWidth * 0.5f,
