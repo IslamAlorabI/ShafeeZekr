@@ -204,8 +204,6 @@ data class AppSettings(
     val dailyGoal: Int = 100
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
-        // All rules are now "Block" rules.
-        // If ANY enabled rule covers the current time, reminder is BLOCKED (return false).
         val enabledRules = periodRules.filter { it.isEnabled }
         
         for (rule in enabledRules) {
@@ -215,6 +213,53 @@ data class AppSettings(
         }
         
         return true
+    }
+
+    fun getQuietHoursEndMillis(): Long {
+        val enabledRules = periodRules.filter { it.isEnabled }
+        val now = Calendar.getInstance()
+        var earliestEnd = Long.MAX_VALUE
+
+        for (rule in enabledRules) {
+            if (!rule.isCurrentTimeInRange()) continue
+
+            if (rule.isAllDay) {
+                val endCal = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 23)
+                    set(Calendar.MINUTE, 59)
+                    set(Calendar.SECOND, 59)
+                    set(Calendar.MILLISECOND, 999)
+                }
+                if (endCal.timeInMillis < earliestEnd) {
+                    earliestEnd = endCal.timeInMillis
+                }
+            } else {
+                val endTotalMinutes = rule.endHour * 60 + rule.endMinute
+                val startTotalMinutes = rule.startHour * 60 + rule.startMinute
+                val nowTotalMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+
+                val endCal = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, rule.endHour)
+                    set(Calendar.MINUTE, rule.endMinute)
+                    set(Calendar.SECOND, 59)
+                    set(Calendar.MILLISECOND, 999)
+                }
+
+                if (startTotalMinutes > endTotalMinutes && nowTotalMinutes >= startTotalMinutes) {
+                    endCal.add(Calendar.DAY_OF_MONTH, 1)
+                }
+
+                if (endCal.timeInMillis < earliestEnd) {
+                    earliestEnd = endCal.timeInMillis
+                }
+            }
+        }
+
+        return if (earliestEnd == Long.MAX_VALUE) {
+            System.currentTimeMillis() + 60_000L
+        } else {
+            earliestEnd + 1000L
+        }
     }
 }
 

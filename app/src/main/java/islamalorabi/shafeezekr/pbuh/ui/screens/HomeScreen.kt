@@ -76,6 +76,7 @@ import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
+import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.delay
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 
@@ -149,15 +150,23 @@ fun HomeScreen(
     
     val sharedPrefs = remember { context.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE) }
     var remainingTime by remember { mutableLongStateOf(0L) }
+    var isPausedByQuiet by remember { mutableStateOf(false) }
     
     LaunchedEffect(settings.isReminderEnabled, settings.reminderInterval, settings.customIntervalMinutes) {
         while (settings.isReminderEnabled) {
-            val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
-            val now = System.currentTimeMillis()
-            remainingTime = if (nextTrigger > now) nextTrigger - now else 0L
+            val paused = ReminderScheduler.isPausedForQuietHours(context)
+            isPausedByQuiet = paused
+            if (paused) {
+                remainingTime = 0L
+            } else {
+                val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
+                val now = System.currentTimeMillis()
+                remainingTime = if (nextTrigger > now) nextTrigger - now else 0L
+            }
             delay(1000L)
         }
         remainingTime = 0L
+        isPausedByQuiet = false
     }
 
     val disabledAlpha by animateFloatAsState(
@@ -274,7 +283,7 @@ fun HomeScreen(
                                     text = stringResource(R.string.enable_reminder),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
-                                if (!settings.isReminderAllowedByPeriodRules()) {
+                                if (settings.isReminderEnabled && !settings.isReminderAllowedByPeriodRules()) {
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = stringResource(R.string.quiet_hours_active),
@@ -302,7 +311,7 @@ fun HomeScreen(
                         trailingContent = {
                             Switch(
                                 checked = settings.isReminderEnabled,
-                                enabled = settings.isReminderAllowedByPeriodRules(),
+                                enabled = true,
                                 onCheckedChange = { enabled ->
                                     if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)

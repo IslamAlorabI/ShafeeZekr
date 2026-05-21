@@ -13,6 +13,8 @@ object ReminderScheduler {
     private const val KEY_INTERVAL = "interval_minutes"
     private const val KEY_ENABLED = "reminder_enabled"
     private const val KEY_REMAINING_MS = "remaining_ms"
+    private const val KEY_PAUSED_BY_QUIET = "paused_by_quiet_hours"
+    private const val QUIET_RESUME_REQUEST_CODE = 9999
     
     fun startReminder(context: Context, intervalMinutes: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -127,5 +129,99 @@ object ReminderScheduler {
     fun isEnabled(context: Context): Boolean {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return prefs.getBoolean(KEY_ENABLED, false)
+    }
+
+    fun isPausedForQuietHours(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_PAUSED_BY_QUIET, false)
+    }
+
+    fun pauseForQuietHours(context: Context, quietEndMillis: Long) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(KEY_PAUSED_BY_QUIET, true)
+            .remove(KEY_NEXT_TRIGGER)
+            .apply()
+
+        cancelAlarm(context)
+
+        if (quietEndMillis > System.currentTimeMillis()) {
+            scheduleQuietHoursResume(context, quietEndMillis)
+        }
+    }
+
+    fun resumeFromQuietHours(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(KEY_PAUSED_BY_QUIET, false)) return
+        if (!prefs.getBoolean(KEY_ENABLED, false)) return
+
+        prefs.edit()
+            .putBoolean(KEY_PAUSED_BY_QUIET, false)
+            .apply()
+
+        scheduleNextAlarm(context)
+    }
+
+    private fun scheduleQuietHoursResume(context: Context, triggerAtMillis: Long) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, ReminderReceiver::class.java).apply {
+            putExtra("quiet_hours_resume", true)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            QUIET_RESUME_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+                )
+            }
+        } catch (e: SecurityException) {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMillis,
+                pendingIntent
+            )
+        }
+    }
+
+    fun cancelQuietHoursResume(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, ReminderReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            QUIET_RESUME_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
+    }
+
+    fun clearQuietHoursPause(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(KEY_PAUSED_BY_QUIET, false)
+            .apply()
+        cancelQuietHoursResume(context)
     }
 }
