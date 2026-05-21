@@ -71,6 +71,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -1950,17 +1951,29 @@ private fun RecordDhikrDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Text(
-                    text = stringResource(R.string.record_max_duration_note),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
-                )
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.errorContainer
+                ) {
+                    Text(
+                        text = stringResource(R.string.record_max_duration_note),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
 
-                Text(
-                    text = stringResource(R.string.record_permission_note),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.tertiaryContainer
+                ) {
+                    Text(
+                        text = stringResource(R.string.record_permission_note),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
 
                 if (isRecording) {
                     Spacer(modifier = Modifier.height(4.dp))
