@@ -490,7 +490,7 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>, dailyGoal: Int) {
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null
                                 ) {
-                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                    selectedIndex = index
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Bottom
