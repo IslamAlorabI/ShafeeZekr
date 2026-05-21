@@ -12,6 +12,7 @@ object ReminderScheduler {
     private const val KEY_NEXT_TRIGGER = "next_trigger_time"
     private const val KEY_INTERVAL = "interval_minutes"
     private const val KEY_ENABLED = "reminder_enabled"
+    private const val KEY_REMAINING_MS = "remaining_ms"
     
     fun startReminder(context: Context, intervalMinutes: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -25,12 +26,32 @@ object ReminderScheduler {
     
     fun stopReminder(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val nextTrigger = prefs.getLong(KEY_NEXT_TRIGGER, 0L)
+        val now = System.currentTimeMillis()
+        val remaining = if (nextTrigger > now) nextTrigger - now else 0L
         prefs.edit()
             .putBoolean(KEY_ENABLED, false)
+            .putLong(KEY_REMAINING_MS, remaining)
             .remove(KEY_NEXT_TRIGGER)
             .apply()
         
         cancelAlarm(context)
+    }
+    
+    fun resumeReminder(context: Context, intervalMinutes: Int) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val savedRemaining = prefs.getLong(KEY_REMAINING_MS, 0L)
+        prefs.edit()
+            .putInt(KEY_INTERVAL, intervalMinutes)
+            .putBoolean(KEY_ENABLED, true)
+            .remove(KEY_REMAINING_MS)
+            .apply()
+        
+        if (savedRemaining > 0L) {
+            scheduleAlarmAt(context, System.currentTimeMillis() + savedRemaining)
+        } else {
+            scheduleNextAlarm(context)
+        }
     }
     
     fun scheduleNextAlarm(context: Context) {
@@ -43,8 +64,13 @@ object ReminderScheduler {
         val intervalMinutes = prefs.getInt(KEY_INTERVAL, 30)
         val intervalMillis = intervalMinutes * 60 * 1000L
         val nextTrigger = System.currentTimeMillis() + intervalMillis
+        scheduleAlarmAt(context, nextTrigger)
         
-        prefs.edit().putLong(KEY_NEXT_TRIGGER, nextTrigger).apply()
+    }
+    
+    private fun scheduleAlarmAt(context: Context, triggerAtMillis: Long) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putLong(KEY_NEXT_TRIGGER, triggerAtMillis).apply()
         
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, ReminderReceiver::class.java)
@@ -60,27 +86,27 @@ object ReminderScheduler {
                 if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        nextTrigger,
+                        triggerAtMillis,
                         pendingIntent
                     )
                 } else {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        nextTrigger,
+                        triggerAtMillis,
                         pendingIntent
                     )
                 }
             } else {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    nextTrigger,
+                    triggerAtMillis,
                     pendingIntent
                 )
             }
         } catch (e: SecurityException) {
             alarmManager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                nextTrigger,
+                triggerAtMillis,
                 pendingIntent
             )
         }
