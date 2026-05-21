@@ -18,7 +18,7 @@
     <string name="interval_30_min">كل ٣٠ دقيقة</string>
     <string name="interval_1_hour">كل ساعة</string>
     <string name="interval_2_hours">كل ساعتين</string>
-    <string name="interval_custom">مخصص</string>
+    <string name="interval_custom">وقت مخصص</string>
     <string name="custom_interval_title">فترة مخصصة</string>
     <string name="minutes">دقيقة</string>
     <string name="interval_reset_note">ملاحظة: تغيير الفترة الزمنية سيؤدي إلى إعادة تعيين المؤقت الحالي.</string>
@@ -107,6 +107,7 @@
     <string name="hours_label">ساعات</string>
     <string name="minutes_label">دقائق</string>
     <string name="total_minutes">المجموع: %1$d دقيقة</string>
+    <string name="max_interval_reached">تم الوصول للحد الأقصى (١٢ ساعة)</string>
     <string name="rule_type_daily">نطاق زمني يومي</string>
     <string name="rule_type_weekly">أيام أسبوعية</string>
     <string name="rule_type_date">تاريخ محدد</string>

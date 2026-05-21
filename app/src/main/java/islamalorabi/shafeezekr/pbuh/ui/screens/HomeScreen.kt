@@ -10,7 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -509,18 +510,46 @@ private fun CustomIntervalDialog(
                         value = minutes,
                         range = if (hours == 12) 0..0 else 0..59,
                         onValueChange = { minutes = it },
-                        label = stringResource(R.string.minutes_label)
+                        label = stringResource(R.string.minutes_label),
+                        enabled = hours < 12
                     )
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 val totalMinutes = hours * 60 + minutes
-                Text(
-                    text = stringResource(R.string.total_minutes, totalMinutes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                val isMaxReached = hours == 12
+
+                androidx.compose.animation.Crossfade(
+                    targetState = isMaxReached,
+                    animationSpec = tween(150),
+                    label = "maxReachedTransition"
+                ) { maxReached ->
+                    if (maxReached) {
+                        Text(
+                            text = stringResource(R.string.max_interval_reached),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.total_minutes, totalMinutes),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
@@ -560,10 +589,18 @@ private fun NumberPickerColumn(
     value: Int,
     range: IntRange,
     onValueChange: (Int) -> Unit,
-    label: String
+    label: String,
+    enabled: Boolean = true
 ) {
+    val alpha by animateFloatAsState(
+        targetValue = if (enabled) 1f else 0.38f,
+        animationSpec = tween(300),
+        label = "pickerAlpha"
+    )
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.graphicsLayer { this.alpha = alpha }
     ) {
         Text(
             text = label,
@@ -584,7 +621,8 @@ private fun NumberPickerColumn(
                 modifier = Modifier.padding(8.dp)
             ) {
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value < range.last) onValueChange(value + 1) }
+                    onClick = { if (enabled && value < range.last) onValueChange(value + 1) },
+                    enabled = enabled && value < range.last
                 ) {
                     Icon(
                         imageVector = androidx.compose.material.icons.Icons.Default.Add,
@@ -602,7 +640,8 @@ private fun NumberPickerColumn(
                 )
                 
                 androidx.compose.material3.IconButton(
-                    onClick = { if (value > range.first) onValueChange(value - 1) }
+                    onClick = { if (enabled && value > range.first) onValueChange(value - 1) },
+                    enabled = enabled && value > range.first
                 ) {
                     Icon(
                         imageVector = androidx.compose.material.icons.Icons.Default.Remove,
