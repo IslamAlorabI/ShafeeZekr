@@ -82,8 +82,16 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     settings.reminderInterval.minutes
                                 }
-                                ReminderScheduler.resumeReminder(context, intervalMinutes)
+                                if (!settings.isReminderAllowedByPeriodRules()) {
+                                    val quietEndMillis = settings.getQuietHoursEndMillis()
+                                    ReminderScheduler.startReminder(context, intervalMinutes)
+                                    ReminderScheduler.pauseForQuietHours(context, quietEndMillis)
+                                } else {
+                                    ReminderScheduler.clearQuietHoursPause(context)
+                                    ReminderScheduler.resumeReminder(context, intervalMinutes)
+                                }
                             } else {
+                                ReminderScheduler.clearQuietHoursPause(context)
                                 ReminderScheduler.stopReminder(context)
                             }
                         }
