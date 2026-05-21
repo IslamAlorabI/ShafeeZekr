@@ -14,7 +14,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -34,15 +33,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInclusive
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,10 +68,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import java.time.LocalDate
@@ -80,6 +85,8 @@ import kotlin.math.sin
 
 @Composable
 fun StatisticsScreen(
+    settings: AppSettings,
+    onDailyGoalChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -90,6 +97,8 @@ fun StatisticsScreen(
     var monthlyTotal by remember { mutableIntStateOf(0) }
     var allTimeTotal by remember { mutableIntStateOf(0) }
     var currentStreak by remember { mutableIntStateOf(0) }
+    var dataLoaded by remember { mutableStateOf(false) }
+    var showGoalDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         todayCount = statsManager.getTodayCount()
@@ -97,6 +106,18 @@ fun StatisticsScreen(
         monthlyTotal = statsManager.getMonthlyTotal()
         allTimeTotal = statsManager.getAllTimeTotal()
         currentStreak = statsManager.getCurrentStreak()
+        dataLoaded = true
+    }
+
+    if (showGoalDialog) {
+        DailyGoalDialog(
+            currentGoal = settings.dailyGoal,
+            onDismiss = { showGoalDialog = false },
+            onConfirm = { newGoal ->
+                onDailyGoalChange(newGoal)
+                showGoalDialog = false
+            }
+        )
     }
 
     LazyColumn(
@@ -105,7 +126,11 @@ fun StatisticsScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            TodayCard(count = todayCount)
+            TodayCard(
+                count = todayCount,
+                target = settings.dailyGoal,
+                onEditGoal = { showGoalDialog = true }
+            )
         }
 
         item {
@@ -144,7 +169,7 @@ fun StatisticsScreen(
             }
         }
 
-        if (allTimeTotal == 0) {
+        if (dataLoaded && allTimeTotal == 0) {
             item {
                 Text(
                     text = stringResource(R.string.stats_no_data),
@@ -161,8 +186,7 @@ fun StatisticsScreen(
 }
 
 @Composable
-private fun TodayCard(count: Int) {
-    val target = 33
+private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
     val progress = (count.toFloat() / target).coerceIn(0f, 1f)
     var animationProgress by remember { mutableFloatStateOf(0f) }
     val animatedProgress by animateFloatAsState(
@@ -171,7 +195,7 @@ private fun TodayCard(count: Int) {
         label = "todayProgress"
     )
 
-    LaunchedEffect(count) {
+    LaunchedEffect(count, target) {
         animationProgress = progress
     }
 
@@ -181,7 +205,9 @@ private fun TodayCard(count: Int) {
     val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onEditGoal() },
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -202,12 +228,6 @@ private fun TodayCard(count: Int) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.stats_today),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -374,16 +394,6 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .border(
-                                width = 1.dp,
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        secondaryColor.copy(alpha = 0.3f),
-                                        primaryColor.copy(alpha = 0.3f)
-                                    )
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            )
                             .padding(vertical = 8.dp, horizontal = 16.dp)
                     ) {
                         Row(
@@ -465,15 +475,6 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
                                             primaryColor.copy(alpha = 0.12f)
                                         } else {
                                             onSurfaceVariantColor.copy(alpha = 0.05f)
-                                        },
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = if (isSelected) {
-                                            primaryColor.copy(alpha = 0.5f)
-                                        } else {
-                                            Color.Transparent
                                         },
                                         shape = RoundedCornerShape(10.dp)
                                     ),
@@ -596,4 +597,57 @@ private fun StatCard(
             )
         }
     }
+}
+
+@Composable
+private fun DailyGoalDialog(
+    currentGoal: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
+    var goalText by remember { mutableStateOf(currentGoal.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.stats_set_goal)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.stats_daily_goal_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = goalText,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() } && newValue.length <= 5) {
+                            goalText = newValue
+                        }
+                    },
+                    label = { Text(stringResource(R.string.stats_daily_goal)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val parsed = goalText.toIntOrNull()
+                    if (parsed != null && parsed > 0) {
+                        onConfirm(parsed)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }

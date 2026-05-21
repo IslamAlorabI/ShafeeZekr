@@ -142,6 +142,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onCustomSoundEnabledChange = { enabled ->
                         scope.launch { preferencesManager.setCustomSoundEnabled(enabled) }
+                    },
+                    onDailyGoalChange = { goal ->
+                        scope.launch { preferencesManager.setDailyGoal(goal) }
                     }
                 )
             }
@@ -166,7 +169,8 @@ fun MainApp(
     onMuteOnSilentChange: (Boolean) -> Unit,
     onMuteOnDNDChange: (Boolean) -> Unit,
     onCustomSoundPathChange: (String?) -> Unit,
-    onCustomSoundEnabledChange: (Boolean) -> Unit
+    onCustomSoundEnabledChange: (Boolean) -> Unit,
+    onDailyGoalChange: (Int) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -247,6 +251,8 @@ fun MainApp(
                 modifier = Modifier.padding(innerPadding)
             )
             1 -> StatisticsScreen(
+                settings = settings,
+                onDailyGoalChange = onDailyGoalChange,
                 modifier = Modifier.padding(innerPadding)
             )
             2 -> SettingsScreen(
