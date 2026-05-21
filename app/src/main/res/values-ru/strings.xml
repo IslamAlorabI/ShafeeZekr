@@ -18,7 +18,7 @@
     <string name="interval_30_min">Каждые 30 минут</string>
     <string name="interval_1_hour">Каждый час</string>
     <string name="interval_2_hours">Каждые 2 часа</string>
-    <string name="interval_custom">Пользовательский</string>
+    <string name="interval_custom">Своё время</string>
     <string name="custom_interval_title">Свой интервал</string>
     <string name="minutes">минут</string>
     <string name="interval_reset_note">Примечание: Изменение интервала сбросит текущий таймер.</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">Часы</string>
     <string name="minutes_label">Минуты</string>
     <string name="total_minutes">Всего: %1$d минут</string>
+    <string name="max_interval_reached">Достигнут максимальный интервал (12 часов)</string>
     <string name="rule_type_daily">Ежедневный период</string>
     <string name="rule_type_weekly">Дни недели</string>
     <string name="rule_type_date">Конкретная дата</string>

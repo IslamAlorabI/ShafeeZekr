@@ -18,7 +18,7 @@
     <string name="interval_30_min">Alle 30 Minuten</string>
     <string name="interval_1_hour">Jede Stunde</string>
     <string name="interval_2_hours">Alle 2 Stunden</string>
-    <string name="interval_custom">Benutzerdefiniert</string>
+    <string name="interval_custom">Eigene Zeit</string>
     <string name="custom_interval_title">Benutzerdefiniertes Intervall</string>
     <string name="minutes">Minuten</string>
     <string name="interval_reset_note">Hinweis: Das Ändern des Intervalls setzt den aktuellen Timer zurück.</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">Stunden</string>
     <string name="minutes_label">Minuten</string>
     <string name="total_minutes">Gesamt: %1$d Minuten</string>
+    <string name="max_interval_reached">Maximales Intervall erreicht (12 Stunden)</string>
     <string name="rule_type_daily">Täglicher Zeitraum</string>
     <string name="rule_type_weekly">Wochentage</string>
     <string name="rule_type_date">Bestimmtes Datum</string>

@@ -18,7 +18,7 @@
     <string name="interval_30_min">Her 30 dakika</string>
     <string name="interval_1_hour">Her 1 saatte</string>
     <string name="interval_2_hours">Her 2 saatte</string>
-    <string name="interval_custom">Özel</string>
+    <string name="interval_custom">Özel Süre</string>
     <string name="custom_interval_title">Özel Aralık</string>
     <string name="minutes">dakika</string>
     <string name="interval_reset_note">Not: Aralığı değiştirmek mevcut zamanlayıcıyı sıfırlar.</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">Saat</string>
     <string name="minutes_label">Dakika</string>
     <string name="total_minutes">Toplam: %1$d dakika</string>
+    <string name="max_interval_reached">Maksimum aralığa ulaşıldı (12 saat)</string>
     <string name="rule_type_daily">Günlük Zaman Aralığı</string>
     <string name="rule_type_weekly">Haftalık Günler</string>
     <string name="rule_type_date">Belirli Tarih</string>
