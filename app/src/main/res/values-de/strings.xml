@@ -169,5 +169,8 @@
     <string name="stats_streak_days">Tage</string>
     <string name="stats_no_data">Noch kein Dhikr aufgezeichnet</string>
     <string name="stats_reminders_today">Erinnerungen heute</string>
+    <string name="stats_daily_goal">Tagesziel</string>
+    <string name="stats_daily_goal_desc">Legen Sie Ihr tägliches Dhikr-Ziel fest</string>
+    <string name="stats_set_goal">Tagesziel festlegen</string>
 </resources>
 
