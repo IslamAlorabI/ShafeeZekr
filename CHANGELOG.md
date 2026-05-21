@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.0 (2026-05-21)
+
+### New Features
+- Add audio playback visualizer animation and circular countdown dial in HomeScreen
+- Add support for custom audio import and voice recording in settings
+- Add support for silent mode, DND muting options and other options to audio playback
+- Add delete functionality and localized button strings to the recording dialog
+
+### Improvements
+- Replace OutlinedCard with filled Card components and update corner radii across UI screens
+- Update SettingsScreen layout to use column-based arrangement for audio selection buttons
+- Center-align action buttons in SettingsScreen layout
+- Remove manual color overrides from AlertDialog components to use default theme colors
+- Remove unnecessary top spacer from AboutScreen layout
+- Remove unused OutlinedCard and OutlinedTextField imports from HomeScreen
+
+### Chores
+- Bump version code to 8 and version name to 2.0
+
 ## v1.8 (2026-02-13)
 
 ### New Features
