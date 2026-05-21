@@ -71,6 +71,8 @@
     <string name="cancel">İptal</string>
     <string name="ok">Tamam</string>
     <string name="next_reminder">Sonraki Hatırlatma</string>
+    <string name="timer_blocked_by_quiet">Sessiz Saatler Tarafından Engellendi</string>
+    <string name="timer_paused">Hatırlatmalar Duraklatıldı</string>
     <string name="battery_section">Batarya</string>
     <string name="battery_optimization">Batarya Optimizasyonu</string>
     <string name="battery_optimization_desc">Güvenilir hatırlatmalar için devre dışı bırakın</string>

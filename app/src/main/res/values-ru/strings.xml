@@ -71,6 +71,8 @@
     <string name="cancel">Отмена</string>
     <string name="ok">ОК</string>
     <string name="next_reminder">Следующее напоминание</string>
+    <string name="timer_blocked_by_quiet">Заблокировано тихим режимом</string>
+    <string name="timer_paused">Напоминания приостановлены</string>
     <string name="battery_section">Батарея</string>
     <string name="battery_optimization">Оптимизация батареи</string>
     <string name="battery_optimization_desc">Отключите для надёжной работы напоминаний</string>

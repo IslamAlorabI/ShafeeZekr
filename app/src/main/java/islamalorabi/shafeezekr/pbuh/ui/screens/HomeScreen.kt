@@ -79,6 +79,15 @@ import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.delay
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun HomeScreen(
@@ -152,11 +161,24 @@ fun HomeScreen(
     var remainingTime by remember { mutableLongStateOf(0L) }
     var isPausedByQuiet by remember { mutableStateOf(false) }
     
-    LaunchedEffect(settings.isReminderEnabled, settings.reminderInterval, settings.customIntervalMinutes) {
+    LaunchedEffect(settings.isReminderEnabled, settings.reminderInterval, settings.customIntervalMinutes, settings.periodRules) {
         while (settings.isReminderEnabled) {
-            val paused = ReminderScheduler.isPausedForQuietHours(context)
-            isPausedByQuiet = paused
-            if (paused) {
+            val quietBlocked = !settings.isReminderAllowedByPeriodRules()
+            val prefPaused = ReminderScheduler.isPausedForQuietHours(context)
+            
+            if (quietBlocked && !prefPaused) {
+                val quietEndMillis = settings.getQuietHoursEndMillis()
+                ReminderScheduler.pauseForQuietHours(context, quietEndMillis)
+            }
+            
+            if (!quietBlocked && prefPaused) {
+                ReminderScheduler.resumeFromQuietHours(context)
+            }
+            
+            val currentlyPaused = quietBlocked || ReminderScheduler.isPausedForQuietHours(context)
+            isPausedByQuiet = currentlyPaused
+            
+            if (currentlyPaused) {
                 remainingTime = 0L
             } else {
                 val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
@@ -169,11 +191,11 @@ fun HomeScreen(
         isPausedByQuiet = false
     }
 
-    val disabledAlpha by animateFloatAsState(
-        targetValue = if (settings.isReminderEnabled) 1f else 0.4f,
-        animationSpec = tween(300),
-        label = "sectionAlpha"
-    )
+    val timerState = when {
+        !settings.isReminderEnabled -> TimerState.PAUSED
+        isPausedByQuiet -> TimerState.BLOCKED_BY_QUIET
+        else -> TimerState.ACTIVE
+    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -255,13 +277,7 @@ fun HomeScreen(
         }
         
         item {
-            Box(
-                modifier = Modifier
-                    .graphicsLayer { alpha = disabledAlpha }
-                    .then(if (!settings.isReminderEnabled) Modifier else Modifier)
-            ) {
-                CountdownCard(settings, remainingTime)
-            }
+            CountdownCard(settings, remainingTime, timerState)
         }
 
         item {
@@ -330,9 +346,14 @@ fun HomeScreen(
         }
 
         item {
+            val sectionAlpha by animateFloatAsState(
+                targetValue = if (settings.isReminderEnabled) 1f else 0.4f,
+                animationSpec = tween(300),
+                label = "sectionAlpha"
+            )
             Box(
                 modifier = Modifier
-                    .graphicsLayer { alpha = disabledAlpha }
+                    .graphicsLayer { alpha = sectionAlpha }
             ) {
                 IntervalSettingsContent(
                     settings = settings,
@@ -374,34 +395,6 @@ private fun SettingsGroup(
             modifier = Modifier.padding(start = 4.dp)
         )
         content()
-    }
-}
-
-@Composable
-private fun CountdownCard(settings: AppSettings, remainingTime: Long) {
-    val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
-        settings.customIntervalMinutes
-    } else {
-        settings.reminderInterval.minutes
-    }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularCountdownDial(
-                remainingTime = remainingTime,
-                totalIntervalMinutes = totalIntervalMinutes
-            )
-        }
     }
 }
 
@@ -654,7 +647,7 @@ private fun NumberPickerColumn(
                     enabled = enabled && value < range.last
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                        imageVector = Icons.Default.Add,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -673,7 +666,7 @@ private fun NumberPickerColumn(
                     enabled = enabled && value > range.first
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Remove,
+                        imageVector = Icons.Default.Remove,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -730,6 +723,151 @@ private fun IntervalPillButton(
     }
 }
 
+private enum class TimerState {
+    ACTIVE, PAUSED, BLOCKED_BY_QUIET
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState: TimerState) {
+    val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+        settings.customIntervalMinutes
+    } else {
+        settings.reminderInterval.minutes
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        AnimatedContent(
+            targetState = timerState,
+            transitionSpec = {
+                (fadeIn(tween(300)) + slideInHorizontally(tween(400)) { it / 4 })
+                    .togetherWith(fadeOut(tween(200)) + slideOutHorizontally(tween(400)) { -it / 4 })
+                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(400) }))
+            },
+            label = "timerStateTransition"
+        ) { state ->
+            when (state) {
+                TimerState.ACTIVE -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularCountdownDial(
+                            remainingTime = remainingTime,
+                            totalIntervalMinutes = totalIntervalMinutes
+                        )
+                    }
+                }
+                TimerState.PAUSED -> {
+                    StatusTimerLayout(
+                        statusText = stringResource(R.string.timer_paused),
+                        statusColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        arcColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+                    )
+                }
+                TimerState.BLOCKED_BY_QUIET -> {
+                    StatusTimerLayout(
+                        statusText = stringResource(R.string.timer_blocked_by_quiet),
+                        statusColor = MaterialTheme.colorScheme.error,
+                        trackColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
+                        arcColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatusTimerLayout(
+    statusText: String,
+    statusColor: Color,
+    trackColor: Color,
+    arcColor: Color
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "statusPulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.6f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Box(
+            modifier = Modifier.size(100.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize().padding(4.dp)) {
+                val strokeWidth = 6.dp.toPx()
+                drawCircle(
+                    color = trackColor,
+                    style = Stroke(width = strokeWidth)
+                )
+                drawArc(
+                    color = arcColor,
+                    startAngle = 270f,
+                    sweepAngle = 0f,
+                    useCenter = false,
+                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                )
+            }
+            Icon(
+                painter = painterResource(
+                    id = if (statusColor == MaterialTheme.colorScheme.error)
+                        R.drawable.ic_pbuh
+                    else
+                        R.drawable.ic_pbuh
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(32.dp)
+                    .graphicsLayer { alpha = pulseAlpha },
+                tint = statusColor.copy(alpha = 0.6f)
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "--:--",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                color = statusColor,
+                modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
+            )
+        }
+    }
+}
+
 @Composable
 private fun CircularCountdownDial(
     remainingTime: Long,
@@ -763,14 +901,12 @@ private fun CircularCountdownDial(
     ) {
         Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             val strokeWidth = 8.dp.toPx()
-            
-            // Draw background track ring
+
             drawCircle(
                 color = trackColor,
                 style = Stroke(width = strokeWidth)
             )
 
-            // Draw active countdown progress arc
             drawArc(
                 color = primaryColor,
                 startAngle = 270f,

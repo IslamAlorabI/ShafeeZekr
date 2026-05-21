@@ -71,6 +71,8 @@
     <string name="cancel">Batal</string>
     <string name="ok">OK</string>
     <string name="next_reminder">Pengingat Berikutnya</string>
+    <string name="timer_blocked_by_quiet">Diblokir oleh Jam Tenang</string>
+    <string name="timer_paused">Pengingat Dijeda</string>
     <string name="battery_section">Baterai</string>
     <string name="battery_optimization">Optimisasi Baterai</string>
     <string name="battery_optimization_desc">Nonaktifkan untuk memastikan pengingat berfungsi</string>
