@@ -1,6 +1,7 @@
 package islamalorabi.shafeezekr.pbuh.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import org.json.JSONObject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -78,6 +79,14 @@ class DhikrStatsManager(context: Context) {
             }
         }
         return streak
+    }
+
+    fun registerChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    fun unregisterChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        prefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     private fun loadCounts(): JSONObject {
