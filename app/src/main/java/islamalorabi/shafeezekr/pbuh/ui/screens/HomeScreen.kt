@@ -490,8 +490,11 @@ private fun CustomIntervalDialog(
                 ) {
                     NumberPickerColumn(
                         value = hours,
-                        range = 0..23,
-                        onValueChange = { hours = it },
+                        range = 0..12,
+                        onValueChange = {
+                            hours = it
+                            if (it == 12) minutes = 0
+                        },
                         label = stringResource(R.string.hours_label)
                     )
                     
@@ -504,7 +507,7 @@ private fun CustomIntervalDialog(
                     
                     NumberPickerColumn(
                         value = minutes,
-                        range = 0..59,
+                        range = if (hours == 12) 0..0 else 0..59,
                         onValueChange = { minutes = it },
                         label = stringResource(R.string.minutes_label)
                     )
