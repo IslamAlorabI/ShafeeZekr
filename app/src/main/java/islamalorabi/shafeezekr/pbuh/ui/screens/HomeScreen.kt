@@ -5,11 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -165,6 +160,12 @@ fun HomeScreen(
         remainingTime = 0L
     }
 
+    val disabledAlpha by animateFloatAsState(
+        targetValue = if (settings.isReminderEnabled) 1f else 0.4f,
+        animationSpec = tween(300),
+        label = "sectionAlpha"
+    )
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -245,35 +246,12 @@ fun HomeScreen(
         }
         
         item {
-            AnimatedVisibility(
-                visible = settings.isReminderEnabled && remainingTime > 0,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
+            Box(
+                modifier = Modifier
+                    .graphicsLayer { alpha = disabledAlpha }
+                    .then(if (!settings.isReminderEnabled) Modifier else Modifier)
             ) {
-                val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
-                    settings.customIntervalMinutes
-                } else {
-                    settings.reminderInterval.minutes
-                }
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularCountdownDial(
-                            remainingTime = remainingTime,
-                            totalIntervalMinutes = totalIntervalMinutes
-                        )
-                    }
-                }
+                CountdownCard(settings, remainingTime)
             }
         }
 
@@ -343,92 +321,15 @@ fun HomeScreen(
         }
 
         item {
-            AnimatedVisibility(visible = settings.isReminderEnabled) {
-                SettingsGroup(
-                    header = stringResource(R.string.interval_title),
-                    headerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.interval_reset_note),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 12.dp)
-                            )
-
-                            val intervals = listOf(
-                                ReminderInterval.ONE to stringResource(R.string.interval_1_min),
-                                ReminderInterval.FIVE to stringResource(R.string.interval_5_min),
-                                ReminderInterval.TEN to stringResource(R.string.interval_10_min),
-                                ReminderInterval.THIRTY to stringResource(R.string.interval_30_min),
-                                ReminderInterval.SIXTY to stringResource(R.string.interval_1_hour),
-                                ReminderInterval.TWO_HOURS to stringResource(R.string.interval_2_hours),
-                                ReminderInterval.CUSTOM to stringResource(R.string.interval_custom)
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                for (i in 0 until 6 step 2) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        val first = intervals[i]
-                                        val second = intervals[i + 1]
-                                        
-                                        IntervalPillButton(
-                                            label = first.second,
-                                            isSelected = settings.reminderInterval == first.first,
-                                            onClick = {
-                                                onIntervalChange(first.first)
-                                            },
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        
-                                        IntervalPillButton(
-                                            label = second.second,
-                                            isSelected = settings.reminderInterval == second.first,
-                                            onClick = {
-                                                onIntervalChange(second.first)
-                                            },
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    }
-                                }
-                                
-                                val customInterval = intervals[6]
-                                val customLabel = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
-                                    "${customInterval.second} (${LocaleUtils.formatLocalizedNumber(settings.customIntervalMinutes)} ${stringResource(R.string.minutes)})"
-                                } else {
-                                    customInterval.second
-                                }
-                                IntervalPillButton(
-                                    label = customLabel,
-                                    isSelected = settings.reminderInterval == ReminderInterval.CUSTOM,
-                                    onClick = {
-                                        showCustomDialog = true
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        }
-                    }
-                }
+            Box(
+                modifier = Modifier
+                    .graphicsLayer { alpha = disabledAlpha }
+            ) {
+                IntervalSettingsContent(
+                    settings = settings,
+                    onIntervalChange = if (settings.isReminderEnabled) onIntervalChange else { _ -> },
+                    onShowCustomDialog = if (settings.isReminderEnabled) { { showCustomDialog = true } } else { {} }
+                )
             }
         }
     }
@@ -464,6 +365,125 @@ private fun SettingsGroup(
             modifier = Modifier.padding(start = 4.dp)
         )
         content()
+    }
+}
+
+@Composable
+private fun CountdownCard(settings: AppSettings, remainingTime: Long) {
+    val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+        settings.customIntervalMinutes
+    } else {
+        settings.reminderInterval.minutes
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularCountdownDial(
+                remainingTime = remainingTime,
+                totalIntervalMinutes = totalIntervalMinutes
+            )
+        }
+    }
+}
+
+@Composable
+private fun IntervalSettingsContent(
+    settings: AppSettings,
+    onIntervalChange: (ReminderInterval) -> Unit,
+    onShowCustomDialog: () -> Unit
+) {
+    SettingsGroup(
+        header = stringResource(R.string.interval_title),
+        headerColor = MaterialTheme.colorScheme.primary
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.interval_reset_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 12.dp)
+                )
+
+                val intervals = listOf(
+                    ReminderInterval.ONE to stringResource(R.string.interval_1_min),
+                    ReminderInterval.FIVE to stringResource(R.string.interval_5_min),
+                    ReminderInterval.TEN to stringResource(R.string.interval_10_min),
+                    ReminderInterval.THIRTY to stringResource(R.string.interval_30_min),
+                    ReminderInterval.SIXTY to stringResource(R.string.interval_1_hour),
+                    ReminderInterval.TWO_HOURS to stringResource(R.string.interval_2_hours),
+                    ReminderInterval.CUSTOM to stringResource(R.string.interval_custom)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    for (i in 0 until 6 step 2) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val first = intervals[i]
+                            val second = intervals[i + 1]
+
+                            IntervalPillButton(
+                                label = first.second,
+                                isSelected = settings.reminderInterval == first.first,
+                                onClick = {
+                                    onIntervalChange(first.first)
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            IntervalPillButton(
+                                label = second.second,
+                                isSelected = settings.reminderInterval == second.first,
+                                onClick = {
+                                    onIntervalChange(second.first)
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+
+                    val customInterval = intervals[6]
+                    val customLabel = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
+                        "${customInterval.second} (${LocaleUtils.formatLocalizedNumber(settings.customIntervalMinutes)} ${stringResource(R.string.minutes)})"
+                    } else {
+                        customInterval.second
+                    }
+                    IntervalPillButton(
+                        label = customLabel,
+                        isSelected = settings.reminderInterval == ReminderInterval.CUSTOM,
+                        onClick = onShowCustomDialog,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
     }
 }
 
