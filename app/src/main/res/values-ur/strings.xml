@@ -71,6 +71,8 @@
     <string name="cancel">منسوخ</string>
     <string name="ok">ٹھیک ہے</string>
     <string name="next_reminder">اگلی یاد دہانی</string>
+    <string name="timer_blocked_by_quiet">خاموش اوقات کی وجہ سے مسدود</string>
+    <string name="timer_paused">یاد دہانیاں روکی گئیں</string>
     <string name="battery_section">بیٹری</string>
     <string name="battery_optimization">بیٹری آپٹیمائزیشن</string>
     <string name="battery_optimization_desc">قابل اعتماد یاد دہانیوں کے لیے غیر فعال کریں</string>

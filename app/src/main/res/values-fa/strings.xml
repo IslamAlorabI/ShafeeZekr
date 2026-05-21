@@ -71,6 +71,8 @@
     <string name="cancel">لغو</string>
     <string name="ok">تأیید</string>
     <string name="next_reminder">یادآوری بعدی</string>
+    <string name="timer_blocked_by_quiet">مسدود توسط ساعات سکوت</string>
+    <string name="timer_paused">یادآوری‌ها متوقف شده</string>
     <string name="battery_section">باتری</string>
     <string name="battery_optimization">بهینه‌سازی باتری</string>
     <string name="battery_optimization_desc">برای عملکرد مطمئن یادآوری غیرفعال کنید</string>

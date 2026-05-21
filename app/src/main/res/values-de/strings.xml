@@ -71,6 +71,8 @@
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
     <string name="next_reminder">Nächste Erinnerung</string>
+    <string name="timer_blocked_by_quiet">Durch Ruhezeiten blockiert</string>
+    <string name="timer_paused">Erinnerungen pausiert</string>
     <string name="battery_section">Batterie</string>
     <string name="battery_optimization">Batterieoptimierung</string>
     <string name="battery_optimization_desc">Deaktivieren, um zuverlässige Erinnerungen zu gewährleisten</string>
