@@ -364,15 +364,18 @@ class PreferencesManager(private val context: Context) {
         }
     }
 
-    suspend fun setLanguageCode(code: String) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LANGUAGE_CODE] = code
-        }
-        // Also save to SharedPreferences for synchronous access
+    fun setLanguageCodeSync(code: String) {
         context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
             .edit()
             .putString("language_code", code)
-            .apply()
+            .commit()
+    }
+
+    suspend fun setLanguageCode(code: String) {
+        setLanguageCodeSync(code)
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LANGUAGE_CODE] = code
+        }
     }
 
     fun getLanguageCodeSync(): String {
