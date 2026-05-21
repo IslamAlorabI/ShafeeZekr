@@ -194,7 +194,6 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val errorAudioTooLong = stringResource(R.string.error_audio_too_long)
-    val errorPermission = stringResource(R.string.error_permission)
     val tilePauseDhikr = stringResource(R.string.tile_pause_dhikr)
 
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -235,15 +234,7 @@ fun SettingsScreen(
         }
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            showRecordDialog = true
-        } else {
-            android.widget.Toast.makeText(context, errorPermission, android.widget.Toast.LENGTH_SHORT).show()
-        }
-    }
+
 
     if (showAddPeriodRuleDialog) {
         AddPeriodRuleDialog(
@@ -448,16 +439,7 @@ fun SettingsScreen(
                                 ) {
                                     Button(
                                         onClick = {
-                                            val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
-                                                context,
-                                                android.Manifest.permission.RECORD_AUDIO
-                                            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-                                            if (hasPermission) {
-                                                showRecordDialog = true
-                                            } else {
-                                                permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                                            }
+                                            showRecordDialog = true
                                         },
                                         modifier = Modifier.weight(1f)
                                     ) {
@@ -1931,6 +1913,8 @@ private fun RecordDhikrDialog(
 ) {
     val context = LocalContext.current
     val errorRecord = stringResource(R.string.error_record)
+    val errorPermission = stringResource(R.string.error_permission)
+    var pendingRecordAfterPermission by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
     var isPlayingRecorded by remember { mutableStateOf(false) }
     var mediaRecorder by remember { mutableStateOf<android.media.MediaRecorder?>(null) }
@@ -2052,34 +2036,64 @@ private fun RecordDhikrDialog(
                             Text(stringResource(R.string.stop_btn))
                         }
                     } else {
+                        val permissionLauncher = rememberLauncherForActivityResult(
+                            contract = ActivityResultContracts.RequestPermission()
+                        ) { isGranted ->
+                            if (isGranted) {
+                                pendingRecordAfterPermission = true
+                            } else {
+                                android.widget.Toast.makeText(context, errorPermission, android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        fun startRecording() {
+                            try {
+                                if (isPlayingRecorded) {
+                                    recorderMediaPlayer?.stop()
+                                    recorderMediaPlayer?.release()
+                                    recorderMediaPlayer = null
+                                    isPlayingRecorded = false
+                                }
+                                if (recordFile.exists()) {
+                                    recordFile.delete()
+                                }
+                                val recorder = android.media.MediaRecorder(context)
+                                recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
+                                recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
+                                recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
+                                recorder.setAudioSamplingRate(44100)
+                                recorder.setAudioEncodingBitRate(128000)
+                                recorder.setAudioChannels(1)
+                                recorder.setMaxDuration(10_000)
+                                recorder.setOutputFile(recordFile.absolutePath)
+                                recorder.prepare()
+                                recorder.start()
+                                mediaRecorder = recorder
+                                isRecording = true
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                android.widget.Toast.makeText(context, errorRecord, android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        LaunchedEffect(pendingRecordAfterPermission) {
+                            if (pendingRecordAfterPermission) {
+                                pendingRecordAfterPermission = false
+                                startRecording()
+                            }
+                        }
+
                         Button(
                             onClick = {
-                                try {
-                                    if (isPlayingRecorded) {
-                                        recorderMediaPlayer?.stop()
-                                        recorderMediaPlayer?.release()
-                                        recorderMediaPlayer = null
-                                        isPlayingRecorded = false
-                                    }
-                                    if (recordFile.exists()) {
-                                        recordFile.delete()
-                                    }
-                                    val recorder = android.media.MediaRecorder(context)
-                                    recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
-                                    recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
-                                    recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
-                                    recorder.setAudioSamplingRate(44100)
-                                    recorder.setAudioEncodingBitRate(128000)
-                                    recorder.setAudioChannels(1)
-                                    recorder.setMaxDuration(10_000)
-                                    recorder.setOutputFile(recordFile.absolutePath)
-                                    recorder.prepare()
-                                    recorder.start()
-                                    mediaRecorder = recorder
-                                    isRecording = true
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    android.widget.Toast.makeText(context, errorRecord, android.widget.Toast.LENGTH_SHORT).show()
+                                val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                    context,
+                                    android.Manifest.permission.RECORD_AUDIO
+                                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                if (hasPermission) {
+                                    startRecording()
+                                } else {
+                                    permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
