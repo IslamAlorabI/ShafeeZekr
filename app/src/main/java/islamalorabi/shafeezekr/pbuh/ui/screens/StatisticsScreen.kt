@@ -300,9 +300,7 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
 
                     val sweepAngle = 360f * animatedProgress
                     drawArc(
-                        brush = Brush.linearGradient(
-                            colors = listOf(primaryColor, secondaryColor, tertiaryColor)
-                        ),
+                        color = primaryColor,
                         startAngle = -90f,
                         sweepAngle = sweepAngle,
                         useCenter = false,
@@ -498,16 +496,7 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
                                         .fillMaxWidth()
                                         .height(barHeight)
                                         .background(
-                                            brush = Brush.verticalGradient(
-                                                colors = if (isToday) {
-                                                    listOf(primaryColor, secondaryColor)
-                                                } else {
-                                                    listOf(
-                                                        primaryColor.copy(alpha = 0.8f),
-                                                        primaryColor.copy(alpha = 0.4f)
-                                                    )
-                                                }
-                                            ),
+                                            color = if (isToday) primaryColor else primaryColor.copy(alpha = 0.6f),
                                             shape = RoundedCornerShape(10.dp)
                                         )
                                 )
