@@ -381,12 +381,30 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
                 .padding(20.dp)
                 .animateContentSize()
         ) {
-            Text(
-                text = stringResource(R.string.stats_this_week),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.stats_this_week),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                val firstDate = data.first().first
+                val lastDate = data.last().first
+                val dateRange = if (firstDate.month == lastDate.month) {
+                    "${firstDate.dayOfMonth} - ${lastDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", locale))}"
+                } else {
+                    "${firstDate.format(DateTimeFormatter.ofPattern("d MMM", locale))} - ${lastDate.format(DateTimeFormatter.ofPattern("d MMM yyyy", locale))}"
+                }
+                Text(
+                    text = dateRange,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
