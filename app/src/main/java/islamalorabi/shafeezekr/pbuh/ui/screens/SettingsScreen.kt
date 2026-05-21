@@ -1,20 +1,24 @@
+@file:Suppress("KotlinConstantConditions")
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,17 +29,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.BatteryStd
@@ -43,39 +44,42 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.DoNotDisturbOn
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PhoneInTalk
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.filled.DoNotDisturbOn
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -89,6 +93,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -97,22 +102,11 @@ import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
-import java.util.UUID
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
-import kotlinx.coroutines.launch
-import java.util.Calendar
-import android.media.MediaPlayer
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
-
-
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
-import androidx.compose.runtime.mutableIntStateOf
+import java.util.Calendar
+import java.util.UUID
+import kotlinx.coroutines.launch
 
 
 data class LanguageOption(
@@ -160,7 +154,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
             val days = if (rule.daysOfWeek.size == 7) {
                 allWeek
             } else {
-                rule.daysOfWeek.sorted().map { dayAbbreviations[it] }.joinToString(", ")
+                rule.daysOfWeek.sorted().joinToString(", ") { dayAbbreviations[it] }
             }
             "$days | $timeRange"
         }
@@ -172,6 +166,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
 }
 
 
+@SuppressLint("BatteryLife")
 @Composable
 fun SettingsScreen(
     settings: AppSettings,
@@ -198,6 +193,9 @@ fun SettingsScreen(
     var showRecordDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val errorAudioTooLong = stringResource(R.string.error_audio_too_long)
+    val errorPermission = stringResource(R.string.error_permission)
+    val tilePauseDhikr = stringResource(R.string.tile_pause_dhikr)
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -212,7 +210,7 @@ fun SettingsScreen(
                         }
                     }
 
-                    val mp = android.media.MediaPlayer()
+                    val mp = MediaPlayer()
                     mp.setDataSource(tempFile.absolutePath)
                     mp.prepare()
                     val durationMs = mp.duration
@@ -221,7 +219,7 @@ fun SettingsScreen(
                     if (durationMs > 10_000) {
                         tempFile.delete()
                         kotlinx.coroutines.Dispatchers.Main.let {
-                            android.widget.Toast.makeText(context, context.getString(R.string.error_audio_too_long), android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, errorAudioTooLong, android.widget.Toast.LENGTH_SHORT).show()
                         }
                         return@launch
                     }
@@ -243,7 +241,7 @@ fun SettingsScreen(
         if (isGranted) {
             showRecordDialog = true
         } else {
-            android.widget.Toast.makeText(context, context.getString(R.string.error_permission), android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(context, errorPermission, android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -356,7 +354,7 @@ fun SettingsScreen(
                                     text = if (settings.isCustomSoundEnabled) {
                                         stringResource(R.string.custom_audio_option)
                                     } else {
-                                        stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex))
+                                        stringResource(R.string.sound_name, LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex))
                                     },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -717,7 +715,7 @@ fun SettingsScreen(
                                 modifier = Modifier.padding(16.dp)
                             )
                         } else {
-                            settings.periodRules.forEachIndexed { index, rule ->
+                            settings.periodRules.forEachIndexed { _, rule ->
                                 val hasConflict = settings.periodRules.any { other ->
                                     other.id != rule.id && other.isEnabled && rule.conflictsWith(other)
                                 }
@@ -985,7 +983,7 @@ fun SettingsScreen(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier = Modifier.clickable {
                             val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                data = Uri.parse("package:${context.packageName}")
+                                data = "package:${context.packageName}".toUri()
                             }
                             context.startActivity(intent)
                         }
@@ -1043,7 +1041,7 @@ fun SettingsScreen(
                                         context,
                                         islamalorabi.shafeezekr.pbuh.service.DhikrTileService::class.java
                                     ),
-                                    context.getString(R.string.tile_pause_dhikr),
+                                    tilePauseDhikr,
                                     android.graphics.drawable.Icon.createWithResource(context, R.drawable.ic_tile_pause),
                                     context.mainExecutor
                                 ) { }
@@ -1304,7 +1302,7 @@ private fun AddPeriodRuleDialog(
     var startMinute by remember { mutableIntStateOf(ruleToEdit?.startMinute ?: 0) }
     var endHour by remember { mutableIntStateOf(ruleToEdit?.endHour ?: 17) }
     var endMinute by remember { mutableIntStateOf(ruleToEdit?.endMinute ?: 0) }
-    var selectedDays by remember { mutableStateOf(ruleToEdit?.daysOfWeek ?: setOf<Int>()) }
+    var selectedDays by remember { mutableStateOf(ruleToEdit?.daysOfWeek ?: setOf()) }
     var isAllDay by remember { mutableStateOf(ruleToEdit?.isAllDay ?: false) }
     
     var showStartTimePicker by remember { mutableStateOf(false) }
@@ -1316,7 +1314,7 @@ private fun AddPeriodRuleDialog(
         calendar.set(ruleToEdit.year, ruleToEdit.month, ruleToEdit.dayOfMonth)
     }
     var selectedDateMillis by remember { 
-        mutableStateOf(calendar.timeInMillis) 
+        mutableLongStateOf(calendar.timeInMillis) 
     }
 
     val dayNames = listOf(
@@ -1797,7 +1795,7 @@ private fun SoundSelectionDialog(
     onCustomSoundEnabledChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    var tempSelected by remember { mutableStateOf(currentIndex) }
+    var tempSelected by remember { mutableIntStateOf(currentIndex) }
     var tempCustomEnabled by remember { mutableStateOf(isCustomSoundEnabled) }
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
@@ -1845,7 +1843,7 @@ private fun SoundSelectionDialog(
                         RadioButton(selected = (!tempCustomEnabled && tempSelected == index), onClick = null)
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = stringResource(R.string.sound_name, islamalorabi.shafeezekr.pbuh.util.LocaleUtils.formatLocalizedNumber(index)), 
+                            text = stringResource(R.string.sound_name, LocaleUtils.formatLocalizedNumber(index)), 
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -1932,10 +1930,11 @@ private fun RecordDhikrDialog(
     onDelete: () -> Unit
 ) {
     val context = LocalContext.current
+    val errorRecord = stringResource(R.string.error_record)
     var isRecording by remember { mutableStateOf(false) }
     var isPlayingRecorded by remember { mutableStateOf(false) }
     var mediaRecorder by remember { mutableStateOf<android.media.MediaRecorder?>(null) }
-    var recorderMediaPlayer by remember { mutableStateOf<android.media.MediaPlayer?>(null) }
+    var recorderMediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     val recordFile = remember { java.io.File(context.filesDir, "recorded_zikr.m4a") }
     var durationSeconds by remember { mutableIntStateOf(0) }
 
@@ -1963,10 +1962,10 @@ private fun RecordDhikrDialog(
         onDispose {
             try {
                 mediaRecorder?.release()
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
             try {
                 recorderMediaPlayer?.release()
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -2065,12 +2064,7 @@ private fun RecordDhikrDialog(
                                     if (recordFile.exists()) {
                                         recordFile.delete()
                                     }
-                                    val recorder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                                        android.media.MediaRecorder(context)
-                                    } else {
-                                        @Suppress("DEPRECATION")
-                                        android.media.MediaRecorder()
-                                    }
+                                    val recorder = android.media.MediaRecorder(context)
                                     recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
                                     recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
                                     recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
@@ -2085,7 +2079,7 @@ private fun RecordDhikrDialog(
                                     isRecording = true
                                 } catch (e: Exception) {
                                     e.printStackTrace()
-                                    android.widget.Toast.makeText(context, context.getString(R.string.error_record), android.widget.Toast.LENGTH_SHORT).show()
+                                    android.widget.Toast.makeText(context, errorRecord, android.widget.Toast.LENGTH_SHORT).show()
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -2103,11 +2097,11 @@ private fun RecordDhikrDialog(
                                             recorderMediaPlayer?.stop()
                                             recorderMediaPlayer?.release()
                                             recorderMediaPlayer = null
-                                        } catch (e: Exception) {}
+                                        } catch (_: Exception) {}
                                         isPlayingRecorded = false
                                     } else {
                                         try {
-                                            val mp = android.media.MediaPlayer().apply {
+                                            val mp = MediaPlayer().apply {
                                                 setDataSource(recordFile.absolutePath)
                                                 prepare()
                                                 start()
@@ -2152,7 +2146,7 @@ private fun RecordDhikrDialog(
                                             recorderMediaPlayer?.stop()
                                             recorderMediaPlayer?.release()
                                             recorderMediaPlayer = null
-                                        } catch (e: Exception) {}
+                                        } catch (_: Exception) {}
                                         isPlayingRecorded = false
                                     }
                                     if (recordFile.exists()) {
@@ -2188,17 +2182,3 @@ private fun RecordDhikrDialog(
     )
 }
 
-private fun getSoundResourceId(index: Int): Int {
-    return when (index) {
-        1 -> R.raw.zikr_sound_1
-        2 -> R.raw.zikr_sound_2
-        3 -> R.raw.zikr_sound_3
-        4 -> R.raw.zikr_sound_4
-        5 -> R.raw.zikr_sound_5
-        6 -> R.raw.zikr_sound_6
-        7 -> R.raw.zikr_sound_7
-        8 -> R.raw.zikr_sound_8
-        9 -> R.raw.zikr_sound_9
-        else -> R.raw.zikr_sound_1
-    }
-}

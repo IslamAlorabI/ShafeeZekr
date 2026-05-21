@@ -1,3 +1,4 @@
+@file:Suppress("KotlinConstantConditions")
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
 import android.Manifest
@@ -5,11 +6,22 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,20 +33,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.background
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,13 +46,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,36 +60,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Canvas
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.core.content.ContextCompat
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
-import kotlinx.coroutines.delay
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.foundation.layout.offset
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.platform.LocalDensity
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -495,8 +486,8 @@ private fun CustomIntervalDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int) -> Unit
 ) {
-    var hours by remember { mutableStateOf(currentValue / 60) }
-    var minutes by remember { mutableStateOf(currentValue % 60) }
+    var hours by remember { mutableIntStateOf(currentValue / 60) }
+    var minutes by remember { mutableIntStateOf(currentValue % 60) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -676,7 +667,7 @@ private fun NumberPickerColumn(
     }
 }
 
-private fun formatLocaleTime(minutes: Int, seconds: Int, localeTag: String): String {
+private fun formatLocaleTime(minutes: Int, seconds: Int): String {
     val formatted = String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds)
     return LocaleUtils.localizeString(formatted)
 }
@@ -735,7 +726,6 @@ private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState
         settings.reminderInterval.minutes
     }
     val isActive = timerState == TimerState.ACTIVE
-    val isBlocked = timerState == TimerState.BLOCKED_BY_QUIET
 
     val labelText = stringResource(R.string.next_reminder)
     val labelStyle = MaterialTheme.typography.labelMedium
@@ -794,8 +784,7 @@ private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState
 
     val minutes = (remainingTime / 60000).toInt()
     val seconds = ((remainingTime % 60000) / 1000).toInt()
-    val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
-    val formattedTime = formatLocaleTime(minutes, seconds, locale)
+    val formattedTime = formatLocaleTime(minutes, seconds)
 
     val textAlpha by animateFloatAsState(
         targetValue = if (isActive) 1f else 0.3f,
