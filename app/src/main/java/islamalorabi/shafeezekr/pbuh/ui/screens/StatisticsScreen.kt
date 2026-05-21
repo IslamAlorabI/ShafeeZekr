@@ -170,6 +170,7 @@ fun StatisticsScreen(
                     icon = Icons.Filled.CalendarMonth,
                     label = stringResource(R.string.stats_this_month),
                     value = LocaleUtils.formatLocalizedNumber(monthlyTotal),
+                    subtitle = stringResource(R.string.stats_dhikr_unit),
                     modifier = Modifier.weight(1f),
                     animateIcon = false
                 )
@@ -177,6 +178,7 @@ fun StatisticsScreen(
                     icon = Icons.Filled.AllInclusive,
                     label = stringResource(R.string.stats_all_time),
                     value = LocaleUtils.formatLocalizedNumber(allTimeTotal),
+                    subtitle = stringResource(R.string.stats_dhikr_unit),
                     modifier = Modifier.weight(1f),
                     animateIcon = false
                 )
@@ -411,7 +413,9 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
             if (selectedIndex in data.indices) {
                 val item = data[selectedIndex]
                 val dateText = item.first.format(DateTimeFormatter.ofPattern("d MMMM yyyy", locale))
-                val countText = LocaleUtils.formatLocalizedNumber(item.second)
+                val dhikrUnit = stringResource(R.string.stats_dhikr_unit)
+                val noDhikr = stringResource(R.string.stats_no_dhikr)
+                val countText = if (item.second == 0) noDhikr else "${LocaleUtils.formatLocalizedNumber(item.second)} $dhikrUnit"
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
