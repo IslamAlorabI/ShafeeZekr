@@ -184,6 +184,7 @@ fun SettingsScreen(
     onMuteOnCallChange: (Boolean) -> Unit,
     onMuteOnSilentChange: (Boolean) -> Unit,
     onMuteOnDNDChange: (Boolean) -> Unit,
+    onMuteOnMediaChange: (Boolean) -> Unit,
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -634,6 +635,41 @@ fun SettingsScreen(
                                 Switch(
                                     checked = settings.muteOnDND,
                                     onCheckedChange = { onMuteOnDNDChange(it) }
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_media),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(R.string.mute_on_media_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.MusicNote,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = settings.muteOnMedia,
+                                    onCheckedChange = { onMuteOnMediaChange(it) }
                                 )
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent)

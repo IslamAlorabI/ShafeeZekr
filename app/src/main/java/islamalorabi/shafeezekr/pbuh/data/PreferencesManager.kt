@@ -199,6 +199,7 @@ data class AppSettings(
     val muteOnCall: Boolean = true,
     val muteOnSilent: Boolean = true,
     val muteOnDND: Boolean = true,
+    val muteOnMedia: Boolean = true,
     val customSoundPath: String? = null,
     val isCustomSoundEnabled: Boolean = false,
     val dailyGoal: Int = 100
@@ -280,6 +281,7 @@ class PreferencesManager(private val context: Context) {
         val MUTE_ON_DND = booleanPreferencesKey("mute_on_dnd")
         val CUSTOM_SOUND_PATH = stringPreferencesKey("custom_sound_path")
         val IS_CUSTOM_SOUND_ENABLED = booleanPreferencesKey("is_custom_sound_enabled")
+        val MUTE_ON_MEDIA = booleanPreferencesKey("mute_on_media")
         val DAILY_GOAL = intPreferencesKey("daily_goal")
     }
 
@@ -325,6 +327,7 @@ class PreferencesManager(private val context: Context) {
             muteOnCall = preferences[PreferencesKeys.MUTE_ON_CALL] ?: true,
             muteOnSilent = preferences[PreferencesKeys.MUTE_ON_SILENT] ?: true,
             muteOnDND = preferences[PreferencesKeys.MUTE_ON_DND] ?: true,
+            muteOnMedia = preferences[PreferencesKeys.MUTE_ON_MEDIA] ?: true,
             customSoundPath = preferences[PreferencesKeys.CUSTOM_SOUND_PATH],
             isCustomSoundEnabled = preferences[PreferencesKeys.IS_CUSTOM_SOUND_ENABLED] ?: false,
             dailyGoal = preferences[PreferencesKeys.DAILY_GOAL] ?: 100
@@ -404,6 +407,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setMuteOnSilent(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.MUTE_ON_SILENT] = enabled
+        }
+    }
+
+    suspend fun setMuteOnMedia(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.MUTE_ON_MEDIA] = enabled
         }
     }
 

@@ -146,6 +146,8 @@
     <string name="mute_on_silent_desc">Keine Erinnerungstöne abspielen, wenn das Gerät auf stumm oder vibrieren eingestellt ist</string>
     <string name="mute_on_dnd">Stumm bei \"Bitte nicht stören\"</string>
     <string name="mute_on_dnd_desc">Keine Erinnerungstöne abspielen, wenn der \"Bitte nicht stören\"-Modus aktiv ist</string>
+    <string name="mute_on_media">Stummschalten bei Medienwiedergabe</string>
+    <string name="mute_on_media_desc">Keine Erinnerungstöne abspielen, wenn andere Audiowiedergabe aktiv ist</string>
     <string name="custom_audio_option">Eigener Ton</string>
     <string name="custom_audio_desc">Datei importieren oder Stimme aufnehmen</string>
     <string name="select_audio_file">Audiodatei auswählen</string>

@@ -159,6 +159,8 @@
     <string name="mute_on_silent_desc">Do not play reminder sounds when your device is set to silent or vibrate</string>
     <string name="mute_on_dnd">Mute on Do Not Disturb</string>
     <string name="mute_on_dnd_desc">Do not play reminder sounds when Do Not Disturb mode is active</string>
+    <string name="mute_on_media">Mute During Media</string>
+    <string name="mute_on_media_desc">Do not play reminder sounds when other audio is playing</string>
     <string name="custom_audio_option">Custom Audio</string>
     <string name="custom_audio_desc">Import a file or record your voice</string>
     <string name="select_audio_file">Select Audio File</string>

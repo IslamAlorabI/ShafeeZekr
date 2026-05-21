@@ -145,6 +145,8 @@
     <string name="mute_on_silent_desc">Не воспроизводить напоминания, когда устройство находится в беззвучном режиме или режиме вибрации</string>
     <string name="mute_on_dnd">Без звука в режиме \"Не беспокоить\"</string>
     <string name="mute_on_dnd_desc">Не воспроизводить напоминания, когда активен режим \"Не беспокоить\"</string>
+    <string name="mute_on_media">Отключить звук при воспроизведении медиа</string>
+    <string name="mute_on_media_desc">Не воспроизводить звук напоминания, когда воспроизводится другое аудио</string>
     <string name="custom_audio_option">Пользовательский звук</string>
     <string name="custom_audio_desc">Импортируйте файл или запишите голос</string>
     <string name="select_audio_file">Выбрать аудиофайл</string>
