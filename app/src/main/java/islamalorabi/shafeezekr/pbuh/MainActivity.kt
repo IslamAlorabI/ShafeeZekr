@@ -125,8 +125,8 @@ class MainActivity : ComponentActivity() {
                         preferencesManager.setLanguageCodeSync(code)
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
+                            recreate()
                         }
-                        recreate()
                     },
                     onVolumeChange = { volume ->
                         scope.launch { preferencesManager.setAppVolume(volume) }
