@@ -162,7 +162,7 @@
     <string name="select_audio_file">Select Audio File</string>
     <string name="record_voice">Record Voice Reminder</string>
     <string name="record_dialog_title">Record Dhikr</string>
-    <string name="record_dialog_desc">Record your voice reciting zikr to use as a reminder</string>
+    <string name="record_dialog_desc">Record your voice, a loved one\'s voice, or your child\'s voice reciting dhikr to use as a reminder sound</string>
     <string name="record_btn">Record</string>
     <string name="stop_btn">Stop</string>
     <string name="play_btn">Play</string>

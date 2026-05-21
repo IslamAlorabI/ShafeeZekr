@@ -148,7 +148,7 @@
     <string name="select_audio_file">انتخاب فایل صوتی</string>
     <string name="record_voice">ضبط یادآور صوتی</string>
     <string name="record_dialog_title">ضبط ذکر</string>
-    <string name="record_dialog_desc">صدای خود را در حال خواندن ذکر ضبط کنید تا به عنوان صدای یادآور استفاده شود</string>
+    <string name="record_dialog_desc">صدای خود، صدای عزیزانتان یا صدای فرزندتان را در حال خواندن ذکر ضبط کنید تا به عنوان صدای یادآور استفاده شود</string>
     <string name="record_btn">ضبط</string>
     <string name="stop_btn">توقف</string>
     <string name="play_btn">پخش</string>

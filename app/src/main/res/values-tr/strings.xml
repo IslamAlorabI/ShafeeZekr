@@ -148,7 +148,7 @@
     <string name="select_audio_file">Ses Dosyası Seç</string>
     <string name="record_voice">Sesli Hatırlatıcı Kaydet</string>
     <string name="record_dialog_title">Zikir Kaydet</string>
-    <string name="record_dialog_desc">Hatırlatıcı sesi olarak kullanmak için zikir okurken sesinizi kaydedin</string>
+    <string name="record_dialog_desc">Hatırlatıcı sesi olarak kullanmak için kendi sesinizi, sevdiğiniz birinin sesini veya çocuğunuzun zikir okurken sesini kaydedin</string>
     <string name="record_btn">Kaydet</string>
     <string name="stop_btn">Durdur</string>
     <string name="play_btn">Oynat</string>
