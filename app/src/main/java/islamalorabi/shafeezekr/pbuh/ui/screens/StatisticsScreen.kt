@@ -148,7 +148,7 @@ fun StatisticsScreen(
         }
 
         item {
-            WeeklyChart(data = weeklyData)
+            WeeklyChart(data = weeklyData, dailyGoal = settings.dailyGoal)
         }
 
         item {
@@ -347,10 +347,10 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
 }
 
 @Composable
-private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
+private fun WeeklyChart(data: List<Pair<LocalDate, Int>>, dailyGoal: Int) {
     if (data.isEmpty()) return
 
-    val maxCount = (data.maxOfOrNull { it.second } ?: 1).coerceAtLeast(1)
+    val maxCount = maxOf((data.maxOfOrNull { it.second } ?: 1), dailyGoal).coerceAtLeast(1)
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
