@@ -122,10 +122,11 @@ class MainActivity : ComponentActivity() {
                         scope.launch { preferencesManager.setColorScheme(scheme) }
                     },
                     onLanguageChange = { code ->
+                        preferencesManager.setLanguageCodeSync(code)
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            recreate()
                         }
+                        recreate()
                     },
                     onVolumeChange = { volume ->
                         scope.launch { preferencesManager.setAppVolume(volume) }
