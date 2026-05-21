@@ -79,15 +79,13 @@ import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import kotlinx.coroutines.delay
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
-import androidx.compose.ui.draw.clip
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.foundation.layout.offset
 
 @Composable
 fun HomeScreen(
@@ -727,7 +725,6 @@ private enum class TimerState {
     ACTIVE, PAUSED, BLOCKED_BY_QUIET
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState: TimerState) {
     val totalIntervalMinutes = if (settings.reminderInterval == ReminderInterval.CUSTOM) {
@@ -735,64 +732,69 @@ private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState
     } else {
         settings.reminderInterval.minutes
     }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
-    ) {
-        AnimatedContent(
-            targetState = timerState,
-            transitionSpec = {
-                (fadeIn(tween(300)) + slideInHorizontally(tween(400)) { it / 4 })
-                    .togetherWith(fadeOut(tween(200)) + slideOutHorizontally(tween(400)) { -it / 4 })
-                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(400) }))
-            },
-            label = "timerStateTransition"
-        ) { state ->
-            when (state) {
-                TimerState.ACTIVE -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularCountdownDial(
-                            remainingTime = remainingTime,
-                            totalIntervalMinutes = totalIntervalMinutes
-                        )
-                    }
-                }
-                TimerState.PAUSED -> {
-                    StatusTimerLayout(
-                        statusText = stringResource(R.string.timer_paused),
-                        statusColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        arcColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
-                    )
-                }
-                TimerState.BLOCKED_BY_QUIET -> {
-                    StatusTimerLayout(
-                        statusText = stringResource(R.string.timer_blocked_by_quiet),
-                        statusColor = MaterialTheme.colorScheme.error,
-                        trackColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
-                        arcColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
-                    )
-                }
-            }
-        }
-    }
-}
+    val isActive = timerState == TimerState.ACTIVE
+    val isBlocked = timerState == TimerState.BLOCKED_BY_QUIET
 
-@Composable
-private fun StatusTimerLayout(
-    statusText: String,
-    statusColor: Color,
-    trackColor: Color,
-    arcColor: Color
-) {
+    val circleSize by androidx.compose.animation.core.animateDpAsState(
+        targetValue = if (isActive) 160.dp else 100.dp,
+        animationSpec = tween(400),
+        label = "circleSize"
+    )
+    val strokeWidth by androidx.compose.animation.core.animateDpAsState(
+        targetValue = if (isActive) 8.dp else 6.dp,
+        animationSpec = tween(400),
+        label = "strokeWidth"
+    )
+
+    val totalTimeMs = totalIntervalMinutes * 60 * 1000L
+    val progress = if (totalTimeMs > 0 && isActive) {
+        (remainingTime.toFloat() / totalTimeMs).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        label = "countdownProgress"
+    )
+
+    val arcColor = when (timerState) {
+        TimerState.ACTIVE -> MaterialTheme.colorScheme.primary
+        TimerState.PAUSED -> MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+        TimerState.BLOCKED_BY_QUIET -> MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+    }
+    val trackColor = when (timerState) {
+        TimerState.ACTIVE -> MaterialTheme.colorScheme.surfaceVariant
+        TimerState.PAUSED -> MaterialTheme.colorScheme.surfaceVariant
+        TimerState.BLOCKED_BY_QUIET -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
+    }
+    val statusColor = when (timerState) {
+        TimerState.ACTIVE -> MaterialTheme.colorScheme.primary
+        TimerState.PAUSED -> MaterialTheme.colorScheme.onSurfaceVariant
+        TimerState.BLOCKED_BY_QUIET -> MaterialTheme.colorScheme.error
+    }
+    val statusText = when (timerState) {
+        TimerState.ACTIVE -> ""
+        TimerState.PAUSED -> stringResource(R.string.timer_paused)
+        TimerState.BLOCKED_BY_QUIET -> stringResource(R.string.timer_blocked_by_quiet)
+    }
+
+    val minutes = (remainingTime / 60000).toInt()
+    val seconds = ((remainingTime % 60000) / 1000).toInt()
+    val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
+    val formattedTime = formatLocaleTime(minutes, seconds, locale)
+
+    val textAlpha by animateFloatAsState(
+        targetValue = if (isActive) 1f else 0.3f,
+        animationSpec = tween(400),
+        label = "textAlpha"
+    )
+    val labelAlpha by animateFloatAsState(
+        targetValue = if (isActive) 0.8f else 0f,
+        animationSpec = tween(300),
+        label = "labelAlpha"
+    )
+
     val infiniteTransition = rememberInfiniteTransition(label = "statusPulse")
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.6f,
@@ -804,133 +806,98 @@ private fun StatusTimerLayout(
         label = "pulseAlpha"
     )
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
     ) {
+        val horizontalBias by animateFloatAsState(
+            targetValue = if (isActive) 0f else -1f,
+            animationSpec = tween(400),
+            label = "circleBias"
+        )
+
         Box(
-            modifier = Modifier.size(100.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 20.dp),
+            contentAlignment = androidx.compose.ui.BiasAlignment(horizontalBias, 0f)
         ) {
-            Canvas(modifier = Modifier.fillMaxSize().padding(4.dp)) {
-                val strokeWidth = 6.dp.toPx()
-                drawCircle(
-                    color = trackColor,
-                    style = Stroke(width = strokeWidth)
-                )
-                drawArc(
-                    color = arcColor,
-                    startAngle = 270f,
-                    sweepAngle = 0f,
-                    useCenter = false,
-                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier.size(circleSize),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize().padding(if (isActive) 8.dp else 4.dp)) {
+                        val sw = strokeWidth.toPx()
+                        drawCircle(
+                            color = trackColor,
+                            style = Stroke(width = sw)
+                        )
+                        drawArc(
+                            color = arcColor,
+                            startAngle = 270f,
+                            sweepAngle = animatedProgress * 360f,
+                            useCenter = false,
+                            style = Stroke(width = sw, cap = StrokeCap.Round)
+                        )
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (isActive) {
+                            Text(
+                                text = stringResource(R.string.next_reminder),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = labelAlpha),
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                        }
+                        Text(
+                            text = if (isActive) formattedTime else "--:--",
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = if (isActive) 28.sp else 22.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = textAlpha)
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = !isActive,
+                    enter = fadeIn(tween(400)) + expandHorizontally(tween(400)),
+                    exit = fadeOut(tween(300)) + shrinkHorizontally(tween(300))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(start = 20.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_pbuh),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .graphicsLayer { alpha = pulseAlpha },
+                            tint = statusColor.copy(alpha = 0.5f)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = statusText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = statusColor,
+                            modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
+                        )
+                    }
+                }
             }
-            Icon(
-                painter = painterResource(
-                    id = if (statusColor == MaterialTheme.colorScheme.error)
-                        R.drawable.ic_pbuh
-                    else
-                        R.drawable.ic_pbuh
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(32.dp)
-                    .graphicsLayer { alpha = pulseAlpha },
-                tint = statusColor.copy(alpha = 0.6f)
-            )
-        }
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "--:--",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = statusText,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = statusColor,
-                modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
-            )
-        }
-    }
-}
-
-@Composable
-private fun CircularCountdownDial(
-    remainingTime: Long,
-    totalIntervalMinutes: Int,
-    modifier: Modifier = Modifier
-) {
-    val totalTimeMs = totalIntervalMinutes * 60 * 1000L
-    val progress = if (totalTimeMs > 0) {
-        (remainingTime.toFloat() / totalTimeMs).coerceIn(0f, 1f)
-    } else {
-        0f
-    }
-
-    val minutes = (remainingTime / 60000).toInt()
-    val seconds = ((remainingTime % 60000) / 1000).toInt()
-    val locale = androidx.compose.ui.text.intl.Locale.current.toLanguageTag()
-    val formattedTime = formatLocaleTime(minutes, seconds, locale)
-
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "countdownProgress"
-    )
-
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val trackColor = MaterialTheme.colorScheme.surfaceVariant
-
-    Box(
-        modifier = modifier.size(160.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val strokeWidth = 8.dp.toPx()
-
-            drawCircle(
-                color = trackColor,
-                style = Stroke(width = strokeWidth)
-            )
-
-            drawArc(
-                color = primaryColor,
-                startAngle = 270f,
-                sweepAngle = animatedProgress * 360f,
-                useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-            )
-        }
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.next_reminder),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = formattedTime,
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 28.sp),
-                color = MaterialTheme.colorScheme.onSurface
-            )
         }
     }
 }
