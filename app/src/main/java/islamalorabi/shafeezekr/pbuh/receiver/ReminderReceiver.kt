@@ -28,10 +28,29 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        val isQuietResume = intent.getBooleanExtra("quiet_hours_resume", false)
+
+        if (isQuietResume) {
+            ReminderScheduler.resumeFromQuietHours(context)
+            return
+        }
+
         val preferencesManager = PreferencesManager(context)
         val languageCode = preferencesManager.getLanguageCodeSync()
         val localizedContext = LocaleUtils.updateResources(context, languageCode)
-        
+
+        val settings = kotlinx.coroutines.runBlocking {
+            preferencesManager.settingsFlow.first()
+        }
+
+        if (!settings.isReminderAllowedByPeriodRules()) {
+            val quietEndMillis = settings.getQuietHoursEndMillis()
+            ReminderScheduler.pauseForQuietHours(context, quietEndMillis)
+            return
+        }
+
+        ReminderScheduler.clearQuietHoursPause(context)
+
         createNotificationChannel(localizedContext)
         showNotification(localizedContext)
         val didPlay = playSound(context)
@@ -85,10 +104,6 @@ class ReminderReceiver : BroadcastReceiver() {
             val preferencesManager = islamalorabi.shafeezekr.pbuh.data.PreferencesManager(context)
             val settings = kotlinx.coroutines.runBlocking {
                 preferencesManager.settingsFlow.first()
-            }
-            
-            if (!settings.isReminderAllowedByPeriodRules()) {
-                return false
             }
 
             if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
