@@ -201,7 +201,7 @@ data class AppSettings(
     val muteOnDND: Boolean = true,
     val customSoundPath: String? = null,
     val isCustomSoundEnabled: Boolean = false,
-    val dailyGoal: Int = 33
+    val dailyGoal: Int = 100
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
         // All rules are now "Block" rules.
@@ -282,7 +282,7 @@ class PreferencesManager(private val context: Context) {
             muteOnDND = preferences[PreferencesKeys.MUTE_ON_DND] ?: true,
             customSoundPath = preferences[PreferencesKeys.CUSTOM_SOUND_PATH],
             isCustomSoundEnabled = preferences[PreferencesKeys.IS_CUSTOM_SOUND_ENABLED] ?: false,
-            dailyGoal = preferences[PreferencesKeys.DAILY_GOAL] ?: 33
+            dailyGoal = preferences[PreferencesKeys.DAILY_GOAL] ?: 100
         )
     }
 
