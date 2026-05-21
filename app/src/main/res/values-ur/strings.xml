@@ -148,7 +148,7 @@
     <string name="select_audio_file">آڈیو فائل منتخب کریں</string>
     <string name="record_voice">آواز ریکارڈ کریں</string>
     <string name="record_dialog_title">ذکر ریکارڈ کریں</string>
-    <string name="record_dialog_desc">یاد دہانی کی آواز کے طور پر استعمال کرنے کے لیے ذکر پڑھتے ہوئے اپنی آواز ریکارڈ کریں</string>
+    <string name="record_dialog_desc">یاد دہانی کی آواز کے طور پر استعمال کرنے کے لیے اپنی آواز، کسی عزیز کی آواز، یا اپنے بچے کی ذکر پڑھتے ہوئے آواز ریکارڈ کریں</string>
     <string name="record_btn">ریکارڈ</string>
     <string name="stop_btn">روکیں</string>
     <string name="play_btn">چلائیں</string>
