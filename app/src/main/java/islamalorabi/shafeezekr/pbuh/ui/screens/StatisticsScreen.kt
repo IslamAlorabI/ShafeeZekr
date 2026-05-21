@@ -355,7 +355,7 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
     val locale = Locale.getDefault()
     val today = LocalDate.now()
 
-    var selectedIndex by remember { mutableStateOf(-1) }
+    var selectedIndex by remember { mutableStateOf(data.indexOfFirst { it.first == today }.coerceAtLeast(data.lastIndex)) }
 
     var animationProgress by remember { mutableFloatStateOf(0f) }
     val animatedProgress by animateFloatAsState(
@@ -408,47 +408,36 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            AnimatedVisibility(
-                visible = selectedIndex != -1,
-                enter = fadeIn() + slideInVertically(initialOffsetY = { -20 }),
-                exit = fadeOut() + slideOutVertically(targetOffsetY = { -20 })
-            ) {
-                if (selectedIndex in data.indices) {
-                    val item = data[selectedIndex]
-                    val dateText = item.first.format(DateTimeFormatter.ofPattern("d MMMM yyyy", locale))
-                    val countText = LocaleUtils.formatLocalizedNumber(item.second)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        secondaryColor.copy(alpha = 0.15f),
-                                        primaryColor.copy(alpha = 0.15f)
-                                    )
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(vertical = 8.dp, horizontal = 16.dp)
+            if (selectedIndex in data.indices) {
+                val item = data[selectedIndex]
+                val dateText = item.first.format(DateTimeFormatter.ofPattern("d MMMM yyyy", locale))
+                val countText = LocaleUtils.formatLocalizedNumber(item.second)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .background(
+                            color = primaryColor.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = dateText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = countText,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        Text(
+                            text = dateText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = countText,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
