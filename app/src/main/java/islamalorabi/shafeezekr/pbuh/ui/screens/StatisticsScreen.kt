@@ -222,11 +222,7 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onEditGoal() },
+            .fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -250,7 +246,11 @@ private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onEditGoal() }
                 ) {
                     Text(
                         text = LocaleUtils.formatLocalizedNumber(count),
