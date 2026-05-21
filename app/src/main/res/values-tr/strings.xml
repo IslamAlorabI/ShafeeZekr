@@ -145,6 +145,8 @@
     <string name="mute_on_silent_desc">Cihazınız sessiz veya titreşim modundayken hatırlatıcı seslerini çalma</string>
     <string name="mute_on_dnd">Rahatsız Etmeyinde Sessize Al</string>
     <string name="mute_on_dnd_desc">Rahatsız Etmeyin modu aktifken hatırlatıcı seslerini çalma</string>
+    <string name="mute_on_media">Medya Oynatılırken Sessize Al</string>
+    <string name="mute_on_media_desc">Başka bir ses çalınırken hatırlatıcı seslerini çalma</string>
     <string name="custom_audio_option">Özel Ses</string>
     <string name="custom_audio_desc">Dosya içe aktarın veya sesinizi kaydedin</string>
     <string name="select_audio_file">Ses Dosyası Seç</string>

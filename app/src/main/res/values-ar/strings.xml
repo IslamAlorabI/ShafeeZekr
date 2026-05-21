@@ -146,6 +146,8 @@
     <string name="mute_on_silent_desc">عدم تشغيل أصوات التذكير عندما يكون جهازك في الوضع الصامت أو الاهتزاز</string>
     <string name="mute_on_dnd">كتم الصوت في وضع عدم الإزعاج</string>
     <string name="mute_on_dnd_desc">عدم تشغيل أصوات التذكير عند تفعيل وضع عدم الإزعاج</string>
+    <string name="mute_on_media">كتم أثناء تشغيل الوسائط</string>
+    <string name="mute_on_media_desc">عدم تشغيل أصوات التذكير أثناء تشغيل وسائط أخرى</string>
     <string name="custom_audio_option">صوت مخصص</string>
     <string name="custom_audio_desc">استورد ملفًا أو سجّل صوتك</string>
     <string name="select_audio_file">اختيار ملف صوتي</string>

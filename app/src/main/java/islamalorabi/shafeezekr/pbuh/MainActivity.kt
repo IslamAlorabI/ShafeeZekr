@@ -145,6 +145,9 @@ class MainActivity : ComponentActivity() {
                     onMuteOnDNDChange = { enabled ->
                         scope.launch { preferencesManager.setMuteOnDND(enabled) }
                     },
+                    onMuteOnMediaChange = { enabled ->
+                        scope.launch { preferencesManager.setMuteOnMedia(enabled) }
+                    },
                     onCustomSoundPathChange = { path ->
                         scope.launch { preferencesManager.setCustomSoundPath(path) }
                     },
@@ -176,6 +179,7 @@ fun MainApp(
     onMuteOnCallChange: (Boolean) -> Unit,
     onMuteOnSilentChange: (Boolean) -> Unit,
     onMuteOnDNDChange: (Boolean) -> Unit,
+    onMuteOnMediaChange: (Boolean) -> Unit,
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     onDailyGoalChange: (Int) -> Unit
@@ -274,6 +278,7 @@ fun MainApp(
                 onMuteOnCallChange = onMuteOnCallChange,
                 onMuteOnSilentChange = onMuteOnSilentChange,
                 onMuteOnDNDChange = onMuteOnDNDChange,
+                onMuteOnMediaChange = onMuteOnMediaChange,
                 onCustomSoundPathChange = onCustomSoundPathChange,
                 onCustomSoundEnabledChange = onCustomSoundEnabledChange,
                 modifier = Modifier.padding(innerPadding)
