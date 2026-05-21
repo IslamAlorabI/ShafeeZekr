@@ -86,6 +86,8 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun HomeScreen(
@@ -735,8 +737,19 @@ private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState
     val isActive = timerState == TimerState.ACTIVE
     val isBlocked = timerState == TimerState.BLOCKED_BY_QUIET
 
+    val labelText = stringResource(R.string.next_reminder)
+    val labelStyle = MaterialTheme.typography.labelMedium
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val safePadding = 24.dp
+    val activeMinSize = remember(labelText, labelStyle, density) {
+        with(density) {
+            val textWidth = textMeasurer.measure(labelText, labelStyle).size.width.toDp()
+            maxOf(160.dp, textWidth + safePadding * 2)
+        }
+    }
     val circleSize by androidx.compose.animation.core.animateDpAsState(
-        targetValue = if (isActive) 160.dp else 100.dp,
+        targetValue = if (isActive) activeMinSize else 100.dp,
         animationSpec = tween(400),
         label = "circleSize"
     )
