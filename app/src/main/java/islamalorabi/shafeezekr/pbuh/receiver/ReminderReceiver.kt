@@ -114,6 +114,10 @@ class ReminderReceiver : BroadcastReceiver() {
                 return false
             }
 
+            if (settings.muteOnMedia && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isMediaPlaying(context)) {
+                return false
+            }
+
             if (settings.appVolume < 0.2f) {
                 return false
             }

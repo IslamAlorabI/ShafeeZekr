@@ -16,6 +16,11 @@ object AudioHelper {
         return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION
     }
 
+    fun isMediaPlaying(context: Context): Boolean {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audioManager.isMusicActive
+    }
+
     fun shouldPlaySound(
         context: Context,
         muteOnSilent: Boolean = true,
