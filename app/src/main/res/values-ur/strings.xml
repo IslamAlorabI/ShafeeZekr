@@ -18,7 +18,7 @@
     <string name="interval_30_min">ہر ۳۰ منٹ</string>
     <string name="interval_1_hour">ہر ۱ گھنٹہ</string>
     <string name="interval_2_hours">ہر ۲ گھنٹے</string>
-    <string name="interval_custom">اپنی مرضی کے مطابق</string>
+    <string name="interval_custom">مخصوص وقت</string>
     <string name="custom_interval_title">اپنی مرضی کا وقفہ</string>
     <string name="minutes">منٹ</string>
     <string name="interval_reset_note">نوٹ: وقفہ تبدیل کرنے سے موجودہ ٹائمر ری سیٹ ہو جائے گا۔</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">گھنٹے</string>
     <string name="minutes_label">منٹ</string>
     <string name="total_minutes">کل: %1$d منٹ</string>
+    <string name="max_interval_reached">زیادہ سے زیادہ وقفہ پہنچ گیا (۱۲ گھنٹے)</string>
     <string name="rule_type_daily">روزانہ وقت</string>
     <string name="rule_type_weekly">ہفتہ وار دن</string>
     <string name="rule_type_date">مخصوص تاریخ</string>

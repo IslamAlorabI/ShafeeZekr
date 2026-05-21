@@ -18,7 +18,7 @@
     <string name="interval_30_min">Setiap 30 menit</string>
     <string name="interval_1_hour">Setiap 1 jam</string>
     <string name="interval_2_hours">Setiap 2 jam</string>
-    <string name="interval_custom">Kustom</string>
+    <string name="interval_custom">Waktu Kustom</string>
     <string name="custom_interval_title">Interval Kustom</string>
     <string name="minutes">menit</string>
     <string name="interval_reset_note">Catatan: Mengubah interval akan mengatur ulang pengatur waktu saat ini.</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">Jam</string>
     <string name="minutes_label">Menit</string>
     <string name="total_minutes">Total: %1$d menit</string>
+    <string name="max_interval_reached">Interval maksimum tercapai (12 jam)</string>
     <string name="rule_type_daily">Rentang Waktu Harian</string>
     <string name="rule_type_weekly">Hari Mingguan</string>
     <string name="rule_type_date">Tanggal Tertentu</string>

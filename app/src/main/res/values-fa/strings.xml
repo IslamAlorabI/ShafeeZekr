@@ -18,7 +18,7 @@
     <string name="interval_30_min">هر ۳۰ دقیقه</string>
     <string name="interval_1_hour">هر ۱ ساعت</string>
     <string name="interval_2_hours">هر ۲ ساعت</string>
-    <string name="interval_custom">سفارشی</string>
+    <string name="interval_custom">زمان سفارشی</string>
     <string name="custom_interval_title">فاصله سفارشی</string>
     <string name="minutes">دقیقه</string>
     <string name="interval_reset_note">توجه: تغییر بازه زمانی باعث تنظیم مجدد تایمر فعلی می‌شود.</string>
@@ -106,6 +106,7 @@
     <string name="hours_label">ساعت</string>
     <string name="minutes_label">دقیقه</string>
     <string name="total_minutes">مجموع: %1$d دقیقه</string>
+    <string name="max_interval_reached">حداکثر فاصله زمانی رسیده است (۱۲ ساعت)</string>
     <string name="rule_type_daily">بازه زمانی روزانه</string>
     <string name="rule_type_weekly">روزهای هفتگی</string>
     <string name="rule_type_date">تاریخ خاص</string>
