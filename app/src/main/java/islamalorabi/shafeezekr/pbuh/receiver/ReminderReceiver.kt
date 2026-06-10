@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 
 import islamalorabi.shafeezekr.pbuh.MainActivity
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
@@ -56,7 +57,13 @@ class ReminderReceiver : BroadcastReceiver() {
         if (!blocked) {
             createNotificationChannel(localizedContext)
             showNotification(localizedContext)
-            val didPlay = playSound(context, settings)
+            val onSoundComplete: (() -> Unit)? = if (settings.autoDismissNotification) {
+                {
+                    val notificationManager = localizedContext.getSystemService(NotificationManager::class.java)
+                    notificationManager.cancel(NOTIFICATION_ID)
+                }
+            } else null
+            val didPlay = playSound(context, settings, onSoundComplete)
             if (didPlay) {
                 DhikrStatsManager(context).recordDhikr()
             }
@@ -67,7 +74,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun isBlockedByMuteOptions(
         context: Context,
-        settings: islamalorabi.shafeezekr.pbuh.data.PreferencesManager.AppSettings
+        settings: islamalorabi.shafeezekr.pbuh.data.AppSettings
     ): Boolean {
         if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
             return true
@@ -123,7 +130,7 @@ class ReminderReceiver : BroadcastReceiver() {
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
-    private fun playSound(context: Context, settings: islamalorabi.shafeezekr.pbuh.data.PreferencesManager.AppSettings): Boolean {
+    private fun playSound(context: Context, settings: islamalorabi.shafeezekr.pbuh.data.AppSettings, onComplete: (() -> Unit)? = null): Boolean {
         try {
             islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                 context = context,
@@ -133,7 +140,8 @@ class ReminderReceiver : BroadcastReceiver() {
                 muteOnDND = settings.muteOnDND,
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled,
-                audioStreamType = settings.audioStreamType
+                audioStreamType = settings.audioStreamType,
+                onComplete = onComplete
             )
             return true
         } catch (e: Exception) {

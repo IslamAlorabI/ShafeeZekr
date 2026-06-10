@@ -172,6 +172,9 @@
     <string name="audio_stream_notification">Benachrichtigung</string>
     <string name="audio_stream_ring">Klingelton</string>
 
+    <string name="auto_dismiss_notification">Benachrichtigung automatisch ausblenden</string>
+    <string name="auto_dismiss_notification_desc">Benachrichtigung automatisch entfernen, nachdem der Erinnerungston beendet ist</string>
+
     <string name="nav_statistics">Statistiken</string>
     <string name="stats_today">Heute</string>
     <string name="stats_this_week">Diese Woche</string>

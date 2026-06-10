@@ -205,7 +205,8 @@ data class AppSettings(
     val customSoundPath: String? = null,
     val isCustomSoundEnabled: Boolean = false,
     val dailyGoal: Int = 100,
-    val audioStreamType: AudioStreamType = AudioStreamType.ALARM
+    val audioStreamType: AudioStreamType = AudioStreamType.ALARM,
+    val autoDismissNotification: Boolean = false
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
         val enabledRules = periodRules.filter { it.isEnabled }
@@ -287,6 +288,7 @@ class PreferencesManager(private val context: Context) {
         val MUTE_ON_MEDIA = booleanPreferencesKey("mute_on_media")
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val AUDIO_STREAM_TYPE = stringPreferencesKey("audio_stream_type")
+        val AUTO_DISMISS_NOTIFICATION = booleanPreferencesKey("auto_dismiss_notification")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -339,7 +341,8 @@ class PreferencesManager(private val context: Context) {
                 AudioStreamType.valueOf(preferences[PreferencesKeys.AUDIO_STREAM_TYPE] ?: "ALARM")
             } catch (e: Exception) {
                 AudioStreamType.ALARM
-            }
+            },
+            autoDismissNotification = preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] ?: false
         )
     }
 
@@ -459,6 +462,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setAudioStreamType(type: AudioStreamType) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.AUDIO_STREAM_TYPE] = type.name
+        }
+    }
+
+    suspend fun setAutoDismissNotification(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] = enabled
         }
     }
 }

@@ -185,6 +185,7 @@ fun SettingsScreen(
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     onAudioStreamTypeChange: (AudioStreamType) -> Unit,
+    onAutoDismissNotificationChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -699,6 +700,41 @@ fun SettingsScreen(
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             modifier = Modifier.clickable { showAudioStreamDialog = true }
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.auto_dismiss_notification),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(R.string.auto_dismiss_notification_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = settings.autoDismissNotification,
+                                    onCheckedChange = { onAutoDismissNotificationChange(it) }
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                         )
                     }
                 }
