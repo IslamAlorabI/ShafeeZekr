@@ -164,6 +164,13 @@
     <string name="error_audio_too_long">File audio harus 10 detik atau kurang</string>
     <string name="delete_btn">Hapus</string>
 
+    <string name="audio_stream">Saluran Audio</string>
+    <string name="audio_stream_desc">Pilih saluran audio yang digunakan untuk pemutaran</string>
+    <string name="audio_stream_media">Media</string>
+    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_notification">Notifikasi</string>
+    <string name="audio_stream_ring">Nada Dering</string>
+
     <string name="nav_statistics">Statistik</string>
     <string name="stats_today">Hari Ini</string>
     <string name="stats_this_week">Minggu Ini</string>

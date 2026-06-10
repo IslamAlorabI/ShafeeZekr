@@ -164,6 +164,13 @@
     <string name="error_audio_too_long">آڈیو فائل ۱۰ سیکنڈ یا اس سے کم ہونی چاہیے</string>
     <string name="delete_btn">حذف کریں</string>
 
+    <string name="audio_stream">آڈیو چینل</string>
+    <string name="audio_stream_desc">چلانے کے لیے آڈیو چینل منتخب کریں</string>
+    <string name="audio_stream_media">میڈیا</string>
+    <string name="audio_stream_alarm">الارم</string>
+    <string name="audio_stream_notification">اطلاع</string>
+    <string name="audio_stream_ring">رنگ ٹون</string>
+
     <string name="nav_statistics">اعداد و شمار</string>
     <string name="stats_today">آج</string>
     <string name="stats_this_week">اس ہفتے</string>

@@ -129,7 +129,8 @@ class ReminderReceiver : BroadcastReceiver() {
                 muteOnSilent = settings.muteOnSilent,
                 muteOnDND = settings.muteOnDND,
                 customSoundPath = settings.customSoundPath,
-                isCustomSoundEnabled = settings.isCustomSoundEnabled
+                isCustomSoundEnabled = settings.isCustomSoundEnabled,
+                audioStreamType = settings.audioStreamType
             )
             return true
         } catch (e: Exception) {

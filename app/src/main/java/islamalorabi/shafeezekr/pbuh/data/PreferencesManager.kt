@@ -32,6 +32,8 @@ enum class ReminderInterval(val minutes: Int) {
 
 enum class RuleScheduleType { WEEKLY_DAYS, SPECIFIC_DATE }
 
+enum class AudioStreamType { MEDIA, ALARM, NOTIFICATION, RING }
+
 data class PeriodRule(
     val id: String = UUID.randomUUID().toString(),
     val scheduleType: RuleScheduleType,
@@ -202,7 +204,8 @@ data class AppSettings(
     val muteOnMedia: Boolean = true,
     val customSoundPath: String? = null,
     val isCustomSoundEnabled: Boolean = false,
-    val dailyGoal: Int = 100
+    val dailyGoal: Int = 100,
+    val audioStreamType: AudioStreamType = AudioStreamType.ALARM
 ) {
     fun isReminderAllowedByPeriodRules(): Boolean {
         val enabledRules = periodRules.filter { it.isEnabled }
@@ -283,6 +286,7 @@ class PreferencesManager(private val context: Context) {
         val IS_CUSTOM_SOUND_ENABLED = booleanPreferencesKey("is_custom_sound_enabled")
         val MUTE_ON_MEDIA = booleanPreferencesKey("mute_on_media")
         val DAILY_GOAL = intPreferencesKey("daily_goal")
+        val AUDIO_STREAM_TYPE = stringPreferencesKey("audio_stream_type")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -330,7 +334,12 @@ class PreferencesManager(private val context: Context) {
             muteOnMedia = preferences[PreferencesKeys.MUTE_ON_MEDIA] ?: true,
             customSoundPath = preferences[PreferencesKeys.CUSTOM_SOUND_PATH],
             isCustomSoundEnabled = preferences[PreferencesKeys.IS_CUSTOM_SOUND_ENABLED] ?: false,
-            dailyGoal = preferences[PreferencesKeys.DAILY_GOAL] ?: 100
+            dailyGoal = preferences[PreferencesKeys.DAILY_GOAL] ?: 100,
+            audioStreamType = try {
+                AudioStreamType.valueOf(preferences[PreferencesKeys.AUDIO_STREAM_TYPE] ?: "ALARM")
+            } catch (e: Exception) {
+                AudioStreamType.ALARM
+            }
         )
     }
 
@@ -444,6 +453,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setDailyGoal(goal: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.DAILY_GOAL] = goal.coerceAtLeast(1)
+        }
+    }
+
+    suspend fun setAudioStreamType(type: AudioStreamType) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AUDIO_STREAM_TYPE] = type.name
         }
     }
 }

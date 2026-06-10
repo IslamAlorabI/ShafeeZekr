@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
+import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
@@ -157,6 +158,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onDailyGoalChange = { goal ->
                         scope.launch { preferencesManager.setDailyGoal(goal) }
+                    },
+                    onAudioStreamTypeChange = { type ->
+                        scope.launch { preferencesManager.setAudioStreamType(type) }
                     }
                 )
             }
@@ -183,7 +187,8 @@ fun MainApp(
     onMuteOnMediaChange: (Boolean) -> Unit,
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
-    onDailyGoalChange: (Int) -> Unit
+    onDailyGoalChange: (Int) -> Unit,
+    onAudioStreamTypeChange: (AudioStreamType) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -282,6 +287,7 @@ fun MainApp(
                 onMuteOnMediaChange = onMuteOnMediaChange,
                 onCustomSoundPathChange = onCustomSoundPathChange,
                 onCustomSoundEnabledChange = onCustomSoundEnabledChange,
+                onAudioStreamTypeChange = onAudioStreamTypeChange,
                 modifier = Modifier.padding(innerPadding)
             )
             3 -> AboutScreen(

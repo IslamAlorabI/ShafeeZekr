@@ -164,6 +164,13 @@
     <string name="error_audio_too_long">Ses dosyası 10 saniye veya daha kısa olmalıdır</string>
     <string name="delete_btn">Sil</string>
 
+    <string name="audio_stream">Ses Kanalı</string>
+    <string name="audio_stream_desc">Çalma için kullanılacak ses kanalını seçin</string>
+    <string name="audio_stream_media">Medya</string>
+    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_notification">Bildirim</string>
+    <string name="audio_stream_ring">Zil Sesi</string>
+
     <string name="nav_statistics">İstatistikler</string>
     <string name="stats_today">Bugün</string>
     <string name="stats_this_week">Bu Hafta</string>

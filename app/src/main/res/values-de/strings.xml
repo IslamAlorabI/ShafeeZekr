@@ -165,6 +165,13 @@
     <string name="error_audio_too_long">Audiodatei darf maximal 10 Sekunden lang sein</string>
     <string name="delete_btn">Löschen</string>
 
+    <string name="audio_stream">Audiokanal</string>
+    <string name="audio_stream_desc">Wählen Sie den Audiokanal für die Wiedergabe</string>
+    <string name="audio_stream_media">Medien</string>
+    <string name="audio_stream_alarm">Wecker</string>
+    <string name="audio_stream_notification">Benachrichtigung</string>
+    <string name="audio_stream_ring">Klingelton</string>
+
     <string name="nav_statistics">Statistiken</string>
     <string name="stats_today">Heute</string>
     <string name="stats_this_week">Diese Woche</string>

@@ -178,6 +178,13 @@
     <string name="error_audio_too_long">Audio file must be 10 seconds or shorter</string>
     <string name="delete_btn">Delete</string>
 
+    <string name="audio_stream">Audio Channel</string>
+    <string name="audio_stream_desc">Choose which audio channel to use for playback</string>
+    <string name="audio_stream_media">Media</string>
+    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_notification">Notification</string>
+    <string name="audio_stream_ring">Ringtone</string>
+
     <string name="nav_statistics">Statistics</string>
     <string name="stats_today">Today</string>
     <string name="stats_this_week">This Week</string>

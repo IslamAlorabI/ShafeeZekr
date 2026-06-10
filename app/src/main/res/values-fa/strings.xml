@@ -164,6 +164,13 @@
     <string name="error_audio_too_long">فایل صوتی باید ۱۰ ثانیه یا کمتر باشد</string>
     <string name="delete_btn">حذف</string>
 
+    <string name="audio_stream">کانال صدا</string>
+    <string name="audio_stream_desc">کانال صدای مورد استفاده برای پخش را انتخاب کنید</string>
+    <string name="audio_stream_media">رسانه</string>
+    <string name="audio_stream_alarm">زنگ هشدار</string>
+    <string name="audio_stream_notification">اعلان</string>
+    <string name="audio_stream_ring">زنگ تماس</string>
+
     <string name="nav_statistics">آمار</string>
     <string name="stats_today">امروز</string>
     <string name="stats_this_week">این هفته</string>
