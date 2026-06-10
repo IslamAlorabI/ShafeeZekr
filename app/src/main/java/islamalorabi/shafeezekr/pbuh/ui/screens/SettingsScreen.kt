@@ -108,6 +108,7 @@ import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import java.util.Calendar
 import java.util.UUID
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 
 data class LanguageOption(
@@ -1986,7 +1987,7 @@ private fun RecordDhikrDialog(
         if (isRecording) {
             durationSeconds = 0
             while (isRecording && durationSeconds < 10) {
-                kotlinx.coroutines.delay(1000)
+                kotlinx.coroutines.delay(1.seconds)
                 durationSeconds++
             }
             if (durationSeconds >= 10 && isRecording) {
