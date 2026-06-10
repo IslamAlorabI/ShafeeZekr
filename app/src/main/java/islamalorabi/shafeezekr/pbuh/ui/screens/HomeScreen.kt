@@ -78,6 +78,7 @@ import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
 @Composable
@@ -114,7 +115,7 @@ fun HomeScreen(
 
     LaunchedEffect(isPlaying) {
         if (isPlaying) {
-            delay(4000)
+            delay(4.seconds)
             isPlaying = false
         }
     }
@@ -176,7 +177,7 @@ fun HomeScreen(
                 val now = System.currentTimeMillis()
                 remainingTime = if (nextTrigger > now) nextTrigger - now else 0L
             }
-            delay(1000L)
+            delay(1.seconds)
         }
         remainingTime = 0L
         isPausedByQuiet = false
