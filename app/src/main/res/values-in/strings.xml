@@ -167,7 +167,7 @@
     <string name="audio_stream">Saluran Audio</string>
     <string name="audio_stream_desc">Pilih saluran audio yang digunakan untuk pemutaran</string>
     <string name="audio_stream_media">Media</string>
-    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_alarm">Alarm (Direkomendasikan)</string>
     <string name="audio_stream_notification">Notifikasi</string>
     <string name="audio_stream_ring">Nada Dering</string>
 

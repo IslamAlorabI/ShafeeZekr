@@ -181,7 +181,7 @@
     <string name="audio_stream">Audio Channel</string>
     <string name="audio_stream_desc">Choose which audio channel to use for playback</string>
     <string name="audio_stream_media">Media</string>
-    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_alarm">Alarm (Recommended)</string>
     <string name="audio_stream_notification">Notification</string>
     <string name="audio_stream_ring">Ringtone</string>
 

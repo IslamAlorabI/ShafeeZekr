@@ -167,7 +167,7 @@
     <string name="audio_stream">کانال صدا</string>
     <string name="audio_stream_desc">کانال صدای مورد استفاده برای پخش را انتخاب کنید</string>
     <string name="audio_stream_media">رسانه</string>
-    <string name="audio_stream_alarm">زنگ هشدار</string>
+    <string name="audio_stream_alarm">زنگ هشدار (پیشنهادی)</string>
     <string name="audio_stream_notification">اعلان</string>
     <string name="audio_stream_ring">زنگ تماس</string>
 

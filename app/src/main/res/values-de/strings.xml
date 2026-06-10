@@ -168,7 +168,7 @@
     <string name="audio_stream">Audiokanal</string>
     <string name="audio_stream_desc">Wählen Sie den Audiokanal für die Wiedergabe</string>
     <string name="audio_stream_media">Medien</string>
-    <string name="audio_stream_alarm">Wecker</string>
+    <string name="audio_stream_alarm">Wecker (Empfohlen)</string>
     <string name="audio_stream_notification">Benachrichtigung</string>
     <string name="audio_stream_ring">Klingelton</string>
 

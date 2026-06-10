@@ -167,7 +167,7 @@
     <string name="audio_stream">Ses Kanalı</string>
     <string name="audio_stream_desc">Çalma için kullanılacak ses kanalını seçin</string>
     <string name="audio_stream_media">Medya</string>
-    <string name="audio_stream_alarm">Alarm</string>
+    <string name="audio_stream_alarm">Alarm (Önerilen)</string>
     <string name="audio_stream_notification">Bildirim</string>
     <string name="audio_stream_ring">Zil Sesi</string>
 
