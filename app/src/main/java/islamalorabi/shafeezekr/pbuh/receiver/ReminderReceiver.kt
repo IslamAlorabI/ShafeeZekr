@@ -51,13 +51,37 @@ class ReminderReceiver : BroadcastReceiver() {
 
         ReminderScheduler.clearQuietHoursPause(context)
 
-        createNotificationChannel(localizedContext)
-        showNotification(localizedContext)
-        val didPlay = playSound(context)
-        if (didPlay) {
-            DhikrStatsManager(context).recordDhikr()
+        val blocked = isBlockedByMuteOptions(context, settings)
+
+        if (!blocked) {
+            createNotificationChannel(localizedContext)
+            showNotification(localizedContext)
+            val didPlay = playSound(context, settings)
+            if (didPlay) {
+                DhikrStatsManager(context).recordDhikr()
+            }
         }
+
         ReminderScheduler.scheduleNextAlarm(context)
+    }
+
+    private fun isBlockedByMuteOptions(
+        context: Context,
+        settings: islamalorabi.shafeezekr.pbuh.data.PreferencesManager.AppSettings
+    ): Boolean {
+        if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
+            return true
+        }
+        if (!islamalorabi.shafeezekr.pbuh.util.AudioHelper.shouldPlaySound(context, settings.muteOnSilent, settings.muteOnDND)) {
+            return true
+        }
+        if (settings.muteOnMedia && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isMediaPlaying(context)) {
+            return true
+        }
+        if (settings.appVolume < 0.2f) {
+            return true
+        }
+        return false
     }
 
     private fun createNotificationChannel(context: Context) {
@@ -99,29 +123,8 @@ class ReminderReceiver : BroadcastReceiver() {
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
-    private fun playSound(context: Context): Boolean {
+    private fun playSound(context: Context, settings: islamalorabi.shafeezekr.pbuh.data.PreferencesManager.AppSettings): Boolean {
         try {
-            val preferencesManager = islamalorabi.shafeezekr.pbuh.data.PreferencesManager(context)
-            val settings = kotlinx.coroutines.runBlocking {
-                preferencesManager.settingsFlow.first()
-            }
-
-            if (settings.muteOnCall && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isInCall(context)) {
-                return false
-            }
-
-            if (!islamalorabi.shafeezekr.pbuh.util.AudioHelper.shouldPlaySound(context, settings.muteOnSilent, settings.muteOnDND)) {
-                return false
-            }
-
-            if (settings.muteOnMedia && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isMediaPlaying(context)) {
-                return false
-            }
-
-            if (settings.appVolume < 0.2f) {
-                return false
-            }
-
             islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                 context = context,
                 soundIndex = settings.selectedSoundIndex,
