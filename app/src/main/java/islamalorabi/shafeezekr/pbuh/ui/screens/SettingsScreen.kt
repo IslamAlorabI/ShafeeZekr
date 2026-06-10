@@ -2119,11 +2119,11 @@ private fun RecordDhikrDialog(
                                     recordFile.delete()
                                 }
                                 val recorder = android.media.MediaRecorder(context)
-                                recorder.setAudioSource(android.media.MediaRecorder.AudioSource.MIC)
+                                recorder.setAudioSource(android.media.MediaRecorder.AudioSource.VOICE_RECOGNITION)
                                 recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
                                 recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
                                 recorder.setAudioSamplingRate(44100)
-                                recorder.setAudioEncodingBitRate(128000)
+                                recorder.setAudioEncodingBitRate(192000)
                                 recorder.setAudioChannels(1)
                                 recorder.setMaxDuration(10_000)
                                 recorder.setOutputFile(recordFile.absolutePath)
