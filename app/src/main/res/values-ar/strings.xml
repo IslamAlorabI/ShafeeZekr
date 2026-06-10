@@ -165,6 +165,13 @@
     <string name="error_audio_too_long">يجب ألا يتجاوز ملف الصوت ١٠ ثوانٍ</string>
     <string name="delete_btn">حذف</string>
 
+    <string name="audio_stream">قناة الصوت</string>
+    <string name="audio_stream_desc">اختر قناة الصوت المستخدمة للتشغيل</string>
+    <string name="audio_stream_media">الوسائط</string>
+    <string name="audio_stream_alarm">المنبه</string>
+    <string name="audio_stream_notification">الإشعارات</string>
+    <string name="audio_stream_ring">نغمة الرنين</string>
+
     <string name="nav_statistics">الإحصائيات</string>
     <string name="stats_today">اليوم</string>
     <string name="stats_this_week">هذا الأسبوع</string>

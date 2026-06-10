@@ -7,8 +7,27 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 
 object AudioHelper {
+
+    private fun getStreamType(audioStreamType: AudioStreamType): Int {
+        return when (audioStreamType) {
+            AudioStreamType.MEDIA -> AudioManager.STREAM_MUSIC
+            AudioStreamType.ALARM -> AudioManager.STREAM_ALARM
+            AudioStreamType.NOTIFICATION -> AudioManager.STREAM_NOTIFICATION
+            AudioStreamType.RING -> AudioManager.STREAM_RING
+        }
+    }
+
+    private fun getUsageType(audioStreamType: AudioStreamType): Int {
+        return when (audioStreamType) {
+            AudioStreamType.MEDIA -> AudioAttributes.USAGE_MEDIA
+            AudioStreamType.ALARM -> AudioAttributes.USAGE_ALARM
+            AudioStreamType.NOTIFICATION -> AudioAttributes.USAGE_NOTIFICATION
+            AudioStreamType.RING -> AudioAttributes.USAGE_NOTIFICATION_RINGTONE
+        }
+    }
 
     fun isInCall(context: Context): Boolean {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -55,6 +74,7 @@ object AudioHelper {
         muteOnDND: Boolean = true,
         customSoundPath: String? = null,
         isCustomSoundEnabled: Boolean = false,
+        audioStreamType: AudioStreamType = AudioStreamType.ALARM,
         onComplete: (() -> Unit)? = null
     ) {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
@@ -65,14 +85,15 @@ object AudioHelper {
         try {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             
-            val originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val streamType = getStreamType(audioStreamType)
+            val originalVolume = audioManager.getStreamVolume(streamType)
+            val maxVolume = audioManager.getStreamMaxVolume(streamType)
             val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
             
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
+            audioManager.setStreamVolume(streamType, targetVolume, 0)
 
             val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setUsage(getUsageType(audioStreamType))
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
 
@@ -99,13 +120,13 @@ object AudioHelper {
             }
             
             mediaPlayer.setOnCompletionListener { mp ->
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0)
+                audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
                 onComplete?.invoke()
             }
             
             mediaPlayer.setOnErrorListener { mp, _, _ ->
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0)
+                audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
                 onComplete?.invoke()
                 true
@@ -125,7 +146,8 @@ object AudioHelper {
         muteOnSilent: Boolean = true,
         muteOnDND: Boolean = true,
         customSoundPath: String? = null,
-        isCustomSoundEnabled: Boolean = false
+        isCustomSoundEnabled: Boolean = false,
+        audioStreamType: AudioStreamType = AudioStreamType.ALARM
     ): MediaPlayer? {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
             return null
@@ -134,11 +156,12 @@ object AudioHelper {
         return try {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             
-            val originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val streamType = getStreamType(audioStreamType)
+            val originalVolume = audioManager.getStreamVolume(streamType)
+            val maxVolume = audioManager.getStreamMaxVolume(streamType)
             val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
             
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
+            audioManager.setStreamVolume(streamType, targetVolume, 0)
 
             val mediaPlayer = if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
                 val file = java.io.File(customSoundPath)
@@ -146,7 +169,7 @@ object AudioHelper {
                     MediaPlayer().apply {
                         setAudioAttributes(
                             AudioAttributes.Builder()
-                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setUsage(getUsageType(audioStreamType))
                                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                                 .build()
                         )
@@ -163,7 +186,7 @@ object AudioHelper {
             }
             
             mediaPlayer?.setOnCompletionListener { mp ->
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0)
+                audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
             }
             

@@ -99,6 +99,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
+import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
@@ -182,6 +183,7 @@ fun SettingsScreen(
     onMuteOnMediaChange: (Boolean) -> Unit,
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
+    onAudioStreamTypeChange: (AudioStreamType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -191,6 +193,7 @@ fun SettingsScreen(
     var ruleToEdit by remember { mutableStateOf<PeriodRule?>(null) }
     var showSoundDialog by remember { mutableStateOf(false) }
     var showRecordDialog by remember { mutableStateOf(false) }
+    var showAudioStreamDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val errorAudioTooLong = stringResource(R.string.error_audio_too_long)
@@ -654,6 +657,48 @@ fun SettingsScreen(
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                         )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.audio_stream),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = when (settings.audioStreamType) {
+                                        AudioStreamType.MEDIA -> stringResource(R.string.audio_stream_media)
+                                        AudioStreamType.ALARM -> stringResource(R.string.audio_stream_alarm)
+                                        AudioStreamType.NOTIFICATION -> stringResource(R.string.audio_stream_notification)
+                                        AudioStreamType.RING -> stringResource(R.string.audio_stream_ring)
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_volume_up),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            modifier = Modifier.clickable { showAudioStreamDialog = true }
+                        )
                     }
                 }
             }
@@ -1080,6 +1125,7 @@ fun SettingsScreen(
             currentVolume = settings.appVolume,
             isCustomSoundEnabled = settings.isCustomSoundEnabled,
             customSoundPath = settings.customSoundPath,
+            audioStreamType = settings.audioStreamType,
             onDismiss = { showSoundDialog = false },
             onSelect = {
                 onSoundChange(it)
@@ -1101,6 +1147,17 @@ fun SettingsScreen(
                 onCustomSoundPathChange(null)
                 onCustomSoundEnabledChange(false)
                 showRecordDialog = false
+            }
+        )
+    }
+
+    if (showAudioStreamDialog) {
+        AudioStreamDialog(
+            currentType = settings.audioStreamType,
+            onDismiss = { showAudioStreamDialog = false },
+            onSelect = {
+                onAudioStreamTypeChange(it)
+                showAudioStreamDialog = false
             }
         )
     }
@@ -1772,6 +1829,7 @@ private fun SoundSelectionDialog(
     currentVolume: Float,
     isCustomSoundEnabled: Boolean,
     customSoundPath: String?,
+    audioStreamType: AudioStreamType,
     onDismiss: () -> Unit,
     onSelect: (Int) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit
@@ -1814,7 +1872,8 @@ private fun SoundSelectionDialog(
                                         muteOnSilent = false,
                                         muteOnDND = false,
                                         customSoundPath = customSoundPath,
-                                        isCustomSoundEnabled = false
+                                        isCustomSoundEnabled = false,
+                                        audioStreamType = audioStreamType
                                     )
                                 },
                                 role = Role.RadioButton
@@ -1847,7 +1906,8 @@ private fun SoundSelectionDialog(
                                         muteOnSilent = false,
                                         muteOnDND = false,
                                         customSoundPath = customSoundPath,
-                                        isCustomSoundEnabled = true
+                                        isCustomSoundEnabled = true,
+                                        audioStreamType = audioStreamType
                                     )
                                 },
                                 role = Role.RadioButton
@@ -2196,3 +2256,53 @@ private fun RecordDhikrDialog(
     )
 }
 
+@Composable
+private fun AudioStreamDialog(
+    currentType: AudioStreamType,
+    onDismiss: () -> Unit,
+    onSelect: (AudioStreamType) -> Unit
+) {
+    var tempSelected by remember { mutableStateOf(currentType) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.audio_stream)) },
+        text = {
+            Column {
+                AudioStreamType.entries.forEach { type ->
+                    val label = when (type) {
+                        AudioStreamType.MEDIA -> stringResource(R.string.audio_stream_media)
+                        AudioStreamType.ALARM -> stringResource(R.string.audio_stream_alarm)
+                        AudioStreamType.NOTIFICATION -> stringResource(R.string.audio_stream_notification)
+                        AudioStreamType.RING -> stringResource(R.string.audio_stream_ring)
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = tempSelected == type,
+                                onClick = { tempSelected = type },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = tempSelected == type, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSelect(tempSelected) }) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}

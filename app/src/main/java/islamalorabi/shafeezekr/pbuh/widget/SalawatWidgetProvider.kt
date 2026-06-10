@@ -125,7 +125,10 @@ class PlaySoundAction : ActionCallback {
             AudioHelper.playWithMasterVolume(
                 context = context,
                 soundIndex = settings.selectedSoundIndex,
-                appVolume = settings.appVolume
+                appVolume = settings.appVolume,
+                customSoundPath = settings.customSoundPath,
+                isCustomSoundEnabled = settings.isCustomSoundEnabled,
+                audioStreamType = settings.audioStreamType
             )
         } catch (e: Exception) {
             e.printStackTrace()

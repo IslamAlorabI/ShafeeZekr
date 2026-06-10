@@ -204,7 +204,8 @@ fun HomeScreen(
                         muteOnSilent = false,
                         muteOnDND = false,
                         customSoundPath = settings.customSoundPath,
-                        isCustomSoundEnabled = settings.isCustomSoundEnabled
+                        isCustomSoundEnabled = settings.isCustomSoundEnabled,
+                        audioStreamType = settings.audioStreamType
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),

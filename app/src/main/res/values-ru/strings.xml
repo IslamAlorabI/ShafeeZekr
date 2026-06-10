@@ -164,6 +164,13 @@
     <string name="error_audio_too_long">Аудиофайл должен быть не более 10 секунд</string>
     <string name="delete_btn">Удалить</string>
 
+    <string name="audio_stream">Аудиоканал</string>
+    <string name="audio_stream_desc">Выберите аудиоканал для воспроизведения</string>
+    <string name="audio_stream_media">Медиа</string>
+    <string name="audio_stream_alarm">Будильник</string>
+    <string name="audio_stream_notification">Уведомление</string>
+    <string name="audio_stream_ring">Рингтон</string>
+
     <string name="nav_statistics">Статистика</string>
     <string name="stats_today">Сегодня</string>
     <string name="stats_this_week">Эта неделя</string>
