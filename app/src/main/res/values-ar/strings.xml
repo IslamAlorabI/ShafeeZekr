@@ -168,7 +168,7 @@
     <string name="audio_stream">قناة الصوت</string>
     <string name="audio_stream_desc">اختر قناة الصوت المستخدمة للتشغيل</string>
     <string name="audio_stream_media">الوسائط</string>
-    <string name="audio_stream_alarm">المنبه</string>
+    <string name="audio_stream_alarm">المنبه (مُوصى به)</string>
     <string name="audio_stream_notification">الإشعارات</string>
     <string name="audio_stream_ring">نغمة الرنين</string>
 

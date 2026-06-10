@@ -167,7 +167,7 @@
     <string name="audio_stream">Аудиоканал</string>
     <string name="audio_stream_desc">Выберите аудиоканал для воспроизведения</string>
     <string name="audio_stream_media">Медиа</string>
-    <string name="audio_stream_alarm">Будильник</string>
+    <string name="audio_stream_alarm">Будильник (Рекомендуется)</string>
     <string name="audio_stream_notification">Уведомление</string>
     <string name="audio_stream_ring">Рингтон</string>
 
