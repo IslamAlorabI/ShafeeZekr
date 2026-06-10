@@ -171,6 +171,9 @@
     <string name="audio_stream_notification">Bildirim</string>
     <string name="audio_stream_ring">Zil Sesi</string>
 
+    <string name="auto_dismiss_notification">Bildirimi Otomatik Kapat</string>
+    <string name="auto_dismiss_notification_desc">Hatırlatma sesi bittikten sonra bildirimi otomatik olarak kaldır</string>
+
     <string name="nav_statistics">İstatistikler</string>
     <string name="stats_today">Bugün</string>
     <string name="stats_this_week">Bu Hafta</string>

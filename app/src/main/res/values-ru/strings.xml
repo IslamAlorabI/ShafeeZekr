@@ -171,6 +171,9 @@
     <string name="audio_stream_notification">Уведомление</string>
     <string name="audio_stream_ring">Рингтон</string>
 
+    <string name="auto_dismiss_notification">Автоскрытие уведомления</string>
+    <string name="auto_dismiss_notification_desc">Автоматически убирать уведомление после окончания звука напоминания</string>
+
     <string name="nav_statistics">Статистика</string>
     <string name="stats_today">Сегодня</string>
     <string name="stats_this_week">Эта неделя</string>

@@ -172,6 +172,9 @@
     <string name="audio_stream_notification">الإشعارات</string>
     <string name="audio_stream_ring">نغمة الرنين</string>
 
+    <string name="auto_dismiss_notification">إخفاء الإشعار تلقائياً</string>
+    <string name="auto_dismiss_notification_desc">إزالة الإشعار تلقائياً بعد انتهاء صوت التذكير</string>
+
     <string name="nav_statistics">الإحصائيات</string>
     <string name="stats_today">اليوم</string>
     <string name="stats_this_week">هذا الأسبوع</string>

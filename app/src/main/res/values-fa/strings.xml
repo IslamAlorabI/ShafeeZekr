@@ -171,6 +171,9 @@
     <string name="audio_stream_notification">اعلان</string>
     <string name="audio_stream_ring">زنگ تماس</string>
 
+    <string name="auto_dismiss_notification">حذف خودکار اعلان</string>
+    <string name="auto_dismiss_notification_desc">حذف خودکار اعلان پس از پایان صدای یادآوری</string>
+
     <string name="nav_statistics">آمار</string>
     <string name="stats_today">امروز</string>
     <string name="stats_this_week">این هفته</string>

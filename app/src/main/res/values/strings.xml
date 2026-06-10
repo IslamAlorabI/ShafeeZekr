@@ -185,6 +185,9 @@
     <string name="audio_stream_notification">Notification</string>
     <string name="audio_stream_ring">Ringtone</string>
 
+    <string name="auto_dismiss_notification">Auto-dismiss Notification</string>
+    <string name="auto_dismiss_notification_desc">Automatically clear the notification after the reminder sound ends</string>
+
     <string name="nav_statistics">Statistics</string>
     <string name="stats_today">Today</string>
     <string name="stats_this_week">This Week</string>

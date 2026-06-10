@@ -161,6 +161,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onAudioStreamTypeChange = { type ->
                         scope.launch { preferencesManager.setAudioStreamType(type) }
+                    },
+                    onAutoDismissNotificationChange = { enabled ->
+                        scope.launch { preferencesManager.setAutoDismissNotification(enabled) }
                     }
                 )
             }
@@ -188,7 +191,8 @@ fun MainApp(
     onCustomSoundPathChange: (String?) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     onDailyGoalChange: (Int) -> Unit,
-    onAudioStreamTypeChange: (AudioStreamType) -> Unit
+    onAudioStreamTypeChange: (AudioStreamType) -> Unit,
+    onAutoDismissNotificationChange: (Boolean) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -288,6 +292,7 @@ fun MainApp(
                 onCustomSoundPathChange = onCustomSoundPathChange,
                 onCustomSoundEnabledChange = onCustomSoundEnabledChange,
                 onAudioStreamTypeChange = onAudioStreamTypeChange,
+                onAutoDismissNotificationChange = onAutoDismissNotificationChange,
                 modifier = Modifier.padding(innerPadding)
             )
             3 -> AboutScreen(

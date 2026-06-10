@@ -171,6 +171,9 @@
     <string name="audio_stream_notification">Notifikasi</string>
     <string name="audio_stream_ring">Nada Dering</string>
 
+    <string name="auto_dismiss_notification">Hapus Notifikasi Otomatis</string>
+    <string name="auto_dismiss_notification_desc">Hapus notifikasi secara otomatis setelah suara pengingat selesai</string>
+
     <string name="nav_statistics">Statistik</string>
     <string name="stats_today">Hari Ini</string>
     <string name="stats_this_week">Minggu Ini</string>

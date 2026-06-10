@@ -171,6 +171,9 @@
     <string name="audio_stream_notification">اطلاع</string>
     <string name="audio_stream_ring">رنگ ٹون</string>
 
+    <string name="auto_dismiss_notification">اطلاع خود بخود ہٹائیں</string>
+    <string name="auto_dismiss_notification_desc">یاد دہانی کی آواز ختم ہونے کے بعد اطلاع خود بخود ہٹا دیں</string>
+
     <string name="nav_statistics">اعداد و شمار</string>
     <string name="stats_today">آج</string>
     <string name="stats_this_week">اس ہفتے</string>
