@@ -97,6 +97,9 @@
     <string name="sound_play_warning">Warning: The sound will play immediately when selected.</string>
     <string name="app_volume">App Volume</string>
     <string name="app_volume_desc">Control app sound volume independently</string>
+    <string name="use_system_volume_active">Using device volume</string>
+    <string name="use_system_volume_hint">Long press to toggle device volume mode</string>
+    <string name="use_system_volume_hint_off">Long press to toggle app volume mode</string>
     <string name="mute_on_call">Mute During Calls</string>
     <string name="mute_on_call_desc">Prevent sound from playing while you are on a phone call</string>
     <string name="mute_on_call_permission_note">This feature requires phone state permission to detect active calls</string>

@@ -86,6 +86,9 @@
     <string name="sound_play_warning">Peringatan: Suara akan diputar segera setelah dipilih.</string>
     <string name="app_volume">Volume Aplikasi</string>
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
+    <string name="use_system_volume_active">Menggunakan volume perangkat</string>
+    <string name="use_system_volume_hint">Tekan lama untuk beralih ke mode volume perangkat</string>
+    <string name="use_system_volume_hint_off">Tekan lama untuk beralih ke mode volume aplikasi</string>
     <string name="mute_on_call">Bisukan Saat Panggilan</string>
     <string name="mute_on_call_desc">Cegah suara diputar saat Anda sedang dalam panggilan telepon</string>
     <string name="mute_on_call_permission_note">Fitur ini memerlukan izin status telepon untuk mendeteksi panggilan aktif</string>

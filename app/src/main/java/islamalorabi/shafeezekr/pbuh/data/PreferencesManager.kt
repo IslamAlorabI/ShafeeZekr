@@ -196,6 +196,7 @@ data class AppSettings(
     val colorScheme: ColorScheme = ColorScheme.MONET,
     val languageCode: String = "",
     val appVolume: Float = 1.0f,
+    val useSystemVolume: Boolean = false,
     val selectedSoundIndex: Int = 1,
     val periodRules: List<PeriodRule> = emptyList(),
     val muteOnCall: Boolean = false,
@@ -289,6 +290,7 @@ class PreferencesManager(private val context: Context) {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val AUDIO_STREAM_TYPE = stringPreferencesKey("audio_stream_type")
         val AUTO_DISMISS_NOTIFICATION = booleanPreferencesKey("auto_dismiss_notification")
+        val USE_SYSTEM_VOLUME = booleanPreferencesKey("use_system_volume")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -342,7 +344,8 @@ class PreferencesManager(private val context: Context) {
             } catch (e: Exception) {
                 AudioStreamType.ALARM
             },
-            autoDismissNotification = preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] ?: false
+            autoDismissNotification = preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] ?: false,
+            useSystemVolume = preferences[PreferencesKeys.USE_SYSTEM_VOLUME] ?: false
         )
     }
 
@@ -468,6 +471,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setAutoDismissNotification(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] = enabled
+        }
+    }
+
+    suspend fun setUseSystemVolume(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USE_SYSTEM_VOLUME] = enabled
         }
     }
 }

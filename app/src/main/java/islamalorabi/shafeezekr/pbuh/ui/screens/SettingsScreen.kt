@@ -14,7 +14,9 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -168,6 +170,7 @@ fun getLocalizedRuleDisplayText(rule: PeriodRule): String {
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("BatteryLife")
 @Composable
 fun SettingsScreen(
@@ -186,6 +189,7 @@ fun SettingsScreen(
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     onAudioStreamTypeChange: (AudioStreamType) -> Unit,
     onAutoDismissNotificationChange: (Boolean) -> Unit,
+    onUseSystemVolumeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -489,6 +493,12 @@ fun SettingsScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        onUseSystemVolumeChange(!settings.useSystemVolume)
+                                    }
+                                )
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -504,27 +514,52 @@ fun SettingsScreen(
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = stringResource(R.string.app_volume_desc),
+                                    text = if (settings.useSystemVolume) {
+                                        stringResource(R.string.use_system_volume_active)
+                                    } else {
+                                        stringResource(R.string.app_volume_desc)
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (settings.useSystemVolume) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                                Text(
+                                    text = if (settings.useSystemVolume) {
+                                        stringResource(R.string.use_system_volume_hint_off)
+                                    } else {
+                                        stringResource(R.string.use_system_volume_hint)
+                                    },
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
                             }
-                            Text(
-                                text = "${LocaleUtils.formatLocalizedNumber((settings.appVolume * 100).toInt())}%",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            if (!settings.useSystemVolume) {
+                                Text(
+                                    text = "${LocaleUtils.formatLocalizedNumber((settings.appVolume * 100).toInt())}%",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                         
-                        Slider(
-                            value = settings.appVolume.coerceAtLeast(0.1f),
-                            onValueChange = { onVolumeChange(it.coerceAtLeast(0.1f)) },
-                            valueRange = 0f..1f,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 16.dp)
-                        )
+                        AnimatedVisibility(
+                            visible = !settings.useSystemVolume,
+                            enter = fadeIn() + expandVertically(),
+                            exit = fadeOut() + shrinkVertically()
+                        ) {
+                            Slider(
+                                value = settings.appVolume.coerceAtLeast(0.1f),
+                                onValueChange = { onVolumeChange(it.coerceAtLeast(0.1f)) },
+                                valueRange = 0f..1f,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 16.dp)
+                            )
+                        }
 
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -1188,6 +1223,7 @@ fun SettingsScreen(
             isCustomSoundEnabled = settings.isCustomSoundEnabled,
             customSoundPath = settings.customSoundPath,
             audioStreamType = settings.audioStreamType,
+            useSystemVolume = settings.useSystemVolume,
             onDismiss = { showSoundDialog = false },
             onSelect = {
                 onSoundChange(it)
@@ -1892,6 +1928,7 @@ private fun SoundSelectionDialog(
     isCustomSoundEnabled: Boolean,
     customSoundPath: String?,
     audioStreamType: AudioStreamType,
+    useSystemVolume: Boolean,
     onDismiss: () -> Unit,
     onSelect: (Int) -> Unit,
     onCustomSoundEnabledChange: (Boolean) -> Unit
@@ -1935,7 +1972,8 @@ private fun SoundSelectionDialog(
                                         muteOnDND = false,
                                         customSoundPath = customSoundPath,
                                         isCustomSoundEnabled = false,
-                                        audioStreamType = audioStreamType
+                                        audioStreamType = audioStreamType,
+                                        useSystemVolume = useSystemVolume
                                     )
                                 },
                                 role = Role.RadioButton
@@ -1969,7 +2007,8 @@ private fun SoundSelectionDialog(
                                         muteOnDND = false,
                                         customSoundPath = customSoundPath,
                                         isCustomSoundEnabled = true,
-                                        audioStreamType = audioStreamType
+                                        audioStreamType = audioStreamType,
+                                        useSystemVolume = useSystemVolume
                                     )
                                 },
                                 role = Role.RadioButton

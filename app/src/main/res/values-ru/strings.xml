@@ -86,6 +86,9 @@
     <string name="sound_play_warning">Предупреждение: звук будет воспроизведен сразу после выбора.</string>
     <string name="app_volume">Громкость приложения</string>
     <string name="app_volume_desc">Независимая регулировка громкости приложения</string>
+    <string name="use_system_volume_active">Используется громкость устройства</string>
+    <string name="use_system_volume_hint">Удерживайте для переключения на громкость устройства</string>
+    <string name="use_system_volume_hint_off">Удерживайте для переключения на громкость приложения</string>
     <string name="mute_on_call">Без звука во время звонка</string>
     <string name="mute_on_call_desc">Не воспроизводить звук во время телефонного разговора</string>
     <string name="mute_on_call_permission_note">Для обнаружения активных вызовов требуется разрешение на доступ к состоянию телефона</string>

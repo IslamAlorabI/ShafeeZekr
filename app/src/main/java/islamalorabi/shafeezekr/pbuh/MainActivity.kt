@@ -164,6 +164,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onAutoDismissNotificationChange = { enabled ->
                         scope.launch { preferencesManager.setAutoDismissNotification(enabled) }
+                    },
+                    onUseSystemVolumeChange = { enabled ->
+                        scope.launch { preferencesManager.setUseSystemVolume(enabled) }
                     }
                 )
             }
@@ -192,7 +195,8 @@ fun MainApp(
     onCustomSoundEnabledChange: (Boolean) -> Unit,
     onDailyGoalChange: (Int) -> Unit,
     onAudioStreamTypeChange: (AudioStreamType) -> Unit,
-    onAutoDismissNotificationChange: (Boolean) -> Unit
+    onAutoDismissNotificationChange: (Boolean) -> Unit,
+    onUseSystemVolumeChange: (Boolean) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -293,6 +297,7 @@ fun MainApp(
                 onCustomSoundEnabledChange = onCustomSoundEnabledChange,
                 onAudioStreamTypeChange = onAudioStreamTypeChange,
                 onAutoDismissNotificationChange = onAutoDismissNotificationChange,
+                onUseSystemVolumeChange = onUseSystemVolumeChange,
                 modifier = Modifier.padding(innerPadding)
             )
             3 -> AboutScreen(

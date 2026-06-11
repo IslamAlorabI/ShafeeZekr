@@ -86,6 +86,9 @@
     <string name="sound_play_warning">تنبيه: سيتم تشغيل الصوت فوراً عند اختياره.</string>
     <string name="app_volume">مستوى صوت التطبيق</string>
     <string name="app_volume_desc">التحكم في مستوى صوت التطبيق بشكل مستقل</string>
+    <string name="use_system_volume_active">استخدام صوت الجهاز</string>
+    <string name="use_system_volume_hint">اضغط مطولاً للتبديل إلى وضع صوت الجهاز</string>
+    <string name="use_system_volume_hint_off">اضغط مطولاً للتبديل إلى وضع صوت التطبيق</string>
     <string name="mute_on_call">كتم أثناء المكالمات</string>
     <string name="mute_on_call_desc">منع تشغيل الصوت أثناء إجراء مكالمة هاتفية</string>
     <string name="mute_on_call_permission_note">تتطلب هذه الميزة إذن حالة الهاتف لاكتشاف المكالمات النشطة</string>
