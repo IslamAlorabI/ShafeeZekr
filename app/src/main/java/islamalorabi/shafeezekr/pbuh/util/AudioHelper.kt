@@ -30,6 +30,11 @@ object AudioHelper {
     }
 
     fun isInCall(context: Context): Boolean {
+        try {
+            val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as android.telecom.TelecomManager
+            if (telecomManager.isInCall) return true
+        } catch (_: SecurityException) { }
+
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val mode = audioManager.mode
         return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION
