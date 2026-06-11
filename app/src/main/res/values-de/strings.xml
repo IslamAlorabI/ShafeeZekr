@@ -86,6 +86,9 @@
     <string name="sound_play_warning">Warnung: Der Ton wird sofort nach der Auswahl abgespielt.</string>
     <string name="app_volume">App-Lautstärke</string>
     <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
+    <string name="use_system_volume_active">Gerätelautstärke verwenden</string>
+    <string name="use_system_volume_hint">Lange drücken, um den Gerätelautstärke-Modus umzuschalten</string>
+    <string name="use_system_volume_hint_off">Lange drücken, um den App-Lautstärke-Modus umzuschalten</string>
     <string name="mute_on_call">Während Anrufen stummschalten</string>
     <string name="mute_on_call_desc">Ton während eines Telefonats nicht abspielen</string>
     <string name="mute_on_call_permission_note">Diese Funktion erfordert die Berechtigung zum Telefonstatus, um aktive Anrufe zu erkennen</string>

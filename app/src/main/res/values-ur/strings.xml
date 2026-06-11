@@ -86,6 +86,9 @@
     <string name="sound_play_warning">انتباہ: منتخب کرنے پر آواز فوراً بجائی جائے گی۔</string>
     <string name="app_volume">ایپ والیوم</string>
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
+    <string name="use_system_volume_active">ڈیوائس والیوم استعمال ہو رہا ہے</string>
+    <string name="use_system_volume_hint">ڈیوائس والیوم موڈ ٹوگل کرنے کے لیے دیر تک دبائیں</string>
+    <string name="use_system_volume_hint_off">ایپ والیوم موڈ ٹوگل کرنے کے لیے دیر تک دبائیں</string>
     <string name="mute_on_call">کال کے دوران خاموش</string>
     <string name="mute_on_call_desc">فون کال کے دوران آواز بجنے سے روکیں</string>
     <string name="mute_on_call_permission_note">اس فیچر کو فعال کالز کا پتہ لگانے کے لیے فون اسٹیٹ کی اجازت درکار ہے</string>

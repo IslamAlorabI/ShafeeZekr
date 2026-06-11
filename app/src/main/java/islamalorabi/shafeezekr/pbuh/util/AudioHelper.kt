@@ -80,6 +80,7 @@ object AudioHelper {
         customSoundPath: String? = null,
         isCustomSoundEnabled: Boolean = false,
         audioStreamType: AudioStreamType = AudioStreamType.ALARM,
+        useSystemVolume: Boolean = false,
         onComplete: (() -> Unit)? = null
     ) {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
@@ -92,10 +93,11 @@ object AudioHelper {
             
             val streamType = getStreamType(audioStreamType)
             val originalVolume = audioManager.getStreamVolume(streamType)
-            val maxVolume = audioManager.getStreamMaxVolume(streamType)
-            val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
-            
-            audioManager.setStreamVolume(streamType, targetVolume, 0)
+            if (!useSystemVolume) {
+                val maxVolume = audioManager.getStreamMaxVolume(streamType)
+                val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
+                audioManager.setStreamVolume(streamType, targetVolume, 0)
+            }
 
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(getUsageType(audioStreamType))
@@ -125,13 +127,13 @@ object AudioHelper {
             }
             
             mediaPlayer.setOnCompletionListener { mp ->
-                audioManager.setStreamVolume(streamType, originalVolume, 0)
+                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
                 onComplete?.invoke()
             }
             
             mediaPlayer.setOnErrorListener { mp, _, _ ->
-                audioManager.setStreamVolume(streamType, originalVolume, 0)
+                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
                 onComplete?.invoke()
                 true
@@ -152,7 +154,8 @@ object AudioHelper {
         muteOnDND: Boolean = true,
         customSoundPath: String? = null,
         isCustomSoundEnabled: Boolean = false,
-        audioStreamType: AudioStreamType = AudioStreamType.ALARM
+        audioStreamType: AudioStreamType = AudioStreamType.ALARM,
+        useSystemVolume: Boolean = false
     ): MediaPlayer? {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
             return null
@@ -163,10 +166,11 @@ object AudioHelper {
             
             val streamType = getStreamType(audioStreamType)
             val originalVolume = audioManager.getStreamVolume(streamType)
-            val maxVolume = audioManager.getStreamMaxVolume(streamType)
-            val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
-            
-            audioManager.setStreamVolume(streamType, targetVolume, 0)
+            if (!useSystemVolume) {
+                val maxVolume = audioManager.getStreamMaxVolume(streamType)
+                val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
+                audioManager.setStreamVolume(streamType, targetVolume, 0)
+            }
 
             val mediaPlayer = if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
                 val file = java.io.File(customSoundPath)
@@ -191,7 +195,7 @@ object AudioHelper {
             }
             
             mediaPlayer?.setOnCompletionListener { mp ->
-                audioManager.setStreamVolume(streamType, originalVolume, 0)
+                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
                 mp.release()
             }
             

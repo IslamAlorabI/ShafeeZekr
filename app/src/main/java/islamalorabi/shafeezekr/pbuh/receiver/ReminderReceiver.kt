@@ -85,7 +85,7 @@ class ReminderReceiver : BroadcastReceiver() {
         if (settings.muteOnMedia && islamalorabi.shafeezekr.pbuh.util.AudioHelper.isMediaPlaying(context)) {
             return true
         }
-        if (settings.appVolume < 0.2f) {
+        if (!settings.useSystemVolume && settings.appVolume < 0.2f) {
             return true
         }
         return false
@@ -141,6 +141,7 @@ class ReminderReceiver : BroadcastReceiver() {
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled,
                 audioStreamType = settings.audioStreamType,
+                useSystemVolume = settings.useSystemVolume,
                 onComplete = onComplete
             )
             return true

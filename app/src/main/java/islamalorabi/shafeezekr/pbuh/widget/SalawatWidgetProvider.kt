@@ -128,7 +128,8 @@ class PlaySoundAction : ActionCallback {
                 appVolume = settings.appVolume,
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled,
-                audioStreamType = settings.audioStreamType
+                audioStreamType = settings.audioStreamType,
+                useSystemVolume = settings.useSystemVolume
             )
         } catch (e: Exception) {
             e.printStackTrace()
