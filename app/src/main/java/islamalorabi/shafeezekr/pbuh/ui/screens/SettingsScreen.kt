@@ -564,15 +564,13 @@ fun SettingsScreen(
                                     checked = settings.muteOnCall,
                                     onCheckedChange = { enabled ->
                                         if (enabled) {
-                                            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
-                                                if (androidx.core.content.ContextCompat.checkSelfPermission(
-                                                        context,
-                                                        android.Manifest.permission.READ_PHONE_STATE
-                                                    ) != android.content.pm.PackageManager.PERMISSION_GRANTED
-                                                ) {
-                                                    phoneStatePermissionLauncher.launch(android.Manifest.permission.READ_PHONE_STATE)
-                                                    return@Switch
-                                                }
+                                            if (androidx.core.content.ContextCompat.checkSelfPermission(
+                                                    context,
+                                                    android.Manifest.permission.READ_PHONE_STATE
+                                                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                                            ) {
+                                                phoneStatePermissionLauncher.launch(android.Manifest.permission.READ_PHONE_STATE)
+                                                return@Switch
                                             }
                                         }
                                         onMuteOnCallChange(enabled)
