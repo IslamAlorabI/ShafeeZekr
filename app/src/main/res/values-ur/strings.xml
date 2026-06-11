@@ -88,6 +88,7 @@
     <string name="app_volume_desc">ایپ کی آواز کو آزادانہ طور پر کنٹرول کریں</string>
     <string name="mute_on_call">کال کے دوران خاموش</string>
     <string name="mute_on_call_desc">فون کال کے دوران آواز بجنے سے روکیں</string>
+    <string name="mute_on_call_permission_note">اس فیچر کو فعال کالز کا پتہ لگانے کے لیے فون اسٹیٹ کی اجازت درکار ہے</string>
     
     <string name="period_rules_section">خاموش اوقات</string>
     <string name="period_rules_desc">وہ اوقات مقرر کریں جب یاد دہانیاں خاموش ہوں</string>

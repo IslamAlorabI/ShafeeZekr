@@ -239,7 +239,13 @@ fun SettingsScreen(
         }
     }
 
-
+    val phoneStatePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            onMuteOnCallChange(true)
+        }
+    }
 
     if (showAddPeriodRuleDialog) {
         AddPeriodRuleDialog(
@@ -533,11 +539,18 @@ fun SettingsScreen(
                                 )
                             },
                             supportingContent = {
-                                Text(
-                                    text = stringResource(R.string.mute_on_call_desc),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.mute_on_call_desc),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.mute_on_call_permission_note),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                }
                             },
                             leadingContent = {
                                 Icon(
@@ -549,7 +562,21 @@ fun SettingsScreen(
                             trailingContent = {
                                 Switch(
                                     checked = settings.muteOnCall,
-                                    onCheckedChange = { onMuteOnCallChange(it) }
+                                    onCheckedChange = { enabled ->
+                                        if (enabled) {
+                                            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+                                                if (androidx.core.content.ContextCompat.checkSelfPermission(
+                                                        context,
+                                                        android.Manifest.permission.READ_PHONE_STATE
+                                                    ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                                                ) {
+                                                    phoneStatePermissionLauncher.launch(android.Manifest.permission.READ_PHONE_STATE)
+                                                    return@Switch
+                                                }
+                                            }
+                                        }
+                                        onMuteOnCallChange(enabled)
+                                    }
                                 )
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent)

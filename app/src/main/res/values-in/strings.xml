@@ -88,6 +88,7 @@
     <string name="app_volume_desc">Kontrol volume suara aplikasi secara mandiri</string>
     <string name="mute_on_call">Bisukan Saat Panggilan</string>
     <string name="mute_on_call_desc">Cegah suara diputar saat Anda sedang dalam panggilan telepon</string>
+    <string name="mute_on_call_permission_note">Fitur ini memerlukan izin status telepon untuk mendeteksi panggilan aktif</string>
     
     <string name="period_rules_section">Jam Tenang</string>
     <string name="period_rules_desc">Atur waktu ketika pengingat diheningkan</string>

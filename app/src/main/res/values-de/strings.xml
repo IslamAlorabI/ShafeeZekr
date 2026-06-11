@@ -88,6 +88,7 @@
     <string name="app_volume_desc">App-Lautstärke unabhängig steuern</string>
     <string name="mute_on_call">Während Anrufen stummschalten</string>
     <string name="mute_on_call_desc">Ton während eines Telefonats nicht abspielen</string>
+    <string name="mute_on_call_permission_note">Diese Funktion erfordert die Berechtigung zum Telefonstatus, um aktive Anrufe zu erkennen</string>
     
     <string name="period_rules_section">Ruhezeiten</string>
     <string name="period_rules_desc">Zeiten festlegen, in denen Erinnerungen stummgeschaltet sind</string>
