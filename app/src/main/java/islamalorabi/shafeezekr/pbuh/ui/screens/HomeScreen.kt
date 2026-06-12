@@ -20,6 +20,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -511,6 +513,7 @@ private fun CustomIntervalDialog(
                         onValueChange = {
                             hours = it
                             if (it == 12) minutes = 0
+                            else if (it == 0 && minutes == 0) minutes = 1
                         },
                         label = stringResource(R.string.hours_label)
                     )
@@ -524,7 +527,7 @@ private fun CustomIntervalDialog(
                     
                     NumberPickerColumn(
                         value = minutes,
-                        range = if (hours == 12) 0..0 else 0..59,
+                        range = if (hours == 12) 0..0 else if (hours == 0) 1..59 else 0..59,
                         onValueChange = { minutes = it },
                         label = stringResource(R.string.minutes_label),
                         enabled = hours < 12
@@ -636,9 +639,9 @@ private fun NumberPickerColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(8.dp)
             ) {
-                androidx.compose.material3.IconButton(
-                    onClick = { if (enabled && value < range.last) onValueChange(value + 1) },
-                    enabled = enabled && value < range.last
+                RepeatableIconButton(
+                    enabled = enabled && value < range.last,
+                    onClick = { if (enabled && value < range.last) onValueChange(value + 1) }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -655,9 +658,9 @@ private fun NumberPickerColumn(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 
-                androidx.compose.material3.IconButton(
-                    onClick = { if (enabled && value > range.first) onValueChange(value - 1) },
-                    enabled = enabled && value > range.first
+                RepeatableIconButton(
+                    enabled = enabled && value > range.first,
+                    onClick = { if (enabled && value > range.first) onValueChange(value - 1) }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Remove,
@@ -667,6 +670,40 @@ private fun NumberPickerColumn(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RepeatableIconButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val currentOnClick by androidx.compose.runtime.rememberUpdatedState(onClick)
+
+    LaunchedEffect(isPressed, enabled) {
+        if (isPressed && enabled) {
+            val initialDelayMs = 400L
+            val minDelayMs = 50L
+            val accelerationStep = 30L
+            delay(initialDelayMs)
+            var currentDelay = 200L
+            while (true) {
+                currentOnClick()
+                delay(currentDelay)
+                currentDelay = (currentDelay - accelerationStep).coerceAtLeast(minDelayMs)
+            }
+        }
+    }
+
+    androidx.compose.material3.IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        interactionSource = interactionSource
+    ) {
+        content()
     }
 }
 
