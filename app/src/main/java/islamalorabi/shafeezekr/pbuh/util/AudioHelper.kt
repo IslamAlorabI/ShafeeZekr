@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
+import kotlin.math.roundToInt
 
 object AudioHelper {
 
@@ -27,6 +28,11 @@ object AudioHelper {
             AudioStreamType.NOTIFICATION -> AudioAttributes.USAGE_NOTIFICATION
             AudioStreamType.RING -> AudioAttributes.USAGE_NOTIFICATION_RINGTONE
         }
+    }
+
+    fun getMaxVolume(context: Context, audioStreamType: AudioStreamType): Int {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audioManager.getStreamMaxVolume(getStreamType(audioStreamType))
     }
 
     fun isInCall(context: Context): Boolean {
@@ -95,7 +101,7 @@ object AudioHelper {
             val originalVolume = audioManager.getStreamVolume(streamType)
             if (!useSystemVolume) {
                 val maxVolume = audioManager.getStreamMaxVolume(streamType)
-                val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
+                val targetVolume = (appVolume * maxVolume).roundToInt().coerceIn(0, maxVolume)
                 audioManager.setStreamVolume(streamType, targetVolume, 0)
             }
 
@@ -168,7 +174,7 @@ object AudioHelper {
             val originalVolume = audioManager.getStreamVolume(streamType)
             if (!useSystemVolume) {
                 val maxVolume = audioManager.getStreamMaxVolume(streamType)
-                val targetVolume = (appVolume * maxVolume).toInt().coerceIn(0, maxVolume)
+                val targetVolume = (appVolume * maxVolume).roundToInt().coerceIn(0, maxVolume)
                 audioManager.setStreamVolume(streamType, targetVolume, 0)
             }
 
