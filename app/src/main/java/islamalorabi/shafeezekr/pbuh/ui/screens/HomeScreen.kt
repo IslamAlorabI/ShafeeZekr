@@ -80,6 +80,7 @@ import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
@@ -685,15 +686,15 @@ private fun RepeatableIconButton(
 
     LaunchedEffect(isPressed, enabled) {
         if (isPressed && enabled) {
-            val initialDelayMs = 400L
-            val minDelayMs = 50L
-            val accelerationStep = 30L
-            delay(initialDelayMs)
-            var currentDelay = 200L
+            val initialDelay = 400.milliseconds
+            val minDelay = 50.milliseconds
+            val accelerationStep = 30.milliseconds
+            delay(initialDelay)
+            var currentDelay = 200.milliseconds
             while (true) {
                 currentOnClick()
                 delay(currentDelay)
-                currentDelay = (currentDelay - accelerationStep).coerceAtLeast(minDelayMs)
+                currentDelay = (currentDelay - accelerationStep).coerceAtLeast(minDelay)
             }
         }
     }
