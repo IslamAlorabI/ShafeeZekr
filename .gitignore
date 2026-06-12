@@ -37,3 +37,9 @@ google-services.json
 *.jks
 *.keystore
 signing.properties
+
+# Internal docs
+docs/
+
+# VS Code
+.vscode/
