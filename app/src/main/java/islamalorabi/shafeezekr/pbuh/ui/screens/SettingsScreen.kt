@@ -110,6 +110,7 @@ import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import java.util.Calendar
 import java.util.UUID
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -537,8 +538,10 @@ fun SettingsScreen(
                                 )
                             }
                             if (!settings.useSystemVolume) {
+                                val maxVolume = islamalorabi.shafeezekr.pbuh.util.AudioHelper.getMaxVolume(context, settings.audioStreamType)
+                                val currentStep = (settings.appVolume * maxVolume).roundToInt().coerceIn(1, maxVolume)
                                 Text(
-                                    text = "${LocaleUtils.formatLocalizedNumber((settings.appVolume * 100).toInt())}%",
+                                    text = "${LocaleUtils.formatLocalizedNumber(currentStep)}/${LocaleUtils.formatLocalizedNumber(maxVolume)}",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -550,10 +553,13 @@ fun SettingsScreen(
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically()
                         ) {
+                            val maxVolume = islamalorabi.shafeezekr.pbuh.util.AudioHelper.getMaxVolume(context, settings.audioStreamType)
+                            val minValue = 1f / maxVolume
                             Slider(
-                                value = settings.appVolume.coerceAtLeast(0.1f),
-                                onValueChange = { onVolumeChange(it.coerceAtLeast(0.1f)) },
+                                value = settings.appVolume.coerceIn(minValue, 1f),
+                                onValueChange = { onVolumeChange(it.coerceAtLeast(minValue)) },
                                 valueRange = 0f..1f,
+                                steps = maxVolume - 1,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
