@@ -32,14 +32,24 @@ import islamalorabi.shafeezekr.pbuh.R
 import java.util.Calendar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 
 @Composable
 fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
     val currentYear = Calendar.getInstance().get(Calendar.YEAR).toString()
-    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    val openUri: (String) -> Unit = { url ->
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: Exception) {
+            Toast.makeText(context, url, Toast.LENGTH_LONG).show()
+        }
+    }
     val githubUrl = stringResource(R.string.github_url)
     val telegramUrl = stringResource(R.string.telegram_url)
     val telegramChannelUrl = stringResource(R.string.telegram_channel_url)
@@ -111,7 +121,7 @@ fun AboutScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { uriHandler.openUri(githubUrl) }
+                        .clickable { openUri(githubUrl) }
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -139,7 +149,7 @@ fun AboutScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { uriHandler.openUri(telegramUrl) }
+                        .clickable { openUri(telegramUrl) }
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -167,7 +177,7 @@ fun AboutScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { uriHandler.openUri(telegramChannelUrl) }
+                        .clickable { openUri(telegramChannelUrl) }
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -196,7 +206,7 @@ fun AboutScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { uriHandler.openUri(privacyPolicyUrl) }
+                        .clickable { openUri(privacyPolicyUrl) }
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
