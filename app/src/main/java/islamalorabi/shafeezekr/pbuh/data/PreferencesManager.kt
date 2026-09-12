@@ -65,14 +65,13 @@ data class PeriodRule(
         }
     }
 
-    fun isCurrentTimeInRange(): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-        val currentMinute = calendar.get(Calendar.MINUTE)
-        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1
-        val currentYear = calendar.get(Calendar.YEAR)
-        val currentMonth = calendar.get(Calendar.MONTH)
-        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+    fun isCurrentTimeInRange(now: Calendar = Calendar.getInstance()): Boolean {
+        val currentHour = now.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = now.get(Calendar.MINUTE)
+        val currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK) - 1
+        val currentYear = now.get(Calendar.YEAR)
+        val currentMonth = now.get(Calendar.MONTH)
+        val currentDay = now.get(Calendar.DAY_OF_MONTH)
 
         return when (scheduleType) {
             RuleScheduleType.WEEKLY_DAYS -> {
@@ -209,28 +208,27 @@ data class AppSettings(
     val audioStreamType: AudioStreamType = AudioStreamType.ALARM,
     val autoDismissNotification: Boolean = false
 ) {
-    fun isReminderAllowedByPeriodRules(): Boolean {
+    fun isReminderAllowedByPeriodRules(now: Calendar = Calendar.getInstance()): Boolean {
         val enabledRules = periodRules.filter { it.isEnabled }
-        
+
         for (rule in enabledRules) {
-            if (rule.isCurrentTimeInRange()) {
+            if (rule.isCurrentTimeInRange(now)) {
                 return false
             }
         }
-        
+
         return true
     }
 
-    fun getQuietHoursEndMillis(): Long {
+    fun getQuietHoursEndMillis(now: Calendar = Calendar.getInstance()): Long {
         val enabledRules = periodRules.filter { it.isEnabled }
-        val now = Calendar.getInstance()
         var earliestEnd = Long.MAX_VALUE
 
         for (rule in enabledRules) {
-            if (!rule.isCurrentTimeInRange()) continue
+            if (!rule.isCurrentTimeInRange(now)) continue
 
             if (rule.isAllDay) {
-                val endCal = Calendar.getInstance().apply {
+                val endCal = (now.clone() as Calendar).apply {
                     set(Calendar.HOUR_OF_DAY, 23)
                     set(Calendar.MINUTE, 59)
                     set(Calendar.SECOND, 59)
@@ -244,7 +242,7 @@ data class AppSettings(
                 val startTotalMinutes = rule.startHour * 60 + rule.startMinute
                 val nowTotalMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
-                val endCal = Calendar.getInstance().apply {
+                val endCal = (now.clone() as Calendar).apply {
                     set(Calendar.HOUR_OF_DAY, rule.endHour)
                     set(Calendar.MINUTE, rule.endMinute)
                     set(Calendar.SECOND, 59)
@@ -262,7 +260,7 @@ data class AppSettings(
         }
 
         return if (earliestEnd == Long.MAX_VALUE) {
-            System.currentTimeMillis() + 60_000L
+            now.timeInMillis + 60_000L
         } else {
             earliestEnd + 1000L
         }

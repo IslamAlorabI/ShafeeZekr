@@ -94,8 +94,8 @@ Fully localized in 8 languages with system language auto-detection:
 | **Design System** | Material 3 (Monet dynamic colors) |
 | **Widgets** | Jetpack Glance + Glance Material 3 |
 | **Data Persistence** | DataStore Preferences |
-| **Architecture** | MVVM |
-| **Networking** | Retrofit 3.0 + Gson |
+| **Architecture** | Single-activity Compose, DataStore-backed state |
+| **Widgets** | Jetpack Glance + Glance Material 3 |
 | **Build** | AGP 9.2.1, Compose BOM 2026.05.00 |
 | **Min SDK** | 31 (Android 12) |
 | **Target SDK** | 36 |
