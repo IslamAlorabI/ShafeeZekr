@@ -12,6 +12,21 @@ import kotlin.math.roundToInt
 
 object AudioHelper {
 
+    const val BUILT_IN_SOUND_COUNT = 9
+
+    fun getRandomSoundIndex(): Int = (1..BUILT_IN_SOUND_COUNT).random()
+
+    private class ActivePlayer(val overriddenStream: Int?)
+    private class VolumeHold(val originalVolume: Int, var holders: Int)
+
+    private val lock = Any()
+
+    // Strong references to players that are still playing. Without this, a MediaPlayer
+    // created as a local variable can be garbage-collected (and finalized/released)
+    // mid-playback, which cuts the sound off before it finishes.
+    private val activePlayers = mutableMapOf<MediaPlayer, ActivePlayer>()
+    private val volumeHolds = mutableMapOf<Int, VolumeHold>()
+
     private fun getStreamType(audioStreamType: AudioStreamType): Int {
         return when (audioStreamType) {
             AudioStreamType.MEDIA -> AudioManager.STREAM_MUSIC
@@ -87,6 +102,7 @@ object AudioHelper {
         isCustomSoundEnabled: Boolean = false,
         audioStreamType: AudioStreamType = AudioStreamType.ALARM,
         useSystemVolume: Boolean = false,
+        onStart: (() -> Unit)? = null,
         onComplete: (() -> Unit)? = null
     ) {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
@@ -94,60 +110,30 @@ object AudioHelper {
             return
         }
 
+        var mediaPlayer: MediaPlayer? = null
         try {
-            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            
-            val streamType = getStreamType(audioStreamType)
-            val originalVolume = audioManager.getStreamVolume(streamType)
-            if (!useSystemVolume) {
-                val maxVolume = audioManager.getStreamMaxVolume(streamType)
-                val targetVolume = (appVolume * maxVolume).roundToInt().coerceIn(0, maxVolume)
-                audioManager.setStreamVolume(streamType, targetVolume, 0)
-            }
+            mediaPlayer = createPlayer(context, soundIndex, customSoundPath, isCustomSoundEnabled, audioStreamType)
+            val player = mediaPlayer
+            registerPlayer(context, player, audioStreamType, appVolume, useSystemVolume)
 
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(getUsageType(audioStreamType))
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
-
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setAudioAttributes(audioAttributes)
-            
-            if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
-                val file = java.io.File(customSoundPath)
-                if (file.exists()) {
-                    mediaPlayer.setDataSource(file.absolutePath)
-                } else {
-                    val resId = getSoundResourceId(soundIndex)
-                    val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
-                    mediaPlayer.setDataSource(context, soundUri)
-                }
-            } else {
-                val resId = getSoundResourceId(soundIndex)
-                val soundUri = Uri.parse("android.resource://${context.packageName}/$resId")
-                mediaPlayer.setDataSource(context, soundUri)
-            }
-            
-            mediaPlayer.setOnPreparedListener { mp ->
+            player.setOnPreparedListener { mp ->
                 mp.start()
+                onStart?.invoke()
             }
-            
-            mediaPlayer.setOnCompletionListener { mp ->
-                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
-                mp.release()
+            player.setOnCompletionListener { mp ->
+                stopPlayer(context, mp)
                 onComplete?.invoke()
             }
-            
-            mediaPlayer.setOnErrorListener { mp, _, _ ->
-                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
-                mp.release()
+            player.setOnErrorListener { mp, _, _ ->
+                stopPlayer(context, mp)
                 onComplete?.invoke()
                 true
             }
-            
-            mediaPlayer.prepareAsync()
+
+            player.prepareAsync()
         } catch (e: Exception) {
             e.printStackTrace()
+            mediaPlayer?.let { stopPlayer(context, it) }
             onComplete?.invoke()
         }
     }
@@ -167,49 +153,129 @@ object AudioHelper {
             return null
         }
 
+        var mediaPlayer: MediaPlayer? = null
         return try {
-            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            
-            val streamType = getStreamType(audioStreamType)
-            val originalVolume = audioManager.getStreamVolume(streamType)
-            if (!useSystemVolume) {
-                val maxVolume = audioManager.getStreamMaxVolume(streamType)
-                val targetVolume = (appVolume * maxVolume).roundToInt().coerceIn(0, maxVolume)
-                audioManager.setStreamVolume(streamType, targetVolume, 0)
-            }
-
-            val mediaPlayer = if (isCustomSoundEnabled && !customSoundPath.isNullOrEmpty()) {
-                val file = java.io.File(customSoundPath)
-                if (file.exists()) {
-                    MediaPlayer().apply {
-                        setAudioAttributes(
-                            AudioAttributes.Builder()
-                                .setUsage(getUsageType(audioStreamType))
-                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                .build()
-                        )
-                        setDataSource(file.absolutePath)
-                        prepare()
-                    }
-                } else {
-                    val resId = getSoundResourceId(soundIndex)
-                    MediaPlayer.create(context, resId)
-                }
-            } else {
-                val resId = getSoundResourceId(soundIndex)
-                MediaPlayer.create(context, resId)
-            }
-            
-            mediaPlayer?.setOnCompletionListener { mp ->
-                if (!useSystemVolume) audioManager.setStreamVolume(streamType, originalVolume, 0)
-                mp.release()
-            }
-            
-            mediaPlayer?.start()
-            mediaPlayer
+            mediaPlayer = createPlayer(context, soundIndex, customSoundPath, isCustomSoundEnabled, audioStreamType)
+            val player = mediaPlayer
+            player.prepare()
+            registerPlayer(context, player, audioStreamType, appVolume, useSystemVolume)
+            player.setOnCompletionListener { mp -> stopPlayer(context, mp) }
+            player.start()
+            player
         } catch (e: Exception) {
             e.printStackTrace()
+            mediaPlayer?.let { stopPlayer(context, it) }
             null
+        }
+    }
+
+    /**
+     * Stops and releases a player started by this helper and restores the stream volume
+     * once no other sound of ours is still using it. Safe to call more than once.
+     */
+    fun stopPlayer(context: Context, mediaPlayer: MediaPlayer) {
+        val entry = synchronized(lock) { activePlayers.remove(mediaPlayer) }
+        try {
+            mediaPlayer.release()
+        } catch (_: Exception) { }
+        if (entry?.overriddenStream != null) {
+            restoreVolume(context, entry.overriddenStream)
+        }
+    }
+
+    /** Duration of the sound that would be played, in ms, or 0 if unknown. */
+    fun getSoundDurationMs(
+        context: Context,
+        soundIndex: Int,
+        customSoundPath: String?,
+        isCustomSoundEnabled: Boolean
+    ): Long {
+        val retriever = android.media.MediaMetadataRetriever()
+        return try {
+            val customFile = customSoundPath?.let { java.io.File(it) }
+            if (isCustomSoundEnabled && customFile != null && customFile.exists()) {
+                retriever.setDataSource(customFile.absolutePath)
+            } else {
+                retriever.setDataSource(context, getSoundUri(context, soundIndex))
+            }
+            retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)
+                ?.toLongOrNull() ?: 0L
+        } catch (_: Exception) {
+            0L
+        } finally {
+            retriever.release()
+        }
+    }
+
+    private fun createPlayer(
+        context: Context,
+        soundIndex: Int,
+        customSoundPath: String?,
+        isCustomSoundEnabled: Boolean,
+        audioStreamType: AudioStreamType
+    ): MediaPlayer {
+        val mediaPlayer = MediaPlayer()
+        try {
+            mediaPlayer.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(getUsageType(audioStreamType))
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+            val customFile = customSoundPath?.let { java.io.File(it) }
+            if (isCustomSoundEnabled && customFile != null && customFile.exists()) {
+                mediaPlayer.setDataSource(customFile.absolutePath)
+            } else {
+                mediaPlayer.setDataSource(context, getSoundUri(context, soundIndex))
+            }
+        } catch (e: Exception) {
+            mediaPlayer.release()
+            throw e
+        }
+        return mediaPlayer
+    }
+
+    private fun getSoundUri(context: Context, soundIndex: Int): Uri =
+        Uri.parse("android.resource://${context.packageName}/${getSoundResourceId(soundIndex)}")
+
+    private fun registerPlayer(
+        context: Context,
+        mediaPlayer: MediaPlayer,
+        audioStreamType: AudioStreamType,
+        appVolume: Float,
+        useSystemVolume: Boolean
+    ) {
+        val streamType = getStreamType(audioStreamType)
+        synchronized(lock) {
+            if (!useSystemVolume) overrideVolume(context, streamType, appVolume)
+            activePlayers[mediaPlayer] = ActivePlayer(if (useSystemVolume) null else streamType)
+        }
+    }
+
+    private fun overrideVolume(context: Context, streamType: Int, appVolume: Float) {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        synchronized(lock) {
+            // Only the first overlapping sound remembers the user's volume; later ones would
+            // otherwise capture our own override and "restore" the stream to it.
+            val hold = volumeHolds.getOrPut(streamType) {
+                VolumeHold(originalVolume = audioManager.getStreamVolume(streamType), holders = 0)
+            }
+            hold.holders++
+            val maxVolume = audioManager.getStreamMaxVolume(streamType)
+            val targetVolume = (appVolume * maxVolume).roundToInt().coerceIn(0, maxVolume)
+            audioManager.setStreamVolume(streamType, targetVolume, 0)
+        }
+    }
+
+    private fun restoreVolume(context: Context, streamType: Int) {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        synchronized(lock) {
+            val hold = volumeHolds[streamType] ?: return
+            hold.holders--
+            if (hold.holders <= 0) {
+                volumeHolds.remove(streamType)
+                audioManager.setStreamVolume(streamType, hold.originalVolume, 0)
+            }
         }
     }
 

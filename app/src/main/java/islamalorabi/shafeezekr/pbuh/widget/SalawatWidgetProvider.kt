@@ -39,11 +39,7 @@ import kotlinx.coroutines.flow.first
 
 class SalawatWidget : GlanceAppWidget() {
 
-    private fun getLocalizedContext(context: Context): Context {
-        val preferencesManager = PreferencesManager(context)
-        val languageCode = preferencesManager.getLanguageCodeSync()
-        return LocaleUtils.updateResources(context, languageCode)
-    }
+    private fun getLocalizedContext(context: Context): Context = LocaleUtils.localizedContext(context)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val localizedContext = getLocalizedContext(context)
@@ -122,10 +118,15 @@ class PlaySoundAction : ActionCallback {
         try {
             val preferencesManager = PreferencesManager(context)
             val settings = preferencesManager.settingsFlow.first()
+            val soundIndex = if (settings.shuffleSounds && !settings.isCustomSoundEnabled)
+                AudioHelper.getRandomSoundIndex()
+            else settings.selectedSoundIndex
             AudioHelper.playWithMasterVolume(
                 context = context,
-                soundIndex = settings.selectedSoundIndex,
+                soundIndex = soundIndex,
                 appVolume = settings.appVolume,
+                muteOnSilent = settings.muteOnSilent,
+                muteOnDND = settings.muteOnDND,
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled,
                 audioStreamType = settings.audioStreamType,

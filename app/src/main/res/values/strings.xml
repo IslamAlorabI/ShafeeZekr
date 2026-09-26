@@ -192,6 +192,9 @@
     <string name="auto_dismiss_notification">Auto-dismiss Notification</string>
     <string name="auto_dismiss_notification_desc">Automatically clear the notification after the reminder sound ends</string>
 
+    <string name="shuffle_sounds">Shuffle Sounds</string>
+    <string name="shuffle_sounds_desc">Play a random built-in sound each time</string>
+
     <string name="nav_statistics">Statistics</string>
     <string name="stats_today">Today</string>
     <string name="stats_this_week">This Week</string>
@@ -206,4 +209,20 @@
     <string name="stats_set_goal">Set Daily Goal</string>
     <string name="stats_dhikr_unit">dhikr</string>
     <string name="stats_no_dhikr">Nothing</string>
+
+    <!-- Statistics backup -->
+    <string name="stats_export">Export</string>
+    <string name="stats_import">Import</string>
+    <string name="stats_export_done">Statistics exported</string>
+    <string name="stats_export_failed">Export failed</string>
+    <string name="stats_import_done">Imported %1$s days and %2$s quiet-hours rules</string>
+    <string name="stats_import_failed">This file is not a statistics export</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">Goal reached!</string>
+    <string name="goal_reached_message">May Allah accept it from you</string>
+    <string name="exact_alarm_title">Allow on-time reminders</string>
+    <string name="exact_alarm_desc">Without the \"Alarms &amp; reminders\" permission, Android may delay reminders by several minutes. Allow it so each reminder arrives on time.</string>
+    <string name="exact_alarm_allow">Allow</string>
+    <string name="not_now">Not now</string>
 </resources>

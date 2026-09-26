@@ -178,6 +178,9 @@
     <string name="auto_dismiss_notification">حذف خودکار اعلان</string>
     <string name="auto_dismiss_notification_desc">حذف خودکار اعلان پس از پایان صدای یادآوری</string>
 
+    <string name="shuffle_sounds">پخش تصادفی صداها</string>
+    <string name="shuffle_sounds_desc">هر بار یک صدای تصادفی داخلی پخش شود</string>
+
     <string name="nav_statistics">آمار</string>
     <string name="stats_today">امروز</string>
     <string name="stats_this_week">این هفته</string>
@@ -192,5 +195,20 @@
     <string name="stats_set_goal">تعیین هدف روزانه</string>
     <string name="stats_dhikr_unit">ذکر</string>
     <string name="stats_no_dhikr">هیچ</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">برون‌بری</string>
+    <string name="stats_import">درون‌ریزی</string>
+    <string name="stats_export_done">آمار برون‌بری شد</string>
+    <string name="stats_export_failed">برون‌بری ناموفق بود</string>
+    <string name="stats_import_done">%1$s روز و %2$s قانون ساعات سکوت درون‌ریزی شد</string>
+    <string name="stats_import_failed">این فایل خروجی آمار نیست</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">به هدف رسیدید!</string>
+    <string name="goal_reached_message">خداوند از شما بپذیرد</string>
+    <string name="exact_alarm_title">اجازه یادآوری به‌موقع</string>
+    <string name="exact_alarm_desc">بدون مجوز \"هشدارها و یادآوری‌ها\"، اندروید ممکن است یادآوری‌ها را چند دقیقه به تأخیر بیندازد. اجازه دهید تا هر یادآوری به‌موقع برسد.</string>
+    <string name="exact_alarm_allow">اجازه دادن</string>
+    <string name="not_now">اکنون نه</string>
+</resources>

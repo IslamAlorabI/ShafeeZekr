@@ -1,6 +1,10 @@
 @file:Suppress("KotlinConstantConditions")
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.saveable.rememberSaveable
+import android.net.Uri
+import android.content.Intent
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -9,10 +13,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -65,7 +72,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,6 +88,7 @@ import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
+import islamalorabi.shafeezekr.pbuh.ui.theme.SmoothCornerShape
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -93,6 +103,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
     var hasNotificationPermission by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -104,6 +115,21 @@ fun HomeScreen(
         )
     }
 
+    val alarmManager = remember { context.getSystemService(android.app.AlarmManager::class.java) }
+    // Exact alarms need no permission before Android 12
+    fun checkExactAlarms() = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+    var canScheduleExactAlarms by remember { mutableStateOf(checkExactAlarms()) }
+    // Asked once per launch while reminders are on; "Not now" hides it until the next launch
+    var exactAlarmPromptDismissed by rememberSaveable { mutableStateOf(false) }
+    val showExactAlarmDialog = settings.isReminderEnabled && !canScheduleExactAlarms && !exactAlarmPromptDismissed
+
+    val exactAlarmSettingsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        canScheduleExactAlarms = checkExactAlarms()
+        if (!canScheduleExactAlarms) exactAlarmPromptDismissed = true
+    }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -113,15 +139,24 @@ fun HomeScreen(
         }
     }
 
-    var showCustomDialog by remember { mutableStateOf(false) }
-    var isPlaying by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            delay(4.seconds)
-            isPlaying = false
-        }
+    if (showExactAlarmDialog) {
+        ExactAlarmDialog(
+            onAllow = {
+                exactAlarmSettingsLauncher.launch(
+                    Intent(
+                        android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.fromParts("package", context.packageName, null)
+                    )
+                )
+            },
+            onDismiss = { exactAlarmPromptDismissed = true }
+        )
     }
+
+    var showCustomDialog by remember { mutableStateOf(false) }
+    // Sounds can overlap when tapped repeatedly; show "Playing" until the last one ends.
+    var activePlaybacks by remember { mutableIntStateOf(0) }
+    val isPlaying = activePlaybacks > 0
 
     val infiniteTransition = rememberInfiniteTransition(label = "visualizer")
     val bar1Scale by infiniteTransition.animateFloat(
@@ -176,6 +211,7 @@ fun HomeScreen(
             if (currentlyPaused) {
                 remainingTime = 0L
             } else {
+                ReminderScheduler.recoverIfOverdue(context)
                 val nextTrigger = sharedPrefs.getLong("next_trigger_time", 0L)
                 val now = System.currentTimeMillis()
                 remainingTime = if (nextTrigger > now) nextTrigger - now else 0L
@@ -192,6 +228,19 @@ fun HomeScreen(
         else -> TimerState.ACTIVE
     }
 
+    val heroInteraction = remember { MutableInteractionSource() }
+    val heroPressed by heroInteraction.collectIsPressedAsState()
+    val heroCorner by animateDpAsState(
+        targetValue = if (heroPressed) 60.dp else 48.dp,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "heroCorner"
+    )
+    val heroScale by animateFloatAsState(
+        targetValue = if (heroPressed) 0.97f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "heroScale"
+    )
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -200,24 +249,41 @@ fun HomeScreen(
         item {
             Card(
                 onClick = {
-                    isPlaying = true
+                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                    var started = false
+                    val soundIndex = if (settings.shuffleSounds && !settings.isCustomSoundEnabled)
+                        islamalorabi.shafeezekr.pbuh.util.AudioHelper.getRandomSoundIndex()
+                    else settings.selectedSoundIndex
                     islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolume(
                         context = context,
-                        soundIndex = settings.selectedSoundIndex,
+                        soundIndex = soundIndex,
                         appVolume = settings.appVolume,
                         muteOnSilent = false,
                         muteOnDND = false,
                         customSoundPath = settings.customSoundPath,
                         isCustomSoundEnabled = settings.isCustomSoundEnabled,
                         audioStreamType = settings.audioStreamType,
-                        useSystemVolume = settings.useSystemVolume
+                        useSystemVolume = settings.useSystemVolume,
+                        onStart = {
+                            started = true
+                            activePlaybacks++
+                        },
+                        onComplete = {
+                            if (started) activePlaybacks = (activePlaybacks - 1).coerceAtLeast(0)
+                        }
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        scaleX = heroScale
+                        scaleY = heroScale
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
-                shape = RoundedCornerShape(36.dp)
+                shape = SmoothCornerShape(heroCorner),
+                interactionSource = heroInteraction
             ) {
                 Column(
                     modifier = Modifier
@@ -284,7 +350,7 @@ fun HomeScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -407,7 +473,7 @@ private fun IntervalSettingsContent(
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = SmoothCornerShape(24.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
             )
@@ -487,6 +553,32 @@ private fun IntervalSettingsContent(
 }
 
 @Composable
+private fun ExactAlarmDialog(onAllow: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_pbuh),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        title = { Text(stringResource(R.string.exact_alarm_title)) },
+        text = { Text(stringResource(R.string.exact_alarm_desc)) },
+        confirmButton = {
+            TextButton(onClick = onAllow) {
+                Text(stringResource(R.string.exact_alarm_allow))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.not_now))
+            }
+        }
+    )
+}
+
+@Composable
 private fun CustomIntervalDialog(
     currentValue: Int,
     onDismiss: () -> Unit,
@@ -555,7 +647,7 @@ private fun CustomIntervalDialog(
                                 .fillMaxWidth()
                                 .background(
                                     color = MaterialTheme.colorScheme.tertiaryContainer,
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = SmoothCornerShape(12.dp)
                                 )
                                 .padding(horizontal = 16.dp, vertical = 10.dp),
                             textAlign = TextAlign.Center
@@ -580,7 +672,7 @@ private fun CustomIntervalDialog(
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = SmoothCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -594,7 +686,7 @@ private fun CustomIntervalDialog(
                         onConfirm(if (totalMinutes > 0) totalMinutes else 1)
                     },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = SmoothCornerShape(12.dp)
                 ) {
                     Text(stringResource(R.string.save))
                 }
@@ -631,7 +723,7 @@ private fun NumberPickerColumn(
         Spacer(modifier = Modifier.height(8.dp))
         
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = SmoothCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             )
@@ -734,7 +826,7 @@ private fun IntervalPillButton(
     Card(
         onClick = onClick,
         modifier = modifier.height(48.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = SmoothCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor
@@ -851,7 +943,7 @@ private fun CountdownCard(settings: AppSettings, remainingTime: Long, timerState
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = SmoothCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         )

@@ -178,6 +178,9 @@
     <string name="auto_dismiss_notification">Bildirimi Otomatik Kapat</string>
     <string name="auto_dismiss_notification_desc">Hatırlatma sesi bittikten sonra bildirimi otomatik olarak kaldır</string>
 
+    <string name="shuffle_sounds">Sesleri Karıştır</string>
+    <string name="shuffle_sounds_desc">Her seferinde rastgele bir yerleşik ses çal</string>
+
     <string name="nav_statistics">İstatistikler</string>
     <string name="stats_today">Bugün</string>
     <string name="stats_this_week">Bu Hafta</string>
@@ -192,5 +195,20 @@
     <string name="stats_set_goal">Günlük Hedefi Belirle</string>
     <string name="stats_dhikr_unit">zikir</string>
     <string name="stats_no_dhikr">Hiçbir şey</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">Dışa aktar</string>
+    <string name="stats_import">İçe aktar</string>
+    <string name="stats_export_done">İstatistikler dışa aktarıldı</string>
+    <string name="stats_export_failed">Dışa aktarma başarısız</string>
+    <string name="stats_import_done">%1$s gün ve %2$s sessiz saat kuralı içe aktarıldı</string>
+    <string name="stats_import_failed">Bu dosya bir istatistik dışa aktarımı değil</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">Hedefe ulaşıldı!</string>
+    <string name="goal_reached_message">Allah kabul etsin</string>
+    <string name="exact_alarm_title">Zamanında hatırlatmalara izin ver</string>
+    <string name="exact_alarm_desc">\"Alarmlar ve hatırlatıcılar\" izni olmadan Android hatırlatmaları birkaç dakika geciktirebilir. Her hatırlatmanın zamanında gelmesi için izin verin.</string>
+    <string name="exact_alarm_allow">İzin ver</string>
+    <string name="not_now">Şimdi değil</string>
+</resources>

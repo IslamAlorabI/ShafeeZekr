@@ -17,6 +17,7 @@ class QuietHoursTest {
 
     // 2026-09-09 is a Wednesday
     private fun wednesday(hour: Int, minute: Int) = utcNow(2026, Calendar.SEPTEMBER, 9, hour, minute)
+    private fun thursday(hour: Int, minute: Int) = utcNow(2026, Calendar.SEPTEMBER, 10, hour, minute)
     private val wednesdayIndex get() = wednesday(12, 0).get(Calendar.DAY_OF_WEEK) - 1
 
     /** Mirrors the app's contract: rule end fires at HH:MM:59.999, resume alarm 1s later. */
@@ -42,7 +43,7 @@ class QuietHoursTest {
     fun `active matching rule blocks reminders`() {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 9, endHour = 17,
+            startHour = 9, endHour = 17, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         assertFalse(settingsWith(rule).isReminderAllowedByPeriodRules(wednesday(12, 0)))
@@ -53,7 +54,7 @@ class QuietHoursTest {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
             isEnabled = false,
-            startHour = 9, endHour = 17,
+            startHour = 9, endHour = 17, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         assertTrue(settingsWith(rule).isReminderAllowedByPeriodRules(wednesday(12, 0)))
@@ -63,7 +64,7 @@ class QuietHoursTest {
     fun `rule on another day does not block`() {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 9, endHour = 17,
+            startHour = 9, endHour = 17, endMinute = 0,
             daysOfWeek = setOf((wednesdayIndex + 1) % 7)
         )
         assertTrue(settingsWith(rule).isReminderAllowedByPeriodRules(wednesday(12, 0)))
@@ -75,7 +76,7 @@ class QuietHoursTest {
     fun `same-day rule ends at rule end today`() {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 9, endHour = 17,
+            startHour = 9, endHour = 17, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         val now = wednesday(12, 0)
@@ -86,7 +87,7 @@ class QuietHoursTest {
     fun `overnight rule entered in evening ends tomorrow morning`() {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 22, endHour = 6,
+            startHour = 22, endHour = 6, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         val now = wednesday(23, 0)
@@ -94,13 +95,13 @@ class QuietHoursTest {
     }
 
     @Test
-    fun `overnight rule in early morning ends same morning`() {
+    fun `overnight rule in early morning of next day ends that morning`() {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 22, endHour = 6,
+            startHour = 22, endHour = 6, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
-        val now = wednesday(5, 0)
+        val now = thursday(5, 0)
         assertEquals(expectedEnd(now, 6, 0), settingsWith(rule).getQuietHoursEndMillis(now))
     }
 
@@ -119,12 +120,12 @@ class QuietHoursTest {
     fun `earliest ending active rule wins`() {
         val later = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 8, endHour = 20,
+            startHour = 8, endHour = 20, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         val earlier = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
-            startHour = 10, endHour = 14,
+            startHour = 10, endHour = 14, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         val now = wednesday(12, 0)
@@ -142,7 +143,7 @@ class QuietHoursTest {
         val rule = PeriodRule(
             scheduleType = RuleScheduleType.WEEKLY_DAYS,
             isEnabled = false,
-            startHour = 9, endHour = 17,
+            startHour = 9, endHour = 17, endMinute = 0,
             daysOfWeek = setOf(wednesdayIndex)
         )
         val now = wednesday(12, 0)

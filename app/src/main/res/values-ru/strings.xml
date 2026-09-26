@@ -178,6 +178,9 @@
     <string name="auto_dismiss_notification">Автоскрытие уведомления</string>
     <string name="auto_dismiss_notification_desc">Автоматически убирать уведомление после окончания звука напоминания</string>
 
+    <string name="shuffle_sounds">Случайный звук</string>
+    <string name="shuffle_sounds_desc">Воспроизводить случайный встроенный звук каждый раз</string>
+
     <string name="nav_statistics">Статистика</string>
     <string name="stats_today">Сегодня</string>
     <string name="stats_this_week">Эта неделя</string>
@@ -192,5 +195,20 @@
     <string name="stats_set_goal">Установить дневную цель</string>
     <string name="stats_dhikr_unit">зикр</string>
     <string name="stats_no_dhikr">Ничего</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">Экспорт</string>
+    <string name="stats_import">Импорт</string>
+    <string name="stats_export_done">Статистика экспортирована</string>
+    <string name="stats_export_failed">Не удалось экспортировать</string>
+    <string name="stats_import_done">Импортировано дней: %1$s, правил тихих часов: %2$s</string>
+    <string name="stats_import_failed">Этот файл не является экспортом статистики</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">Цель достигнута!</string>
+    <string name="goal_reached_message">Да примет Аллах это от вас</string>
+    <string name="exact_alarm_title">Разрешить точные напоминания</string>
+    <string name="exact_alarm_desc">Без разрешения «Будильники и напоминания» Android может задерживать напоминания на несколько минут. Разрешите, чтобы каждое напоминание приходило вовремя.</string>
+    <string name="exact_alarm_allow">Разрешить</string>
+    <string name="not_now">Не сейчас</string>
+</resources>

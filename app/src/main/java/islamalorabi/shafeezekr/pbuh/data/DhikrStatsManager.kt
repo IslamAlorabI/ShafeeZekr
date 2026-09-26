@@ -13,6 +13,7 @@ class DhikrStatsManager(context: Context) {
     companion object {
         private const val PREFS_NAME = "dhikr_stats"
         private const val KEY_DAILY_COUNTS = "daily_counts"
+        private const val KEY_LAST_CELEBRATED = "last_celebrated_date"
         private val DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
 
         fun computeStreak(counts: Map<String, Int>, today: LocalDate): Int {
@@ -51,6 +52,15 @@ class DhikrStatsManager(context: Context) {
         saveCounts(counts)
     }
 
+    /** Returns true once per day, the first time today's count reaches [goal]. */
+    fun consumeGoalCelebration(goal: Int): Boolean {
+        val today = LocalDate.now().format(DATE_FORMATTER)
+        if (goal <= 0 || getTodayCount() < goal) return false
+        if (prefs.getString(KEY_LAST_CELEBRATED, null) == today) return false
+        prefs.edit().putString(KEY_LAST_CELEBRATED, today).apply()
+        return true
+    }
+
     fun getTodayCount(): Int {
         val today = LocalDate.now().format(DATE_FORMATTER)
         return loadCounts().optInt(today, 0)
@@ -67,6 +77,12 @@ class DhikrStatsManager(context: Context) {
 
     fun getCurrentStreak(): Int =
         computeStreak(toMap(loadCounts()), LocalDate.now())
+
+    fun getAllCounts(): Map<String, Int> = toMap(loadCounts())
+
+    fun replaceAllCounts(counts: Map<String, Int>) {
+        saveCounts(JSONObject(counts as Map<*, *>))
+    }
 
     fun registerChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)

@@ -179,6 +179,9 @@
     <string name="auto_dismiss_notification">Benachrichtigung automatisch ausblenden</string>
     <string name="auto_dismiss_notification_desc">Benachrichtigung automatisch entfernen, nachdem der Erinnerungston beendet ist</string>
 
+    <string name="shuffle_sounds">Zufällige Wiedergabe</string>
+    <string name="shuffle_sounds_desc">Jedes Mal einen zufälligen integrierten Ton abspielen</string>
+
     <string name="nav_statistics">Statistiken</string>
     <string name="stats_today">Heute</string>
     <string name="stats_this_week">Diese Woche</string>
@@ -193,5 +196,20 @@
     <string name="stats_set_goal">Tagesziel festlegen</string>
     <string name="stats_dhikr_unit">Dhikr</string>
     <string name="stats_no_dhikr">Nichts</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">Exportieren</string>
+    <string name="stats_import">Importieren</string>
+    <string name="stats_export_done">Statistik exportiert</string>
+    <string name="stats_export_failed">Export fehlgeschlagen</string>
+    <string name="stats_import_done">%1$s Tage und %2$s Ruhezeit-Regeln importiert</string>
+    <string name="stats_import_failed">Diese Datei ist kein Statistik-Export</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">Ziel erreicht!</string>
+    <string name="goal_reached_message">Möge Allah es von dir annehmen</string>
+    <string name="exact_alarm_title">Pünktliche Erinnerungen erlauben</string>
+    <string name="exact_alarm_desc">Ohne die Berechtigung \"Wecker &amp; Erinnerungen\" kann Android Erinnerungen um mehrere Minuten verzögern. Erlaube sie, damit jede Erinnerung pünktlich kommt.</string>
+    <string name="exact_alarm_allow">Erlauben</string>
+    <string name="not_now">Nicht jetzt</string>
+</resources>

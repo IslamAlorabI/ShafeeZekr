@@ -27,6 +27,7 @@ class PeriodRuleTest {
     private fun wednesday(hour: Int, minute: Int) = utcNow(2026, Calendar.SEPTEMBER, 9, hour, minute)
     private val wednesdayIndex get() = wednesday(12, 0).get(Calendar.DAY_OF_WEEK) - 1
     private val thursdayIndex get() = (wednesdayIndex + 1) % 7
+    private fun thursday(hour: Int, minute: Int) = utcNow(2026, Calendar.SEPTEMBER, 10, hour, minute)
 
     private fun weeklyRule(
         days: Set<Int>,
@@ -83,7 +84,7 @@ class PeriodRuleTest {
 
     @Test
     fun `weekly same-day range excludes after end`() {
-        val rule = weeklyRule(setOf(wednesdayIndex), startHour = 9, endHour = 17)
+        val rule = weeklyRule(setOf(wednesdayIndex), startHour = 9, endHour = 17, endMinute = 0)
         assertFalse(rule.isCurrentTimeInRange(wednesday(17, 1)))
     }
 
@@ -110,15 +111,28 @@ class PeriodRuleTest {
     }
 
     @Test
-    fun `overnight range active in early morning`() {
+    fun `overnight range active in early morning of next day`() {
         val rule = weeklyRule(setOf(wednesdayIndex), startHour = 22, endHour = 6)
-        assertTrue(rule.isCurrentTimeInRange(wednesday(5, 59)))
+        assertTrue(rule.isCurrentTimeInRange(thursday(5, 59)))
+    }
+
+    @Test
+    fun `overnight range inactive in early morning of its own day`() {
+        val rule = weeklyRule(setOf(wednesdayIndex), startHour = 22, endHour = 6)
+        assertFalse(rule.isCurrentTimeInRange(wednesday(5, 59)))
     }
 
     @Test
     fun `overnight range inactive just after end`() {
-        val rule = weeklyRule(setOf(wednesdayIndex), startHour = 22, endHour = 6)
-        assertFalse(rule.isCurrentTimeInRange(wednesday(6, 1)))
+        val rule = weeklyRule(setOf(wednesdayIndex), startHour = 22, endHour = 6, endMinute = 0)
+        assertFalse(rule.isCurrentTimeInRange(thursday(6, 1)))
+    }
+
+    @Test
+    fun `overnight date rule continues past midnight`() {
+        val rule = dateRule(startHour = 22, endHour = 6)
+        assertTrue(rule.isCurrentTimeInRange(thursday(2, 0)))
+        assertFalse(rule.isCurrentTimeInRange(wednesday(2, 0)))
     }
 
     @Test

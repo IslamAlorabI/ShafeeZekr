@@ -66,36 +66,32 @@ data class PeriodRule(
     }
 
     fun isCurrentTimeInRange(now: Calendar = Calendar.getInstance()): Boolean {
-        val currentHour = now.get(Calendar.HOUR_OF_DAY)
-        val currentMinute = now.get(Calendar.MINUTE)
-        val currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK) - 1
-        val currentYear = now.get(Calendar.YEAR)
-        val currentMonth = now.get(Calendar.MONTH)
-        val currentDay = now.get(Calendar.DAY_OF_MONTH)
+        if (isAllDay) return appliesOn(now)
 
-        return when (scheduleType) {
-            RuleScheduleType.WEEKLY_DAYS -> {
-                if (currentDayOfWeek !in daysOfWeek) return false
-                if (isAllDay) return true
-                isTimeInRange(currentHour, currentMinute)
-            }
-            RuleScheduleType.SPECIFIC_DATE -> {
-                if (currentYear != year || currentMonth != month || currentDay != dayOfMonth) return false
-                if (isAllDay) return true
-                isTimeInRange(currentHour, currentMinute)
-            }
-        }
-    }
-
-    private fun isTimeInRange(currentHour: Int, currentMinute: Int): Boolean {
-        val currentTotalMinutes = currentHour * 60 + currentMinute
+        val currentTotalMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
         val startTotalMinutes = startHour * 60 + startMinute
         val endTotalMinutes = endHour * 60 + endMinute
 
-        return if (startTotalMinutes <= endTotalMinutes) {
-            currentTotalMinutes in startTotalMinutes..endTotalMinutes
-        } else {
-            currentTotalMinutes >= startTotalMinutes || currentTotalMinutes <= endTotalMinutes
+        if (startTotalMinutes <= endTotalMinutes) {
+            return appliesOn(now) && currentTotalMinutes in startTotalMinutes..endTotalMinutes
+        }
+
+        // Overnight range (e.g. 22:00-06:00): the evening part belongs to the selected day,
+        // and the part after midnight belongs to the day before it.
+        if (currentTotalMinutes >= startTotalMinutes) return appliesOn(now)
+        if (currentTotalMinutes <= endTotalMinutes) {
+            val yesterday = (now.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, -1) }
+            return appliesOn(yesterday)
+        }
+        return false
+    }
+
+    private fun appliesOn(day: Calendar): Boolean {
+        return when (scheduleType) {
+            RuleScheduleType.WEEKLY_DAYS -> (day.get(Calendar.DAY_OF_WEEK) - 1) in daysOfWeek
+            RuleScheduleType.SPECIFIC_DATE -> day.get(Calendar.YEAR) == year &&
+                day.get(Calendar.MONTH) == month &&
+                day.get(Calendar.DAY_OF_MONTH) == dayOfMonth
         }
     }
 
@@ -206,7 +202,8 @@ data class AppSettings(
     val isCustomSoundEnabled: Boolean = false,
     val dailyGoal: Int = 100,
     val audioStreamType: AudioStreamType = AudioStreamType.ALARM,
-    val autoDismissNotification: Boolean = false
+    val autoDismissNotification: Boolean = false,
+    val shuffleSounds: Boolean = false
 ) {
     fun isReminderAllowedByPeriodRules(now: Calendar = Calendar.getInstance()): Boolean {
         val enabledRules = periodRules.filter { it.isEnabled }
@@ -289,6 +286,7 @@ class PreferencesManager(private val context: Context) {
         val AUDIO_STREAM_TYPE = stringPreferencesKey("audio_stream_type")
         val AUTO_DISMISS_NOTIFICATION = booleanPreferencesKey("auto_dismiss_notification")
         val USE_SYSTEM_VOLUME = booleanPreferencesKey("use_system_volume")
+        val SHUFFLE_SOUNDS = booleanPreferencesKey("shuffle_sounds")
     }
 
     private fun parsePeriodRules(json: String): List<PeriodRule> {
@@ -343,7 +341,8 @@ class PreferencesManager(private val context: Context) {
                 AudioStreamType.ALARM
             },
             autoDismissNotification = preferences[PreferencesKeys.AUTO_DISMISS_NOTIFICATION] ?: false,
-            useSystemVolume = preferences[PreferencesKeys.USE_SYSTEM_VOLUME] ?: false
+            useSystemVolume = preferences[PreferencesKeys.USE_SYSTEM_VOLUME] ?: false,
+            shuffleSounds = preferences[PreferencesKeys.SHUFFLE_SOUNDS] ?: false
         )
     }
 
@@ -394,6 +393,18 @@ class PreferencesManager(private val context: Context) {
     fun getLanguageCodeSync(): String {
         return context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
             .getString("language_code", "") ?: ""
+    }
+
+    fun isLanguageMigrated(): Boolean {
+        return context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
+            .getBoolean("language_migrated_to_appcompat", false)
+    }
+
+    fun setLanguageMigrated() {
+        context.getSharedPreferences("settings_sync", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("language_migrated_to_appcompat", true)
+            .commit()
     }
 
     suspend fun setAppVolume(volume: Float) {
@@ -475,6 +486,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setUseSystemVolume(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.USE_SYSTEM_VOLUME] = enabled
+        }
+    }
+
+    suspend fun setShuffleSounds(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHUFFLE_SOUNDS] = enabled
         }
     }
 }

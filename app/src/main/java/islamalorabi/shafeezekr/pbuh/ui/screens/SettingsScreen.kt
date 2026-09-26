@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -53,6 +54,7 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PhoneInTalk
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -100,6 +102,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.ui.theme.SmoothCornerShape
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
@@ -191,6 +194,7 @@ fun SettingsScreen(
     onAudioStreamTypeChange: (AudioStreamType) -> Unit,
     onAutoDismissNotificationChange: (Boolean) -> Unit,
     onUseSystemVolumeChange: (Boolean) -> Unit,
+    onShuffleSoundsChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -293,7 +297,7 @@ fun SettingsScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -341,7 +345,7 @@ fun SettingsScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -360,6 +364,8 @@ fun SettingsScreen(
                                 Text(
                                     text = if (settings.isCustomSoundEnabled) {
                                         stringResource(R.string.custom_audio_option)
+                                    } else if (settings.shuffleSounds) {
+                                        stringResource(R.string.shuffle_sounds)
                                     } else {
                                         stringResource(R.string.sound_name, LocaleUtils.formatLocalizedNumber(settings.selectedSoundIndex))
                                     },
@@ -485,6 +491,42 @@ fun SettingsScreen(
                                 }
                             }
                         }
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.shuffle_sounds),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(R.string.shuffle_sounds_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Shuffle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = settings.shuffleSounds,
+                                    onCheckedChange = onShuffleSoundsChange,
+                                    enabled = !settings.isCustomSoundEnabled
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        )
 
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -831,7 +873,7 @@ fun SettingsScreen(
                 }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -943,7 +985,7 @@ fun SettingsScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -994,7 +1036,7 @@ fun SettingsScreen(
                             },
                             supportingContent = {
                                 Text(
-                                    text = when (settings.colorScheme) {
+                                    text = when (settings.colorScheme.displayed()) {
                                         ColorScheme.MONET -> stringResource(R.string.color_monet)
                                         ColorScheme.GREEN -> stringResource(R.string.color_green)
                                         ColorScheme.BLUE -> stringResource(R.string.color_blue)
@@ -1061,7 +1103,7 @@ fun SettingsScreen(
                 )
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -1129,7 +1171,7 @@ fun SettingsScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = SmoothCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -1199,7 +1241,7 @@ fun SettingsScreen(
 
     if (showColorDialog) {
         ColorSchemeDialog(
-            currentScheme = settings.colorScheme,
+            currentScheme = settings.colorScheme.displayed(),
             onDismiss = { showColorDialog = false },
             onSelect = {
                 onColorSchemeChange(it)
@@ -1327,7 +1369,7 @@ private fun ThemeModeDialog(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = SmoothCornerShape(12.dp)
             ) {
                 Text(stringResource(R.string.cancel))
             }
@@ -1346,8 +1388,8 @@ private fun ColorSchemeDialog(
         title = { Text(stringResource(R.string.color_scheme)) },
         text = {
             Column(modifier = Modifier.selectableGroup()) {
-                val options = listOf(
-                    ColorScheme.MONET to stringResource(R.string.color_monet),
+                val options = listOfNotNull(
+                    if (supportsDynamicColor()) ColorScheme.MONET to stringResource(R.string.color_monet) else null,
                     ColorScheme.GREEN to stringResource(R.string.color_green),
                     ColorScheme.BLUE to stringResource(R.string.color_blue),
                     ColorScheme.PURPLE to stringResource(R.string.color_purple),
@@ -1379,7 +1421,7 @@ private fun ColorSchemeDialog(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = SmoothCornerShape(12.dp)
             ) {
                 Text(stringResource(R.string.cancel))
             }
@@ -1424,7 +1466,7 @@ private fun LanguageDialog(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = SmoothCornerShape(12.dp)
             ) {
                 Text(stringResource(R.string.cancel))
             }
@@ -1589,7 +1631,7 @@ private fun AddPeriodRuleDialog(
                         Card(
                             onClick = { showDatePicker = true },
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = SmoothCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             )
@@ -1646,7 +1688,7 @@ private fun AddPeriodRuleDialog(
                             Card(
                                 onClick = { showStartTimePicker = true },
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp),
+                                shape = SmoothCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                                 )
@@ -1682,7 +1724,7 @@ private fun AddPeriodRuleDialog(
                             Card(
                                 onClick = { showEndTimePicker = true },
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp),
+                                shape = SmoothCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                                 )
@@ -1723,7 +1765,7 @@ private fun AddPeriodRuleDialog(
                     Button(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = SmoothCornerShape(12.dp),
                         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant,
                             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1754,7 +1796,7 @@ private fun AddPeriodRuleDialog(
                             )
                         },
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = SmoothCornerShape(12.dp),
                         enabled = when (scheduleType) {
                             RuleScheduleType.WEEKLY_DAYS -> selectedDays.isNotEmpty()
                             else -> true
@@ -1767,7 +1809,7 @@ private fun AddPeriodRuleDialog(
                     Button(
                         onClick = onDelete,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = SmoothCornerShape(12.dp),
                         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -1857,7 +1899,7 @@ private fun TimePickerDialog(
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = SmoothCornerShape(12.dp),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1870,7 +1912,7 @@ private fun TimePickerDialog(
                         onConfirm(timePickerState.hour, timePickerState.minute) 
                     },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = SmoothCornerShape(12.dp)
                 ) {
                     Text(stringResource(R.string.confirm))
                 }
@@ -1901,7 +1943,7 @@ private fun DatePickerModal(
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = SmoothCornerShape(12.dp),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1914,7 +1956,7 @@ private fun DatePickerModal(
                         datePickerState.selectedDateMillis?.let { onConfirm(it) }
                     },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = SmoothCornerShape(12.dp)
                 ) {
                     Text(stringResource(R.string.confirm))
                 }
@@ -1946,7 +1988,7 @@ private fun SoundSelectionDialog(
 
     DisposableEffect(Unit) {
         onDispose {
-            mediaPlayer?.release()
+            mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
         }
     }
 
@@ -1969,7 +2011,7 @@ private fun SoundSelectionDialog(
                                     tempSelected = index
                                     tempCustomEnabled = false
                                     
-                                    mediaPlayer?.release()
+                                    mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
                                     mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
                                         context = context,
                                         soundIndex = index,
@@ -2004,7 +2046,7 @@ private fun SoundSelectionDialog(
                                 selected = tempCustomEnabled,
                                 onClick = {
                                     tempCustomEnabled = true
-                                    mediaPlayer?.release()
+                                    mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
                                     mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
                                         context = context,
                                         soundIndex = tempSelected,
@@ -2048,7 +2090,7 @@ private fun SoundSelectionDialog(
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = SmoothCornerShape(12.dp),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -2062,7 +2104,7 @@ private fun SoundSelectionDialog(
                         onSelect(tempSelected)
                     },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = SmoothCornerShape(12.dp)
                 ) {
                     Text(stringResource(R.string.save))
                 }
@@ -2224,7 +2266,13 @@ private fun RecordDhikrDialog(
                                 if (recordFile.exists()) {
                                     recordFile.delete()
                                 }
-                                val recorder = android.media.MediaRecorder(context)
+                                // The context constructor exists from Android 12
+                                val recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    android.media.MediaRecorder(context)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    android.media.MediaRecorder()
+                                }
                                 recorder.setAudioSource(android.media.MediaRecorder.AudioSource.VOICE_RECOGNITION)
                                 recorder.setOutputFormat(android.media.MediaRecorder.OutputFormat.MPEG_4)
                                 recorder.setAudioEncoder(android.media.MediaRecorder.AudioEncoder.AAC)
@@ -2350,7 +2398,7 @@ private fun RecordDhikrDialog(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = SmoothCornerShape(12.dp),
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -2413,3 +2461,9 @@ private fun AudioStreamDialog(
         }
     )
 }
+
+private fun supportsDynamicColor() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+// Wallpaper colors need Android 12; the theme falls back to green there, so show green
+private fun ColorScheme.displayed() =
+    if (this == ColorScheme.MONET && !supportsDynamicColor()) ColorScheme.GREEN else this

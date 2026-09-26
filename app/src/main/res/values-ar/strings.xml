@@ -179,6 +179,9 @@
     <string name="auto_dismiss_notification">إخفاء الإشعار تلقائياً</string>
     <string name="auto_dismiss_notification_desc">إزالة الإشعار تلقائياً بعد انتهاء صوت التذكير</string>
 
+    <string name="shuffle_sounds">خلط الأصوات</string>
+    <string name="shuffle_sounds_desc">تشغيل صوت عشوائي مدمج في كل مرة</string>
+
     <string name="nav_statistics">الإحصائيات</string>
     <string name="stats_today">اليوم</string>
     <string name="stats_this_week">هذا الأسبوع</string>
@@ -193,5 +196,20 @@
     <string name="stats_set_goal">تحديد الهدف اليومي</string>
     <string name="stats_dhikr_unit">ذكر</string>
     <string name="stats_no_dhikr">لا شيء</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">تصدير</string>
+    <string name="stats_import">استيراد</string>
+    <string name="stats_export_done">تم تصدير الإحصائيات</string>
+    <string name="stats_export_failed">فشل التصدير</string>
+    <string name="stats_import_done">تم استيراد %1$s يوم و%2$s من قواعد أوقات الهدوء</string>
+    <string name="stats_import_failed">هذا الملف ليس ملف إحصائيات مُصدّر</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">حققت هدفك!</string>
+    <string name="goal_reached_message">تقبّل الله منك</string>
+    <string name="exact_alarm_title">السماح بالتذكيرات في وقتها</string>
+    <string name="exact_alarm_desc">بدون إذن \"المنبّهات والتذكيرات\" قد يؤخر أندرويد التذكيرات عدة دقائق. اسمح به ليصل كل تذكير في وقته.</string>
+    <string name="exact_alarm_allow">السماح</string>
+    <string name="not_now">ليس الآن</string>
+</resources>

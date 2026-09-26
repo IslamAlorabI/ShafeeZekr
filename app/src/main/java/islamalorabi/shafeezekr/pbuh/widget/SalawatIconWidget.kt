@@ -21,10 +21,12 @@ import androidx.glance.layout.size
 import androidx.glance.ColorFilter
 import androidx.glance.appwidget.cornerRadius
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 
 class SalawatIconWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val localizedContext = LocaleUtils.localizedContext(context)
         provideContent {
             GlanceTheme {
                 Box(
@@ -37,7 +39,7 @@ class SalawatIconWidget : GlanceAppWidget() {
                 ) {
                     Image(
                         provider = ImageProvider(R.drawable.ic_pbuh_white),
-                        contentDescription = context.getString(R.string.notification_title),
+                        contentDescription = localizedContext.getString(R.string.notification_title),
                         modifier = GlanceModifier.size(48.dp),
                         colorFilter = ColorFilter.tint(GlanceTheme.colors.primary)
                     )

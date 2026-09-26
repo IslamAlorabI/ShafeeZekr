@@ -15,6 +15,8 @@ object ReminderScheduler {
     private const val KEY_REMAINING_MS = "remaining_ms"
     private const val KEY_PAUSED_BY_QUIET = "paused_by_quiet_hours"
     private const val QUIET_RESUME_REQUEST_CODE = 9999
+    // How late an alarm may be before we assume it was deferred or lost
+    private const val OVERDUE_GRACE_MS = 10_000L
     
     fun startReminder(context: Context, intervalMinutes: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -70,6 +72,60 @@ object ReminderScheduler {
         
     }
     
+    /**
+     * Re-registers the pending reminder at its current trigger time, e.g. after the exact-alarm
+     * permission is granted, so it switches from an inexact to an exact alarm without
+     * restarting the countdown.
+     */
+    fun rescheduleCurrent(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(KEY_ENABLED, false)) return
+        if (prefs.getBoolean(KEY_PAUSED_BY_QUIET, false)) return
+
+        val nextTrigger = prefs.getLong(KEY_NEXT_TRIGGER, 0L)
+        if (nextTrigger > System.currentTimeMillis()) {
+            scheduleAlarmAt(context, nextTrigger)
+        } else {
+            scheduleNextAlarm(context)
+        }
+    }
+
+    /**
+     * Fires the reminder now if its alarm is overdue. Inexact alarms (exact-alarm permission
+     * not granted) can be deferred by many minutes, leaving the countdown at 00:00. A lost
+     * alarm is rescheduled from now without firing. Returns true if a reminder was triggered.
+     */
+    fun recoverIfOverdue(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(KEY_ENABLED, false)) return false
+        if (prefs.getBoolean(KEY_PAUSED_BY_QUIET, false)) return false
+
+        val nextTrigger = prefs.getLong(KEY_NEXT_TRIGGER, 0L)
+        val now = System.currentTimeMillis()
+        // Force-stop (including every install from Android Studio) and app updates cancel the
+        // alarm's PendingIntent but leave next_trigger_time behind. That's a lost alarm, not a
+        // due reminder: start a fresh countdown instead of firing immediately.
+        if (nextTrigger == 0L || !isAlarmPending(context)) {
+            scheduleNextAlarm(context)
+            return false
+        }
+        if (now - nextTrigger < OVERDUE_GRACE_MS) return false
+
+        // Push next_trigger forward right away so the next UI tick doesn't fire again
+        // before the receiver has rescheduled
+        prefs.edit().putLong(KEY_NEXT_TRIGGER, now + prefs.getInt(KEY_INTERVAL, 30) * 60 * 1000L).apply()
+        context.sendBroadcast(Intent(context, ReminderReceiver::class.java))
+        return true
+    }
+
+    private fun isAlarmPending(context: Context): Boolean =
+        PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, ReminderReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        ) != null
+
     private fun scheduleAlarmAt(context: Context, triggerAtMillis: Long) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putLong(KEY_NEXT_TRIGGER, triggerAtMillis).apply()

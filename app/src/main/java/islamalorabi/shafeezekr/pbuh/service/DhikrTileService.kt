@@ -1,11 +1,13 @@
 package islamalorabi.shafeezekr.pbuh.service
 
+import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.data.dataStore
+import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -49,10 +51,14 @@ class DhikrTileService : TileService() {
         }
 
         tile.state = if (isEnabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-        tile.subtitle = if (isEnabled) {
-            getString(R.string.tile_pause_dhikr_active)
-        } else {
-            getString(R.string.tile_pause_dhikr_inactive)
+        // Tile subtitles exist from Android 10
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val localizedContext = LocaleUtils.localizedContext(this)
+            tile.subtitle = if (isEnabled) {
+                localizedContext.getString(R.string.tile_pause_dhikr_active)
+            } else {
+                localizedContext.getString(R.string.tile_pause_dhikr_inactive)
+            }
         }
         tile.updateTile()
     }

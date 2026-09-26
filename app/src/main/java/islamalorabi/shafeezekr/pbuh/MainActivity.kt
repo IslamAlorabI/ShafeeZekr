@@ -1,10 +1,13 @@
 package islamalorabi.shafeezekr.pbuh
 
+import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,7 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,18 +39,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
+import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
 import islamalorabi.shafeezekr.pbuh.service.ReminderScheduler
+import islamalorabi.shafeezekr.pbuh.ui.components.GoalCelebration
 import islamalorabi.shafeezekr.pbuh.ui.screens.AboutScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.StatisticsScreen
@@ -52,15 +62,10 @@ import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
-    override fun attachBaseContext(newBase: android.content.Context) {
-        val preferencesManager = PreferencesManager(newBase)
-        val languageCode = preferencesManager.getLanguageCodeSync()
-        super.attachBaseContext(LocaleUtils.updateResources(newBase, languageCode))
-    }
-
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LocaleUtils.syncAppLanguage(PreferencesManager(this), lifecycleScope)
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
@@ -123,10 +128,10 @@ class MainActivity : ComponentActivity() {
                         scope.launch { preferencesManager.setColorScheme(scheme) }
                     },
                     onLanguageChange = { code ->
-                        preferencesManager.setLanguageCodeSync(code)
                         scope.launch {
                             preferencesManager.setLanguageCode(code)
-                            recreate()
+                            // Recreates the activity with the new language
+                            LocaleUtils.setAppLanguage(code)
                         }
                     },
                     onVolumeChange = { volume ->
@@ -167,6 +172,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onUseSystemVolumeChange = { enabled ->
                         scope.launch { preferencesManager.setUseSystemVolume(enabled) }
+                    },
+                    onShuffleSoundsChange = { enabled ->
+                        scope.launch { preferencesManager.setShuffleSounds(enabled) }
                     }
                 )
             }
@@ -196,9 +204,28 @@ fun MainApp(
     onDailyGoalChange: (Int) -> Unit,
     onAudioStreamTypeChange: (AudioStreamType) -> Unit,
     onAutoDismissNotificationChange: (Boolean) -> Unit,
-    onUseSystemVolumeChange: (Boolean) -> Unit
+    onUseSystemVolumeChange: (Boolean) -> Unit,
+    onShuffleSoundsChange: (Boolean) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    var showCelebration by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
+    val statsManager = remember { DhikrStatsManager(context) }
+    val currentGoal by rememberUpdatedState(settings.dailyGoal)
+
+    DisposableEffect(statsManager) {
+        // A goal already reached before the app was opened is not celebrated late.
+        statsManager.consumeGoalCelebration(currentGoal)
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            if (statsManager.consumeGoalCelebration(currentGoal)) {
+                showCelebration = true
+                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+            }
+        }
+        statsManager.registerChangeListener(listener)
+        onDispose { statsManager.unregisterChangeListener(listener) }
+    }
 
     val titles = listOf(
         stringResource(R.string.nav_home),
@@ -207,6 +234,7 @@ fun MainApp(
         stringResource(R.string.nav_about)
     )
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -298,11 +326,14 @@ fun MainApp(
                 onAudioStreamTypeChange = onAudioStreamTypeChange,
                 onAutoDismissNotificationChange = onAutoDismissNotificationChange,
                 onUseSystemVolumeChange = onUseSystemVolumeChange,
+                onShuffleSoundsChange = onShuffleSoundsChange,
                 modifier = Modifier.padding(innerPadding)
             )
             3 -> AboutScreen(
                 modifier = Modifier.padding(innerPadding)
             )
         }
+    }
+    GoalCelebration(visible = showCelebration, onFinished = { showCelebration = false })
     }
 }

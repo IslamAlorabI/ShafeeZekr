@@ -18,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import islamalorabi.shafeezekr.pbuh.BuildConfig
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.ui.theme.SmoothCornerShape
 import java.util.Calendar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -63,7 +63,7 @@ fun AboutScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Card(
-            shape = RoundedCornerShape(20.dp),
+            shape = SmoothCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
@@ -112,7 +112,7 @@ fun AboutScreen(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = SmoothCornerShape(24.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
             )
@@ -246,7 +246,7 @@ fun AboutScreen(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = SmoothCornerShape(24.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
             )

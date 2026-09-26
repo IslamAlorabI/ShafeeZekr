@@ -1,13 +1,19 @@
 package islamalorabi.shafeezekr.pbuh.util
 
+import android.content.Context
+import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
+import androidx.core.os.LocaleListCompat
+import islamalorabi.shafeezekr.pbuh.data.PreferencesManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.text.intl.Locale as ComposeLocale
 
 object LocaleUtils {
     
     fun formatLocalizedNumber(number: Int, paddedDigits: Int = 0): String {
-        val locale = ComposeLocale.current.toLanguageTag()
-        val lang = locale.split("-").first().lowercase()
+        val lang = activeLanguage()
         
         val formatted = if (paddedDigits > 0) {
             String.format(java.util.Locale.US, "%0${paddedDigits}d", number)
@@ -24,8 +30,7 @@ object LocaleUtils {
     }
     
     fun localizeString(text: String): String {
-        val locale = ComposeLocale.current.toLanguageTag()
-        val lang = locale.split("-").first().lowercase()
+        val lang = activeLanguage()
         
         return when (lang) {
             "ar" -> text.map { convertToArabicNumeral(it) }.joinToString("")
@@ -36,8 +41,7 @@ object LocaleUtils {
     }
     
     fun formatLocalizedTime(hour: Int, minute: Int): String {
-        val locale = ComposeLocale.current.toLanguageTag()
-        val lang = locale.split("-").first().lowercase()
+        val lang = activeLanguage()
         
         val isPM = hour >= 12
         val hour12 = when {
@@ -124,29 +128,63 @@ object LocaleUtils {
             else -> char
         }
     }
-    fun getSystemLocale(): java.util.Locale {
-        return android.os.Build.VERSION.SDK_INT.let { sdk ->
-            if (sdk >= android.os.Build.VERSION_CODES.N) {
-                android.content.res.Resources.getSystem().configuration.locales[0]
-            } else {
-                @Suppress("DEPRECATION")
-                android.content.res.Resources.getSystem().configuration.locale
+    // Explicit app language first, so digits match the UI even before the default locale updates
+    private fun activeLanguage(): String =
+        currentAppLanguage().ifEmpty { ComposeLocale.current.language.lowercase() }
+
+    /** Language code the user picked in the app or in system settings; "" means follow the system. */
+    fun currentAppLanguage(): String {
+        val locale = AppCompatDelegate.getApplicationLocales()[0] ?: return ""
+        // "id" and "in" are both Indonesian; resources and the picker use "in"
+        return if (locale.language == "id") "in" else locale.language
+    }
+
+    /** Applies [language] app-wide; AppCompat recreates open activities and, on Android 13+, syncs system settings. */
+    fun setAppLanguage(language: String) {
+        AppCompatDelegate.setApplicationLocales(
+            if (language.isEmpty()) LocaleListCompat.getEmptyLocaleList()
+            else LocaleListCompat.forLanguageTags(language)
+        )
+    }
+
+    /**
+     * Keeps the stored language and the AppCompat locale in agreement. Call after Activity.onCreate.
+     * The first run moves a language saved by older versions into AppCompat; later runs pick up
+     * a language changed from system settings (Android 13+).
+     */
+    fun syncAppLanguage(preferencesManager: PreferencesManager, scope: CoroutineScope) {
+        val stored = preferencesManager.getLanguageCodeSync()
+        val current = currentAppLanguage()
+        if (!preferencesManager.isLanguageMigrated()) {
+            preferencesManager.setLanguageMigrated()
+            if (stored.isNotEmpty() && stored != current) {
+                setAppLanguage(stored)
+                return
             }
+        }
+        if (stored != current) {
+            scope.launch { preferencesManager.setLanguageCode(current) }
         }
     }
 
-    fun updateResources(context: android.content.Context, language: String): android.content.Context {
-        val locale = if (language.isEmpty()) {
-            getSystemLocale()
-        } else {
-            java.util.Locale.Builder().setLanguage(language).build()
-        }
+    /**
+     * Context with the app language for receivers, services and widgets. Android 13+ already applies
+     * the per-app language to every context; older versions only apply it inside AppCompat activities.
+     */
+    fun localizedContext(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+        return updateResources(context, PreferencesManager(context).getLanguageCodeSync())
+    }
+
+    private fun updateResources(context: Context, language: String): Context {
+        if (language.isEmpty()) return context
+        val locale = java.util.Locale.forLanguageTag(language)
         java.util.Locale.setDefault(locale)
-        
+
         val configuration = android.content.res.Configuration(context.resources.configuration)
         configuration.setLocale(locale)
         configuration.setLayoutDirection(locale)
-        
+
         return context.createConfigurationContext(configuration)
     }
 }

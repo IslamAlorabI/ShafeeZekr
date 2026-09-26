@@ -1,5 +1,8 @@
 package islamalorabi.shafeezekr.pbuh.ui.screens
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.RepeatMode
@@ -36,14 +39,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInclusive
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,6 +61,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,9 +71,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,16 +81,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import islamalorabi.shafeezekr.pbuh.R
+import islamalorabi.shafeezekr.pbuh.ui.theme.SmoothCornerShape
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
+import islamalorabi.shafeezekr.pbuh.data.BackupManager
 import islamalorabi.shafeezekr.pbuh.data.DhikrStatsManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import android.content.SharedPreferences
 import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun StatisticsScreen(
@@ -198,148 +207,154 @@ fun StatisticsScreen(
                 )
             }
         }
+
+        item {
+            BackupButtons()
+        }
+    }
+}
+
+@Composable
+private fun BackupButtons() {
+    val context = LocalContext.current
+    val backupManager = remember { BackupManager(context) }
+    val scope = rememberCoroutineScope()
+
+    fun toast(message: String) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+            val ok = withContext(Dispatchers.IO) {
+                runCatching {
+                    context.contentResolver.openOutputStream(uri, "wt")!!.bufferedWriter().use {
+                        it.write(backupManager.exportJson())
+                    }
+                }.isSuccess
+            }
+            toast(context.getString(if (ok) R.string.stats_export_done else R.string.stats_export_failed))
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val json = context.contentResolver.openInputStream(uri)!!.bufferedReader().use { it.readText() }
+                    backupManager.importJson(json)
+                }.getOrNull()
+            }
+            toast(
+                if (result != null) {
+                    context.getString(
+                        R.string.stats_import_done,
+                        LocaleUtils.formatLocalizedNumber(result.days),
+                        LocaleUtils.formatLocalizedNumber(result.newRules)
+                    )
+                } else {
+                    context.getString(R.string.stats_import_failed)
+                }
+            )
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            onClick = { exportLauncher.launch("shafeezekr-stats-${LocalDate.now()}.json") },
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            shape = SmoothCornerShape(16.dp)
+        ) {
+            Icon(Icons.Outlined.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.stats_export))
+        }
+        Button(
+            onClick = { importLauncher.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) },
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            shape = SmoothCornerShape(16.dp)
+        ) {
+            Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.stats_import))
+        }
     }
 }
 
 @Composable
 private fun TodayCard(count: Int, target: Int, onEditGoal: () -> Unit) {
-    val progress = (count.toFloat() / target).coerceIn(0f, 1f)
-    var animationProgress by remember { mutableFloatStateOf(0f) }
+    val progress = if (target > 0) (count.toFloat() / target).coerceIn(0f, 1f) else 0f
     val animatedProgress by animateFloatAsState(
-        targetValue = animationProgress,
-        animationSpec = tween(durationMillis = 1000),
+        targetValue = progress,
+        animationSpec = tween(durationMillis = 600),
         label = "todayProgress"
     )
-
-    LaunchedEffect(count, target) {
-        animationProgress = progress
-    }
-
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val secondaryColor = MaterialTheme.colorScheme.secondary
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
-    val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+    val onContainer = MaterialTheme.colorScheme.onPrimaryContainer
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        onClick = onEditGoal,
+        modifier = Modifier.fillMaxWidth(),
+        shape = SmoothCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.stats_reminders_today),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = onContainer,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onEditGoal() }
-                ) {
-                    Text(
-                        text = LocaleUtils.formatLocalizedNumber(count),
-                        style = MaterialTheme.typography.displayLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 48.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Text(
-                        text = " / " + LocaleUtils.formatLocalizedNumber(target),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
-                    )
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(bottom = 14.dp, start = 6.dp)
-                            .size(16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(120.dp)
-            ) {
-                Canvas(modifier = Modifier.size(100.dp)) {
-                    val strokeWidth = 10.dp.toPx()
-                    val diameter = size.minDimension - strokeWidth
-                    val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
-                    val circleSize = Size(diameter, diameter)
-                    val radius = diameter / 2
-                    val centerX = size.width / 2
-                    val centerY = size.height / 2
-
-                    drawArc(
-                        color = trackColor,
-                        startAngle = 0f,
-                        sweepAngle = 360f,
-                        useCenter = false,
-                        topLeft = topLeft,
-                        size = circleSize,
-                        style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-                    )
-
-                    val dashStroke = Stroke(
-                        width = 1.dp.toPx(),
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 4.dp.toPx()), 0f)
-                    )
-                    drawCircle(
-                        color = primaryColor.copy(alpha = 0.15f),
-                        radius = radius - 12.dp.toPx(),
-                        style = dashStroke
-                    )
-
-                    val sweepAngle = 360f * animatedProgress
-                    drawArc(
-                        color = primaryColor,
-                        startAngle = -90f,
-                        sweepAngle = sweepAngle,
-                        useCenter = false,
-                        topLeft = topLeft,
-                        size = circleSize,
-                        style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-                    )
-
-                    if (sweepAngle > 0f) {
-                        val angleRad = Math.toRadians((-90f + sweepAngle).toDouble())
-                        val tipX = centerX + radius * cos(angleRad).toFloat()
-                        val tipY = centerY + radius * sin(angleRad).toFloat()
-
-                        drawCircle(
-                            color = Color.White,
-                            radius = strokeWidth * 0.5f,
-                            center = Offset(tipX, tipY)
-                        )
-                    }
-                }
-
                 Text(
-                    text = LocaleUtils.formatLocalizedNumber((progress * 100).toInt()) + "%",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    text = LocaleUtils.formatLocalizedNumber(count),
+                    style = MaterialTheme.typography.headlineSmall.copy(fontFeatureSettings = "tnum"),
+                    fontWeight = FontWeight.Bold,
+                    color = onContainer
+                )
+                Text(
+                    text = " / " + LocaleUtils.formatLocalizedNumber(target),
+                    style = MaterialTheme.typography.titleSmall.copy(fontFeatureSettings = "tnum"),
+                    color = onContainer.copy(alpha = 0.6f)
+                )
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.stats_set_goal),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(16.dp),
+                    tint = onContainer.copy(alpha = 0.5f)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(onContainer.copy(alpha = 0.12f), CircleShape)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(animatedProgress)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
         }
@@ -354,7 +369,8 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>, dailyGoal: Int) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val locale = Locale.getDefault()
+    // The activity configuration carries the app language; the process default may lag behind
+    val locale = LocalConfiguration.current.locales[0]
     val today = LocalDate.now()
 
     var selectedIndex by remember { mutableStateOf(data.indexOfFirst { it.first == today }.coerceAtLeast(data.lastIndex)) }
@@ -372,7 +388,7 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>, dailyGoal: Int) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = SmoothCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         )
@@ -422,7 +438,7 @@ private fun WeeklyChart(data: List<Pair<LocalDate, Int>>, dailyGoal: Int) {
                         .padding(bottom = 16.dp)
                         .background(
                             color = primaryColor.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = SmoothCornerShape(12.dp)
                         )
                         .padding(vertical = 8.dp, horizontal = 16.dp)
                 ) {
@@ -565,7 +581,7 @@ private fun StatCard(
 
     Card(
         modifier = modifier.fillMaxHeight(),
-        shape = RoundedCornerShape(24.dp),
+        shape = SmoothCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         )

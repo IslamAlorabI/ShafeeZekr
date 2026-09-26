@@ -178,6 +178,9 @@
     <string name="auto_dismiss_notification">اطلاع خود بخود ہٹائیں</string>
     <string name="auto_dismiss_notification_desc">یاد دہانی کی آواز ختم ہونے کے بعد اطلاع خود بخود ہٹا دیں</string>
 
+    <string name="shuffle_sounds">آوازیں تبدیل کریں</string>
+    <string name="shuffle_sounds_desc">ہر بار ایک بے ترتیب پہلے سے موجود آواز چلائیں</string>
+
     <string name="nav_statistics">اعداد و شمار</string>
     <string name="stats_today">آج</string>
     <string name="stats_this_week">اس ہفتے</string>
@@ -192,5 +195,20 @@
     <string name="stats_set_goal">روزانہ ہدف مقرر کریں</string>
     <string name="stats_dhikr_unit">ذکر</string>
     <string name="stats_no_dhikr">کچھ نہیں</string>
-</resources>
 
+    <!-- Statistics backup -->
+    <string name="stats_export">ایکسپورٹ</string>
+    <string name="stats_import">امپورٹ</string>
+    <string name="stats_export_done">اعداد و شمار ایکسپورٹ ہو گئے</string>
+    <string name="stats_export_failed">ایکسپورٹ ناکام</string>
+    <string name="stats_import_done">%1$s دن اور %2$s خاموش اوقات کے اصول امپورٹ ہوئے</string>
+    <string name="stats_import_failed">یہ فائل اعداد و شمار کی ایکسپورٹ نہیں ہے</string>
+
+    <!-- Goal celebration -->
+    <string name="goal_reached_title">ہدف مکمل!</string>
+    <string name="goal_reached_message">اللہ آپ سے قبول فرمائے</string>
+    <string name="exact_alarm_title">بروقت یاد دہانیوں کی اجازت دیں</string>
+    <string name="exact_alarm_desc">\"الارمز اور یاد دہانیاں\" کی اجازت کے بغیر اینڈرائیڈ یاد دہانیوں میں کئی منٹ کی تاخیر کر سکتا ہے۔ اجازت دیں تاکہ ہر یاد دہانی بروقت آئے۔</string>
+    <string name="exact_alarm_allow">اجازت دیں</string>
+    <string name="not_now">ابھی نہیں</string>
+</resources>
