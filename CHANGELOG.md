@@ -1,5 +1,34 @@
 # Changelog
 
+## v2.3 (2026-09-28)
+
+> This release also includes everything from v2.2, which was not published separately.
+
+### New in v2.3
+- New app logo, with a choice of Cream, Green, or Classic app icons in settings
+- Splash screen now follows the in-app theme
+- The big button and widget play one sound at a time and show playback progress
+- More compact sound selection grid
+- Ask for the "Alarms & reminders" permission so reminders arrive on time, also from the Quick Settings tile
+- Fix the same sound repeating in shuffle mode
+- Disable automatic cloud backup of app data
+
+### New in v2.2
+- Support Android 9 and newer (minimum SDK lowered to 28)
+- Shuffle Sounds option that plays a random built-in sound each time
+- Export and import statistics together with quiet-hours rules
+- Celebration when the daily goal is reached
+- More compact Today card on the statistics screen
+- Smooth corners and haptic feedback on taps
+- Playing indicator now stays in sync with the audio
+- New notification icon
+- About screen links show an error message when no app can open them
+
+### Chores
+- Update Android Gradle Plugin to 9.4.1
+- Add unit tests for statistics, quiet hours, period rules, and backup
+- Bump version code to 11 and version name to 2.3
+
 ## v2.0 (2026-05-21)
 
 ### New Features

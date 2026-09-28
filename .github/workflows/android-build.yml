@@ -95,7 +95,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.name }}
-          name: v${{ steps.version.outputs.name }} STABLE BUILD [A12+]
+          name: v${{ steps.version.outputs.name }} STABLE BUILD [A9+]
           body: ${{ steps.notes.outputs.body }}
           files: ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.apk
           draft: false
