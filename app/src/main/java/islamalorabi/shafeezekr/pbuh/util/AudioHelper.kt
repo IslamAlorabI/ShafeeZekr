@@ -102,7 +102,8 @@ object AudioHelper {
         isCustomSoundEnabled: Boolean = false,
         audioStreamType: AudioStreamType = AudioStreamType.ALARM,
         useSystemVolume: Boolean = false,
-        onStart: (() -> Unit)? = null,
+        /** Called once playback starts, with the sound's length in ms (or -1 if unknown). */
+        onStart: ((durationMs: Int) -> Unit)? = null,
         onComplete: (() -> Unit)? = null
     ) {
         if (!shouldPlaySound(context, muteOnSilent, muteOnDND)) {
@@ -118,7 +119,7 @@ object AudioHelper {
 
             player.setOnPreparedListener { mp ->
                 mp.start()
-                onStart?.invoke()
+                onStart?.invoke(mp.duration)
             }
             player.setOnCompletionListener { mp ->
                 stopPlayer(context, mp)

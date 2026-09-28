@@ -39,6 +39,11 @@
     <string name="color_orange">نارنجی</string>
     <string name="color_pink">صورتی</string>
     <string name="color_red">قرمز</string>
+    <string name="app_icon">آیکون برنامه</string>
+    <string name="app_icon_cream">کرم</string>
+    <string name="app_icon_green">سبز</string>
+    <string name="app_icon_classic">کلاسیک</string>
+    <string name="app_icon_note">ممکن است چند ثانیه طول بکشد تا صفحه اصلی آیکون جدید را نشان دهد.</string>
     
     <string name="language_section">زبان</string>
     <string name="language">زبان</string>

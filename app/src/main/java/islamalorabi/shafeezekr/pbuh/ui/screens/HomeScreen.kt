@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
@@ -61,6 +62,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -69,6 +71,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -82,6 +87,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -97,6 +103,7 @@ import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -199,9 +206,19 @@ fun HomeScreen(
     }
 
     var showCustomDialog by remember { mutableStateOf(false) }
-    // Sounds can overlap when tapped repeatedly; show "Playing" until the last one ends.
-    var activePlaybacks by remember { mutableIntStateOf(0) }
-    val isPlaying = activePlaybacks > 0
+    // One sound at a time: taps are ignored from the moment playback is requested
+    // (preparing is async) until it finishes, so rapid tapping can't stack sounds.
+    var isSoundBusy by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(false) }
+    // Fills the card from the start edge over the sound's length, then fades out.
+    val playbackProgress = remember { Animatable(0f) }
+    val progressAlpha by animateFloatAsState(
+        targetValue = if (isPlaying) 1f else 0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "progressAlpha"
+    )
+    val progressColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f)
+    val scope = rememberCoroutineScope()
 
     val infiniteTransition = rememberInfiniteTransition(label = "visualizer")
     val bar1Scale by infiniteTransition.animateFloat(
@@ -294,8 +311,9 @@ fun HomeScreen(
         item {
             Card(
                 onClick = {
+                    if (isSoundBusy) return@Card
+                    isSoundBusy = true
                     haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                    var started = false
                     val soundIndex = if (settings.shuffleSounds && !settings.isCustomSoundEnabled)
                         islamalorabi.shafeezekr.pbuh.util.AudioHelper.getRandomSoundIndex()
                     else settings.selectedSoundIndex
@@ -309,12 +327,21 @@ fun HomeScreen(
                         isCustomSoundEnabled = settings.isCustomSoundEnabled,
                         audioStreamType = settings.audioStreamType,
                         useSystemVolume = settings.useSystemVolume,
-                        onStart = {
-                            started = true
-                            activePlaybacks++
+                        onStart = { durationMs ->
+                            isPlaying = true
+                            scope.launch {
+                                playbackProgress.snapTo(0f)
+                                if (durationMs > 0) {
+                                    playbackProgress.animateTo(
+                                        targetValue = 1f,
+                                        animationSpec = tween(durationMillis = durationMs, easing = LinearEasing)
+                                    )
+                                }
+                            }
                         },
                         onComplete = {
-                            if (started) activePlaybacks = (activePlaybacks - 1).coerceAtLeast(0)
+                            isPlaying = false
+                            isSoundBusy = false
                         }
                     )
                 },
@@ -324,8 +351,13 @@ fun HomeScreen(
                         scaleX = heroScale
                         scaleY = heroScale
                     },
+                // Disabled while a sound plays: no ripple, hover or press animation.
+                // Disabled colors match enabled ones so the card doesn't look greyed out.
+                enabled = !isSoundBusy,
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 shape = SmoothCornerShape(heroCorner),
                 interactionSource = heroInteraction
@@ -333,6 +365,17 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .drawBehind {
+                            val fillWidth = size.width * playbackProgress.value
+                            if (fillWidth <= 0f || progressAlpha <= 0f) return@drawBehind
+                            val startX = if (layoutDirection == LayoutDirection.Rtl) size.width - fillWidth else 0f
+                            drawRect(
+                                color = progressColor,
+                                topLeft = Offset(startX, 0f),
+                                size = Size(fillWidth, size.height),
+                                alpha = progressAlpha
+                            )
+                        }
                         .padding(horizontal = 24.dp, vertical = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

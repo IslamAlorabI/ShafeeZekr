@@ -39,6 +39,11 @@
     <string name="color_orange">Orange</string>
     <string name="color_pink">Rosa</string>
     <string name="color_red">Rot</string>
+    <string name="app_icon">App-Symbol</string>
+    <string name="app_icon_cream">Creme</string>
+    <string name="app_icon_green">Grün</string>
+    <string name="app_icon_classic">Klassisch</string>
+    <string name="app_icon_note">Es kann einige Sekunden dauern, bis der Startbildschirm das neue Symbol anzeigt.</string>
     
     <string name="language_section">Sprache</string>
     <string name="language">Sprache</string>

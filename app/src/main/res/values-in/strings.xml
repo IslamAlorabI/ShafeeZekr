@@ -39,6 +39,11 @@
     <string name="color_orange">Oranye</string>
     <string name="color_pink">Merah Muda</string>
     <string name="color_red">Merah</string>
+    <string name="app_icon">Ikon Aplikasi</string>
+    <string name="app_icon_cream">Krem</string>
+    <string name="app_icon_green">Hijau</string>
+    <string name="app_icon_classic">Klasik</string>
+    <string name="app_icon_note">Layar utama mungkin perlu beberapa detik untuk menampilkan ikon baru.</string>
     
     <string name="language_section">Bahasa</string>
     <string name="language">Bahasa</string>

@@ -39,6 +39,11 @@
     <string name="color_orange">برتقالي</string>
     <string name="color_pink">وردي</string>
     <string name="color_red">أحمر</string>
+    <string name="app_icon">أيقونة التطبيق</string>
+    <string name="app_icon_cream">كريمي</string>
+    <string name="app_icon_green">أخضر</string>
+    <string name="app_icon_classic">الكلاسيكية</string>
+    <string name="app_icon_note">قد تستغرق الشاشة الرئيسية بضع ثوانٍ لإظهار الأيقونة الجديدة.</string>
     
     <string name="language_section">اللغة</string>
     <string name="language">اللغة</string>

@@ -39,6 +39,11 @@
     <string name="color_orange">نارنجی</string>
     <string name="color_pink">گلابی</string>
     <string name="color_red">سرخ</string>
+    <string name="app_icon">ایپ آئیکن</string>
+    <string name="app_icon_cream">کریم</string>
+    <string name="app_icon_green">سبز</string>
+    <string name="app_icon_classic">کلاسک</string>
+    <string name="app_icon_note">ہوم اسکرین پر نیا آئیکن ظاہر ہونے میں چند سیکنڈ لگ سکتے ہیں۔</string>
     
     <string name="language_section">زبان</string>
     <string name="language">زبان</string>

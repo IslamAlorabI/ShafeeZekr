@@ -39,6 +39,11 @@
     <string name="color_orange">Оранжевый</string>
     <string name="color_pink">Розовый</string>
     <string name="color_red">Красный</string>
+    <string name="app_icon">Значок приложения</string>
+    <string name="app_icon_cream">Кремовый</string>
+    <string name="app_icon_green">Зелёный</string>
+    <string name="app_icon_classic">Классический</string>
+    <string name="app_icon_note">Главному экрану может потребоваться несколько секунд, чтобы показать новый значок.</string>
     
     <string name="language_section">Язык</string>
     <string name="language">Язык</string>

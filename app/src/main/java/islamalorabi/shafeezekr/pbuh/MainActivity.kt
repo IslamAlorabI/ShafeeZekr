@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
+import islamalorabi.shafeezekr.pbuh.util.SystemNightMode
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.AudioStreamType
 import islamalorabi.shafeezekr.pbuh.data.ColorScheme
@@ -60,12 +61,36 @@ import islamalorabi.shafeezekr.pbuh.ui.screens.HomeScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.StatisticsScreen
 import islamalorabi.shafeezekr.pbuh.ui.screens.SettingsScreen
 import islamalorabi.shafeezekr.pbuh.ui.theme.ShafeeZekrTheme
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    /**
+     * Auto Backup restores settings after a reinstall but not the phone permission, and revoking
+     * the permission leaves the setting behind too. Turn "mute during calls" off so its switch
+     * doesn't show on while it can't detect calls.
+     */
+    private fun clearMuteOnCallWithoutPermission() {
+        val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+            this, android.Manifest.permission.READ_PHONE_STATE
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (granted) return
+        val preferencesManager = PreferencesManager(this)
+        lifecycleScope.launch {
+            if (preferencesManager.settingsFlow.first().muteOnCall) {
+                preferencesManager.setMuteOnCall(false)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LocaleUtils.syncAppLanguage(PreferencesManager(this), lifecycleScope)
+        clearMuteOnCallWithoutPermission()
+        // Covers users who picked a theme before the splash followed it; a no-op once in sync
+        lifecycleScope.launch {
+            SystemNightMode.apply(this@MainActivity, PreferencesManager(this@MainActivity).settingsFlow.first().themeMode)
+        }
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
@@ -123,6 +148,7 @@ class MainActivity : AppCompatActivity() {
                     },
                     onThemeModeChange = { mode ->
                         scope.launch { preferencesManager.setThemeMode(mode) }
+                        SystemNightMode.apply(context, mode)
                     },
                     onColorSchemeChange = { scheme ->
                         scope.launch { preferencesManager.setColorScheme(scheme) }

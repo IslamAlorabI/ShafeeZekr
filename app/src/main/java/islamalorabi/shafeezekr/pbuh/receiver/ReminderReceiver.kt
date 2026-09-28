@@ -205,7 +205,7 @@ class ReminderReceiver : BroadcastReceiver() {
             isCustomSoundEnabled = settings.isCustomSoundEnabled,
             audioStreamType = settings.audioStreamType,
             useSystemVolume = settings.useSystemVolume,
-            onStart = onStart,
+            onStart = { onStart() },
             onComplete = onComplete
         )
     }

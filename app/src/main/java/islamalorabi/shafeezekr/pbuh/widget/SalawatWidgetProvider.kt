@@ -115,6 +115,8 @@ class PlaySoundAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
+        // One sound at a time: ignore taps until the current sound finishes.
+        if (!isSoundBusy.compareAndSet(false, true)) return
         try {
             val preferencesManager = PreferencesManager(context)
             val settings = preferencesManager.settingsFlow.first()
@@ -130,10 +132,17 @@ class PlaySoundAction : ActionCallback {
                 customSoundPath = settings.customSoundPath,
                 isCustomSoundEnabled = settings.isCustomSoundEnabled,
                 audioStreamType = settings.audioStreamType,
-                useSystemVolume = settings.useSystemVolume
+                useSystemVolume = settings.useSystemVolume,
+                onComplete = { isSoundBusy.set(false) }
             )
         } catch (e: Exception) {
             e.printStackTrace()
+            isSoundBusy.set(false)
         }
+    }
+
+    companion object {
+        // Shared by every widget instance, since they all live in the same process.
+        private val isSoundBusy = java.util.concurrent.atomic.AtomicBoolean(false)
     }
 }

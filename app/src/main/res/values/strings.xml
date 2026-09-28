@@ -39,6 +39,11 @@
     <string name="color_orange">Orange</string>
     <string name="color_pink">Pink</string>
     <string name="color_red">Red</string>
+    <string name="app_icon">App Icon</string>
+    <string name="app_icon_cream">Cream</string>
+    <string name="app_icon_green">Green</string>
+    <string name="app_icon_classic">Classic</string>
+    <string name="app_icon_note">Your home screen may take a few seconds to show the new icon.</string>
     
     <string name="language_section">Language</string>
     <string name="language">Language</string>

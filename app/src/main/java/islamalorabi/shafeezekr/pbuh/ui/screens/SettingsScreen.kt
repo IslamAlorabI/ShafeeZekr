@@ -16,9 +16,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -29,18 +32,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.BatteryStd
 import androidx.compose.material.icons.filled.Check
@@ -89,12 +95,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -109,6 +118,8 @@ import islamalorabi.shafeezekr.pbuh.data.ColorScheme
 import islamalorabi.shafeezekr.pbuh.data.PeriodRule
 import islamalorabi.shafeezekr.pbuh.data.RuleScheduleType
 import islamalorabi.shafeezekr.pbuh.data.ThemeMode
+import islamalorabi.shafeezekr.pbuh.util.AppIcon
+import islamalorabi.shafeezekr.pbuh.util.AppIconManager
 import islamalorabi.shafeezekr.pbuh.util.LocaleUtils
 import java.util.Calendar
 import java.util.UUID
@@ -199,6 +210,7 @@ fun SettingsScreen(
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
+    var showAppIconDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showAddPeriodRuleDialog by remember { mutableStateOf(false) }
     var ruleToEdit by remember { mutableStateOf<PeriodRule?>(null) }
@@ -207,6 +219,7 @@ fun SettingsScreen(
     var showAudioStreamDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var currentAppIcon by remember { mutableStateOf(AppIconManager.current(context)) }
     val errorAudioTooLong = stringResource(R.string.error_audio_too_long)
     val tilePauseDhikr = stringResource(R.string.tile_pause_dhikr)
 
@@ -1067,6 +1080,38 @@ fun SettingsScreen(
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             modifier = Modifier.clickable { showColorDialog = true }
                         )
+
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.app_icon),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = stringResource(currentAppIcon.labelRes()),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Apps,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            modifier = Modifier.clickable { showAppIconDialog = true }
+                        )
                     }
                 }
             }
@@ -1250,6 +1295,20 @@ fun SettingsScreen(
         )
     }
 
+    if (showAppIconDialog) {
+        AppIconDialog(
+            currentIcon = currentAppIcon,
+            onDismiss = { showAppIconDialog = false },
+            onSelect = {
+                if (it != currentAppIcon) {
+                    AppIconManager.set(context, it)
+                    currentAppIcon = it
+                }
+                showAppIconDialog = false
+            }
+        )
+    }
+
     if (showLanguageDialog) {
         LanguageDialog(
             currentCode = settings.languageCode,
@@ -1415,6 +1474,85 @@ private fun ColorSchemeDialog(
                         Text(text = label, style = MaterialTheme.typography.bodyLarge)
                     }
                 }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth(),
+                shape = SmoothCornerShape(12.dp)
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+private fun AppIcon.labelRes() = when (this) {
+    AppIcon.CREAM -> R.string.app_icon_cream
+    AppIcon.GREEN -> R.string.app_icon_green
+    AppIcon.CLASSIC -> R.string.app_icon_classic
+}
+
+@Composable
+private fun AppIconPreview(icon: AppIcon) {
+    val (background, foreground) = when (icon) {
+        AppIcon.CREAM -> Color(0xFFF4EBD9) to R.drawable.ic_launcher_cream_foreground
+        AppIcon.GREEN -> Color(0xFF0F5132) to R.drawable.ic_launcher_green_foreground
+        AppIcon.CLASSIC -> Color.White to R.drawable.app_icon_foreground
+    }
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clip(CircleShape)
+            .background(background),
+        contentAlignment = Alignment.Center
+    ) {
+        // Adaptive foregrounds are drawn on a 108dp canvas with a 72dp visible area
+        Image(
+            painter = painterResource(id = foreground),
+            contentDescription = null,
+            modifier = Modifier.requiredSize(72.dp)
+        )
+    }
+}
+
+@Composable
+private fun AppIconDialog(
+    currentIcon: AppIcon,
+    onDismiss: () -> Unit,
+    onSelect: (AppIcon) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.app_icon)) },
+        text = {
+            Column(modifier = Modifier.selectableGroup()) {
+                AppIcon.entries.forEach { icon ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = currentIcon == icon,
+                                onClick = { onSelect(icon) },
+                                role = Role.RadioButton
+                            )
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = currentIcon == icon, onClick = null)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        AppIconPreview(icon)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(text = stringResource(icon.labelRes()), style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.app_icon_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         },
         confirmButton = {
@@ -1996,85 +2134,63 @@ private fun SoundSelectionDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.sound_selection)) },
         text = {
+            fun preview(index: Int, custom: Boolean) {
+                mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
+                mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
+                    context = context,
+                    soundIndex = index,
+                    appVolume = currentVolume,
+                    muteOnSilent = false,
+                    muteOnDND = false,
+                    customSoundPath = customSoundPath,
+                    isCustomSoundEnabled = custom,
+                    audioStreamType = audioStreamType,
+                    useSystemVolume = useSystemVolume
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .selectableGroup()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                (1..9).forEach { index ->
+                (1..9).chunked(3).forEach { row ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = (!tempCustomEnabled && tempSelected == index),
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        row.forEach { index ->
+                            SoundOptionTile(
+                                label = LocaleUtils.formatLocalizedNumber(index),
+                                contentDescription = stringResource(R.string.sound_name, LocaleUtils.formatLocalizedNumber(index)),
+                                selected = !tempCustomEnabled && tempSelected == index,
                                 onClick = {
                                     tempSelected = index
                                     tempCustomEnabled = false
-                                    
-                                    mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
-                                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
-                                        context = context,
-                                        soundIndex = index,
-                                        appVolume = currentVolume,
-                                        muteOnSilent = false,
-                                        muteOnDND = false,
-                                        customSoundPath = customSoundPath,
-                                        isCustomSoundEnabled = false,
-                                        audioStreamType = audioStreamType,
-                                        useSystemVolume = useSystemVolume
-                                    )
+                                    preview(index, custom = false)
                                 },
-                                role = Role.RadioButton
+                                modifier = Modifier.weight(1f)
                             )
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = (!tempCustomEnabled && tempSelected == index), onClick = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.sound_name, LocaleUtils.formatLocalizedNumber(index)), 
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        }
                     }
                 }
-                
+
                 if (!customSoundPath.isNullOrEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = tempCustomEnabled,
-                                onClick = {
-                                    tempCustomEnabled = true
-                                    mediaPlayer?.let { islamalorabi.shafeezekr.pbuh.util.AudioHelper.stopPlayer(context, it) }
-                                    mediaPlayer = islamalorabi.shafeezekr.pbuh.util.AudioHelper.playWithMasterVolumeSync(
-                                        context = context,
-                                        soundIndex = tempSelected,
-                                        appVolume = currentVolume,
-                                        muteOnSilent = false,
-                                        muteOnDND = false,
-                                        customSoundPath = customSoundPath,
-                                        isCustomSoundEnabled = true,
-                                        audioStreamType = audioStreamType,
-                                        useSystemVolume = useSystemVolume
-                                    )
-                                },
-                                role = Role.RadioButton
-                            )
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = tempCustomEnabled, onClick = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.custom_audio_option),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
+                    SoundOptionTile(
+                        label = stringResource(R.string.custom_audio_option),
+                        selected = tempCustomEnabled,
+                        onClick = {
+                            tempCustomEnabled = true
+                            preview(tempSelected, custom = true)
+                        },
+                        icon = Icons.Default.Mic,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = stringResource(R.string.sound_play_warning),
                     style = MaterialTheme.typography.bodySmall,
@@ -2112,6 +2228,47 @@ private fun SoundSelectionDialog(
         },
         dismissButton = {}
     )
+}
+
+@Composable
+private fun SoundOptionTile(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String = label,
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = null
+) {
+    val shape = SmoothCornerShape(16.dp)
+    Surface(
+        modifier = modifier
+            .height(52.dp)
+            .clip(shape)
+            .selectable(selected = selected, onClick = onClick, role = Role.RadioButton)
+            .semantics { this.contentDescription = contentDescription },
+        shape = shape,
+        color = if (selected) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        contentColor = if (selected) MaterialTheme.colorScheme.onPrimary
+        else MaterialTheme.colorScheme.onSurfaceVariant
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (icon != null) {
+                Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
+            }
+            Text(
+                text = label,
+                style = if (icon == null) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleSmall,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+        }
+    }
 }
 
 @Composable
