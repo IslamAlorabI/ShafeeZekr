@@ -17,7 +17,8 @@
 - **Battery Optimization Handling**: Intelligent management of battery optimization settings for reliable reminder delivery
 
 ### 🎵 Sound & Volume
-- **Multiple Sound Options**: Choose from various reminder sounds with instant preview
+- **Multiple Sound Options**: Choose from 9 built-in sounds in a compact grid with instant preview
+- **Shuffle Sounds**: Play a random built-in sound with each reminder
 - **Custom Audio Import**: Import your own audio files as reminder sounds
 - **Voice Recording**: Record and use your own voice as a reminder sound
 - **Independent Volume Control**: App-level volume slider that temporarily overrides system volume during playback
@@ -38,11 +39,21 @@
 - **Weekly Chart**: Animated bar chart of your last 7 days with day-by-day breakdown
 - **Streak Tracking**: Track your consecutive days of dhikr with an animated fire icon
 - **Monthly & All-Time Totals**: See cumulative dhikr counts
-- **Customizable Daily Goal**: Set and adjust your personal target
+- **Customizable Daily Goal**: Set and adjust your personal target, with a celebration when you reach it
+- **Export & Import**: Back up your statistics to a file and restore them on any device
 
 ### 🎨 Appearance
 - **Material Design 3**: Dynamic color theming with Monet, Light/Dark mode support, and smooth animations
 - **Color Schemes**: Choose from 8 color palettes — Monet (dynamic), Green, Blue, Purple, Teal, Orange, Pink, Red
+- **App Icon Picker**: Switch the launcher icon between Cream, Green, and Classic styles, with a themed (monochrome) icon on Android 13+
+
+  <p>
+    <img src="docs/icons/icon_cream.png" width="72" alt="Cream icon" />
+    <img src="docs/icons/icon_green.png" width="72" alt="Green icon" />
+    <img src="docs/icons/icon_classic.png" width="72" alt="Classic icon" />
+  </p>
+
+- **Smooth Corners & Haptics**: Squircle-style corners and subtle tap feedback throughout the app
 - **Localized Numerals**: Numbers automatically display in Arabic, Persian, or Urdu numerals based on the selected language
 
 ### 🌍 Multi-Language Support
@@ -59,6 +70,7 @@ Fully localized in 8 languages with system language auto-detection:
 ### 🔒 Privacy
 - No data collection, no tracking, no analytics, no ads
 - Works completely offline — no internet required
+- No cloud backup: your settings and statistics stay on your device and are never uploaded to Google backup
 - Open source — see our [Privacy Policy](PRIVACY_POLICY.md)
 
 ## Screenshots
@@ -71,7 +83,7 @@ Fully localized in 8 languages with system language auto-detection:
 
 ## Requirements
 
-- Android 12 (API 31) or higher
+- Android 9 (API 28) or higher
 - Android Studio Ladybug or newer
 - JDK 11+
 
@@ -95,10 +107,9 @@ Fully localized in 8 languages with system language auto-detection:
 | **Widgets** | Jetpack Glance + Glance Material 3 |
 | **Data Persistence** | DataStore Preferences |
 | **Architecture** | Single-activity Compose, DataStore-backed state |
-| **Widgets** | Jetpack Glance + Glance Material 3 |
-| **Build** | AGP 9.2.1, Compose BOM 2026.05.00 |
-| **Min SDK** | 31 (Android 12) |
-| **Target SDK** | 36 |
+| **Build** | AGP 9.4.1, Kotlin 2.3.21, Compose BOM 2026.05.00 |
+| **Min SDK** | 28 (Android 9) |
+| **Target SDK** | 36 (compile SDK 37) |
 
 ## Contributing
 
