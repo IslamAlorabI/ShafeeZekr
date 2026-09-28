@@ -208,7 +208,7 @@
     <string name="goal_reached_title">ہدف مکمل!</string>
     <string name="goal_reached_message">اللہ آپ سے قبول فرمائے</string>
     <string name="exact_alarm_title">بروقت یاد دہانیوں کی اجازت دیں</string>
-    <string name="exact_alarm_desc">\"الارمز اور یاد دہانیاں\" کی اجازت کے بغیر اینڈرائیڈ یاد دہانیوں میں کئی منٹ کی تاخیر کر سکتا ہے۔ اجازت دیں تاکہ ہر یاد دہانی بروقت آئے۔</string>
+    <string name="exact_alarm_desc">یاد دہانیوں کے لیے \"الارمز اور یاد دہانیاں\" کی اجازت ضروری ہے۔ اس کے بغیر اینڈرائیڈ یاد دہانیوں میں کئی منٹ کی تاخیر کرتا ہے۔ یاد دہانیاں استعمال کرنے کے لیے اجازت دیں۔</string>
     <string name="exact_alarm_allow">اجازت دیں</string>
-    <string name="not_now">ابھی نہیں</string>
+    <string name="exact_alarm_turn_off">یاد دہانیاں بند کریں</string>
 </resources>

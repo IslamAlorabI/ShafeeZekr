@@ -222,7 +222,7 @@
     <string name="goal_reached_title">Goal reached!</string>
     <string name="goal_reached_message">May Allah accept it from you</string>
     <string name="exact_alarm_title">Allow on-time reminders</string>
-    <string name="exact_alarm_desc">Without the \"Alarms &amp; reminders\" permission, Android may delay reminders by several minutes. Allow it so each reminder arrives on time.</string>
+    <string name="exact_alarm_desc">Reminders need the \"Alarms &amp; reminders\" permission. Without it, Android delays them by several minutes. Allow it to use reminders.</string>
     <string name="exact_alarm_allow">Allow</string>
-    <string name="not_now">Not now</string>
+    <string name="exact_alarm_turn_off">Turn off reminders</string>
 </resources>

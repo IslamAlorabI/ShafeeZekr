@@ -59,6 +59,7 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -84,6 +85,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import islamalorabi.shafeezekr.pbuh.R
 import islamalorabi.shafeezekr.pbuh.data.AppSettings
 import islamalorabi.shafeezekr.pbuh.data.ReminderInterval
@@ -119,15 +123,32 @@ fun HomeScreen(
     // Exact alarms need no permission before Android 12
     fun checkExactAlarms() = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
     var canScheduleExactAlarms by remember { mutableStateOf(checkExactAlarms()) }
-    // Asked once per launch while reminders are on; "Not now" hides it until the next launch
-    var exactAlarmPromptDismissed by rememberSaveable { mutableStateOf(false) }
-    val showExactAlarmDialog = settings.isReminderEnabled && !canScheduleExactAlarms && !exactAlarmPromptDismissed
+    // Reminders don't run without "Alarms & reminders": inexact alarms arrive late, and a late
+    // alarm racing the overdue recovery plays the reminder twice. Set while the user is turning
+    // reminders on and still has to grant it.
+    var enablePendingExactAlarm by rememberSaveable { mutableStateOf(false) }
+    // Also shown when reminders are already on but the permission was revoked
+    val showExactAlarmDialog = !canScheduleExactAlarms &&
+        (settings.isReminderEnabled || enablePendingExactAlarm)
+
+    // The permission can be granted from system settings while the app is in the background
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                canScheduleExactAlarms = checkExactAlarms()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val exactAlarmSettingsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         canScheduleExactAlarms = checkExactAlarms()
-        if (!canScheduleExactAlarms) exactAlarmPromptDismissed = true
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -136,6 +157,22 @@ fun HomeScreen(
         hasNotificationPermission = isGranted
         if (isGranted) {
             onReminderEnabledChange(true)
+        }
+    }
+
+    fun enableReminders() {
+        if (!hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            onReminderEnabledChange(true)
+        }
+    }
+
+    // Finish turning reminders on once the permission comes back granted
+    LaunchedEffect(canScheduleExactAlarms) {
+        if (canScheduleExactAlarms && enablePendingExactAlarm) {
+            enablePendingExactAlarm = false
+            enableReminders()
         }
     }
 
@@ -149,7 +186,15 @@ fun HomeScreen(
                     )
                 )
             },
-            onDismiss = { exactAlarmPromptDismissed = true }
+            dismissLabel = if (settings.isReminderEnabled) {
+                stringResource(R.string.exact_alarm_turn_off)
+            } else {
+                stringResource(R.string.cancel)
+            },
+            onDismiss = {
+                enablePendingExactAlarm = false
+                if (settings.isReminderEnabled) onReminderEnabledChange(false)
+            }
         )
     }
 
@@ -392,10 +437,10 @@ fun HomeScreen(
                                 checked = settings.isReminderEnabled,
                                 enabled = true,
                                 onCheckedChange = { enabled ->
-                                    if (enabled && !hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        onReminderEnabledChange(enabled)
+                                    when {
+                                        !enabled -> onReminderEnabledChange(false)
+                                        !canScheduleExactAlarms -> enablePendingExactAlarm = true
+                                        else -> enableReminders()
                                     }
                                 }
                             )
@@ -553,9 +598,10 @@ private fun IntervalSettingsContent(
 }
 
 @Composable
-private fun ExactAlarmDialog(onAllow: () -> Unit, onDismiss: () -> Unit) {
+private fun ExactAlarmDialog(onAllow: () -> Unit, dismissLabel: String, onDismiss: () -> Unit) {
     AlertDialog(
-        onDismissRequest = onDismiss,
+        // Not dismissible by tapping outside: the user must allow or give up on reminders
+        onDismissRequest = {},
         icon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_pbuh),
@@ -572,7 +618,7 @@ private fun ExactAlarmDialog(onAllow: () -> Unit, onDismiss: () -> Unit) {
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.not_now))
+                Text(dismissLabel)
             }
         }
     )

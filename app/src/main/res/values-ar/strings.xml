@@ -209,7 +209,7 @@
     <string name="goal_reached_title">حققت هدفك!</string>
     <string name="goal_reached_message">تقبّل الله منك</string>
     <string name="exact_alarm_title">السماح بالتذكيرات في وقتها</string>
-    <string name="exact_alarm_desc">بدون إذن \"المنبّهات والتذكيرات\" قد يؤخر أندرويد التذكيرات عدة دقائق. اسمح به ليصل كل تذكير في وقته.</string>
+    <string name="exact_alarm_desc">تحتاج التذكيرات إلى إذن \"المنبّهات والتذكيرات\". بدونه يؤخر أندرويد التذكيرات عدة دقائق. اسمح به لاستخدام التذكيرات.</string>
     <string name="exact_alarm_allow">السماح</string>
-    <string name="not_now">ليس الآن</string>
+    <string name="exact_alarm_turn_off">إيقاف التذكيرات</string>
 </resources>

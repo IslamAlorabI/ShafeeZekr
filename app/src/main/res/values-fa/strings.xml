@@ -208,7 +208,7 @@
     <string name="goal_reached_title">به هدف رسیدید!</string>
     <string name="goal_reached_message">خداوند از شما بپذیرد</string>
     <string name="exact_alarm_title">اجازه یادآوری به‌موقع</string>
-    <string name="exact_alarm_desc">بدون مجوز \"هشدارها و یادآوری‌ها\"، اندروید ممکن است یادآوری‌ها را چند دقیقه به تأخیر بیندازد. اجازه دهید تا هر یادآوری به‌موقع برسد.</string>
+    <string name="exact_alarm_desc">یادآوری‌ها به مجوز \"هشدارها و یادآوری‌ها\" نیاز دارند. بدون آن، اندروید یادآوری‌ها را چند دقیقه به تأخیر می‌اندازد. برای استفاده از یادآوری‌ها اجازه دهید.</string>
     <string name="exact_alarm_allow">اجازه دادن</string>
-    <string name="not_now">اکنون نه</string>
+    <string name="exact_alarm_turn_off">خاموش کردن یادآوری‌ها</string>
 </resources>

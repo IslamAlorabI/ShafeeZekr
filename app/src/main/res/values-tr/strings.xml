@@ -208,7 +208,7 @@
     <string name="goal_reached_title">Hedefe ulaşıldı!</string>
     <string name="goal_reached_message">Allah kabul etsin</string>
     <string name="exact_alarm_title">Zamanında hatırlatmalara izin ver</string>
-    <string name="exact_alarm_desc">\"Alarmlar ve hatırlatıcılar\" izni olmadan Android hatırlatmaları birkaç dakika geciktirebilir. Her hatırlatmanın zamanında gelmesi için izin verin.</string>
+    <string name="exact_alarm_desc">Hatırlatmalar için \"Alarmlar ve hatırlatıcılar\" izni gerekir. Bu izin olmadan Android hatırlatmaları birkaç dakika geciktirir. Hatırlatmaları kullanmak için izin verin.</string>
     <string name="exact_alarm_allow">İzin ver</string>
-    <string name="not_now">Şimdi değil</string>
+    <string name="exact_alarm_turn_off">Hatırlatmaları kapat</string>
 </resources>

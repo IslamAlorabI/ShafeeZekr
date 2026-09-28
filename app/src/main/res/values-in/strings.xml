@@ -208,7 +208,7 @@
     <string name="goal_reached_title">Target tercapai!</string>
     <string name="goal_reached_message">Semoga Allah menerimanya darimu</string>
     <string name="exact_alarm_title">Izinkan pengingat tepat waktu</string>
-    <string name="exact_alarm_desc">Tanpa izin \"Alarm &amp; pengingat\", Android dapat menunda pengingat hingga beberapa menit. Izinkan agar setiap pengingat datang tepat waktu.</string>
+    <string name="exact_alarm_desc">Pengingat memerlukan izin \"Alarm &amp; pengingat\". Tanpa izin ini, Android menunda pengingat hingga beberapa menit. Izinkan untuk menggunakan pengingat.</string>
     <string name="exact_alarm_allow">Izinkan</string>
-    <string name="not_now">Nanti saja</string>
+    <string name="exact_alarm_turn_off">Matikan pengingat</string>
 </resources>
