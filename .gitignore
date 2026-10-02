@@ -39,7 +39,8 @@ google-services.json
 signing.properties
 
 # Internal docs
-docs/
+docs/*
+!docs/icons/
 
 # VS Code
 .vscode/
