@@ -76,9 +76,10 @@ Fully localized in 8 languages with system language auto-detection:
 ## Screenshots
 
 <p align="center">
-  <img src="Screenshots/Screenshot_20260129_020251.png" width="250" alt="Home Screen" />
-  <img src="Screenshots/Screenshot_20260129_020325.png" width="250" alt="Settings Screen" />
-  <img src="Screenshots/Screenshot_20260129_020331.png" width="250" alt="About Screen" />
+  <img src="Screenshots/home.png" width="200" alt="Home Screen" />
+  <img src="Screenshots/statistics.png" width="200" alt="Statistics Screen" />
+  <img src="Screenshots/settings.png" width="200" alt="Settings Screen" />
+  <img src="Screenshots/about.png" width="200" alt="About Screen" />
 </p>
 
 ## Requirements
