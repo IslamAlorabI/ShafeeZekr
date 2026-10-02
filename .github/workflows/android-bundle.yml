@@ -6,26 +6,22 @@ on:
 jobs:
   bundle:
     name: Build release AAB
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
+    env:
+      # SHA-1 of the upload key Play Console expects
+      EXPECTED_CERT_SHA1: 93:1A:C5:3C:35:98:C6:5F:BC:54:8E:F2:7C:86:49:5D:D1:08:62:B3
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-
+          cache: 'gradle'
 
       - name: Extract version info
         id: version
@@ -47,17 +43,55 @@ jobs:
         run: chmod +x gradlew && ./gradlew bundleRelease --no-daemon
 
       - name: Collect files
+        id: files
         run: |
           mkdir -p play
+          AAB_NAME="ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.aab"
           AAB_PATH=$(find app/build/outputs/bundle/release -name "*.aab" | head -1)
-          cp "$AAB_PATH" "play/ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}.aab"
+          cp "$AAB_PATH" "play/$AAB_NAME"
           # R8 mapping: upload to Play Console so crash stack traces are readable
           cp app/build/outputs/mapping/release/mapping.txt play/ 2>/dev/null || true
           cp app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip play/ 2>/dev/null || true
+          echo "aab=$AAB_NAME" >> $GITHUB_OUTPUT
+
+      - name: Verify signing key
+        id: cert
+        run: |
+          SHA1=$(keytool -printcert -jarfile "play/${{ steps.files.outputs.aab }}" | grep -m1 'SHA1:' | awk '{print $2}')
+          OWNER=$(keytool -printcert -jarfile "play/${{ steps.files.outputs.aab }}" | grep -m1 'Owner:' | sed 's/^Owner: //')
+          echo "sha1=$SHA1" >> $GITHUB_OUTPUT
+          echo "owner=$OWNER" >> $GITHUB_OUTPUT
+          if [ "$SHA1" != "$EXPECTED_CERT_SHA1" ]; then
+            echo "::error::AAB is signed with $SHA1, but Play Console expects $EXPECTED_CERT_SHA1"
+            exit 1
+          fi
 
       - name: Upload AAB
-        uses: actions/upload-artifact@v4
+        id: upload
+        uses: actions/upload-artifact@v7
         with:
           name: ShafeeZekr-v${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}
           path: play/
           if-no-files-found: error
+
+      - name: Write summary
+        run: |
+          {
+            echo "## ShafeeZekr v${{ steps.version.outputs.name }} (build ${{ steps.version.outputs.code }})"
+            echo
+            echo "**[Download artifact](${{ steps.upload.outputs.artifact-url }})**"
+            echo
+            echo "| File | Size |"
+            echo "|------|------|"
+            for f in play/*; do
+              echo "| \`$(basename "$f")\` | $(du -h "$f" | cut -f1) |"
+            done
+            echo
+            echo "### Signing"
+            echo "- Signer: ${{ steps.cert.outputs.owner }}"
+            echo "- SHA-1: \`${{ steps.cert.outputs.sha1 }}\` ✅ matches the Play upload key"
+            echo
+            echo "### Upload to Play Console"
+            echo "1. Upload \`${{ steps.files.outputs.aab }}\` to a new release"
+            echo "2. In **App bundle explorer → Downloads**, upload \`mapping.txt\` as the deobfuscation file"
+          } >> $GITHUB_STEP_SUMMARY
